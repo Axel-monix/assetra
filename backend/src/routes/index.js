@@ -4,7 +4,7 @@ const router = express.Router();
 const { getApiStatus } = require("../controllers/indexController");
 const { getUsers } = require("../controllers/userController");
 
-router.get("/", getApiStatus);
+router.get("/api", getApiStatus);
 
 router.get("/users", getUsers);
 
