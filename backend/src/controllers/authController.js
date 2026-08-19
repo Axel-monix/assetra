@@ -1,5 +1,4 @@
 const pool = require("../config/db");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
@@ -20,7 +19,7 @@ const login = async (req, res) => {
                 id,
                 name,
                 email,
-                password_hash,
+                password,
                 role,
                 status
             FROM users
@@ -49,7 +48,7 @@ const login = async (req, res) => {
 
     const { comparePassword } = require("../utils/password");
 
-    const isPasswordValid = await comparePassword(password, user.password_hash);
+    const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -91,7 +90,27 @@ const login = async (req, res) => {
     });
   }
 };
+const getMe = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "User data retrieved successfully",
+      data: {
+        user: req.user,
+      },
+    });
+  } catch (error) {
+    console.error("Get me error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      data: null,
+    });
+  }
+};
 
 module.exports = {
   login,
+  getMe,
 };
