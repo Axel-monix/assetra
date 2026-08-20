@@ -89,26 +89,12 @@ export default function LoginPage() {
             </label>
 
             <div className="flex items-center rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
-              <span className="mr-3 text-[#8D8FA0]">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
-                </svg>
-              </span>
-
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="Enter your username or email"
+                placeholder="Enter your email"
                 className="h-11 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
                 required
               />
@@ -125,20 +111,6 @@ export default function LoginPage() {
             </label>
 
             <div className="flex items-center rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
-              <span className="mr-3 text-[#8D8FA0]">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="5" y="10" width="14" height="10" rx="2" />
-                  <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                </svg>
-              </span>
-
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -159,14 +131,13 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Remember + Forgot */}
+          {/* Remember Me */}
           <div className="mb-7 flex items-center justify-between text-xs">
             <label className="flex cursor-pointer items-center gap-2 text-[#A1A1AA]">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(event) => setRememberMe(event.target.checked)}
-                className="h-4 w-4 rounded border-[#272D3D] bg-[#0D0D15]"
               />
               Remember me
             </label>
@@ -185,8 +156,6 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-
-          {/* Login Button */}
           <button
             type="submit"
             disabled={loading}
@@ -196,11 +165,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-6 border-t border-[#272D3D] pt-5 text-center text-xs text-[#71717A]">
           🛡 Access restricted to authorized Assetra users.
         </div>
       </div>
     </main>
   );
-}
+} 

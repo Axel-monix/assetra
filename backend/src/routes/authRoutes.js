@@ -14,9 +14,16 @@ const {
 const {
   authorizeRoles,
 } = require("../middleware/roleMiddleware");
-
+const {
+  forgotPassword,
+  verifyResetCode,
+  resetPassword,
+} = require("../controllers/forgotPasswordController");
 
 router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/forgot-password/verify", verifyResetCode);
+router.post("/forgot-password/reset", resetPassword);
 
 router.get(
   "/me",
