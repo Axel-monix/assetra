@@ -2,15 +2,11 @@
 const bcrypt = require("bcrypt");
 const pool = require("../config/db"); // pool pg yang sudah ada
 const { generateVerificationCode, sendResetPasswordEmail } = require("../utils/mailer");
-const resetCodeStore = require("../utils/resetCodeStore");
+const Resetcode = require("../utils/Resetcode"); 
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
 
-// ============================================
-// POST /api/auth/forgot-password
-// { email } -> cek terdaftar, generate kode, kirim email
-// ============================================
 async function forgotPassword(req, res) {
   try {
     const { email } = req.body;
@@ -37,12 +33,12 @@ async function forgotPassword(req, res) {
     }
 
     const code = generateVerificationCode();
-    resetCodeStore.setCode(normalizedEmail, code);
+    Resetcode.setCode(normalizedEmail, code);
 
     const emailSent = await sendResetPasswordEmail(normalizedEmail, code);
 
     if (!emailSent) {
-      resetCodeStore.deleteEntry(normalizedEmail);
+      Resetcode.deleteEntry(normalizedEmail);
       return res.status(500).json({
         success: false,
         message: "Gagal mengirim email verifikasi. Silakan coba lagi.",
@@ -62,10 +58,7 @@ async function forgotPassword(req, res) {
   }
 }
 
-// ============================================
-// POST /api/auth/forgot-password/verify
-// { email, code } -> cek kode benar & belum kedaluwarsa
-// ============================================
+
 async function verifyResetCode(req, res) {
   try {
     const { email, code } = req.body;
@@ -78,7 +71,7 @@ async function verifyResetCode(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = resetCodeStore.getEntry(normalizedEmail);
+    const entry = Resetcode.getEntry(normalizedEmail);
 
     if (!entry) {
       return res.status(404).json({
@@ -87,8 +80,8 @@ async function verifyResetCode(req, res) {
       });
     }
 
-    if (resetCodeStore.isExpired(entry)) {
-      resetCodeStore.deleteEntry(normalizedEmail);
+    if (Resetcode.isExpired(entry)) {
+      Resetcode.deleteEntry(normalizedEmail);
       return res.status(400).json({
         success: false,
         message: "Kode verifikasi sudah kedaluwarsa. Silakan minta kode baru.",
@@ -102,7 +95,7 @@ async function verifyResetCode(req, res) {
       });
     }
 
-    resetCodeStore.markVerified(normalizedEmail);
+    Resetcode.markVerified(normalizedEmail);
 
     return res.json({
       success: true,
@@ -117,10 +110,6 @@ async function verifyResetCode(req, res) {
   }
 }
 
-// ============================================
-// POST /api/auth/forgot-password/reset
-// { email, code, newPassword } -> update password
-// ============================================
 async function resetPassword(req, res) {
   try {
     const { email, code, newPassword } = req.body;
@@ -140,11 +129,11 @@ async function resetPassword(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = resetCodeStore.getEntry(normalizedEmail);
+    const entry = Resetcode.getEntry(normalizedEmail);
 
     // Re-validasi kode di step terakhir ini juga (bukan cuma percaya step verify),
     // supaya endpoint ini tidak bisa dipanggil langsung tanpa verifikasi yang sah.
-    if (!entry || resetCodeStore.isExpired(entry)) {
+    if (!entry || Resetcode.isExpired(entry)) {
       return res.status(400).json({
         success: false,
         message: "Sesi reset password sudah kedaluwarsa. Silakan ulangi dari awal.",
@@ -172,7 +161,7 @@ async function resetPassword(req, res) {
       });
     }
 
-    resetCodeStore.deleteEntry(normalizedEmail);
+    Resetcode.deleteEntry(normalizedEmail);
 
     return res.json({
       success: true,
