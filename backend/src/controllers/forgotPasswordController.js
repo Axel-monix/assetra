@@ -1,6 +1,6 @@
 // src/controllers/forgotPasswordController.js
 const bcrypt = require("bcrypt");
-const pool = require("../config/db"); // pool pg yang sudah ada
+const pool = require("../config/db");
 const { generateVerificationCode, sendResetPasswordEmail } = require("../utils/mailer");
 const Resetcode = require("../utils/Resetcode"); 
 
@@ -14,21 +14,21 @@ async function forgotPassword(req, res) {
     if (!email || !EMAIL_REGEX.test(email)) {
       return res.status(400).json({
         success: false,
-        message: "Format email tidak valid.",
+        message: "Email Format Invalid.",
       });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
 
     const { rows } = await pool.query(
-      "SELECT id_user FROM users WHERE email = $1",
+      "SELECT id FROM users WHERE email = $1",
       [normalizedEmail]
     );
 
     if (rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Email tidak terdaftar.",
+        message: "Email is not registered.",
       });
     }
 
@@ -41,19 +41,19 @@ async function forgotPassword(req, res) {
       Resetcode.deleteEntry(normalizedEmail);
       return res.status(500).json({
         success: false,
-        message: "Gagal mengirim email verifikasi. Silakan coba lagi.",
+        message: "Failed to send verification email. Please try again.",
       });
     }
 
     return res.json({
       success: true,
-      message: "Kode verifikasi telah dikirim ke email kamu. Berlaku 5 menit.",
+      message: "Code for reset password has been sent to your email. Valid for 5 minutes.",
     });
   } catch (err) {
     console.error("Error in forgotPassword:", err);
     return res.status(500).json({
       success: false,
-      message: "Terjadi kesalahan pada server.",
+      message: "An error occurred on the server.",
     });
   }
 }
@@ -66,7 +66,7 @@ async function verifyResetCode(req, res) {
     if (!email || !code) {
       return res.status(400).json({
         success: false,
-        message: "Email dan kode verifikasi wajib diisi.",
+        message: "Email and verification code are required.",
       });
     }
 
@@ -76,7 +76,7 @@ async function verifyResetCode(req, res) {
     if (!entry) {
       return res.status(404).json({
         success: false,
-        message: "Kode verifikasi tidak ditemukan. Silakan minta kode baru.",
+        message: "Verification code not found. Please request a new code.",
       });
     }
 
@@ -84,14 +84,14 @@ async function verifyResetCode(req, res) {
       Resetcode.deleteEntry(normalizedEmail);
       return res.status(400).json({
         success: false,
-        message: "Kode verifikasi sudah kedaluwarsa. Silakan minta kode baru.",
+        message: "Verification code has expired. Please request a new code.",
       });
     }
 
     if (entry.code !== code) {
       return res.status(400).json({
         success: false,
-        message: "Kode verifikasi salah. Silakan coba lagi.",
+        message: "Invalid verification code. Please try again.",
       });
     }
 
@@ -99,13 +99,13 @@ async function verifyResetCode(req, res) {
 
     return res.json({
       success: true,
-      message: "Kode verifikasi benar.",
+      message: "Verification code is valid.",
     });
   } catch (err) {
     console.error("Error in verifyResetCode:", err);
     return res.status(500).json({
       success: false,
-      message: "Terjadi kesalahan pada server.",
+      message: "An error occurred on the server.",
     });
   }
 }
@@ -117,14 +117,14 @@ async function resetPassword(req, res) {
     if (!email || !code || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: "Email, kode, dan password baru wajib diisi.",
+        message: "Email, verification code, and new password are required.",
       });
     }
 
     if (newPassword.length < PASSWORD_MIN_LENGTH) {
       return res.status(400).json({
         success: false,
-        message: `Password minimal ${PASSWORD_MIN_LENGTH} karakter.`,
+        message: `New password must be at least ${PASSWORD_MIN_LENGTH} characters long.`,
       });
     }
 
@@ -136,14 +136,14 @@ async function resetPassword(req, res) {
     if (!entry || Resetcode.isExpired(entry)) {
       return res.status(400).json({
         success: false,
-        message: "Sesi reset password sudah kedaluwarsa. Silakan ulangi dari awal.",
+        message: "The password reset session has expired. Please start over.",
       });
     }
 
     if (entry.code !== code || !entry.verified) {
       return res.status(400).json({
         success: false,
-        message: "Kode verifikasi tidak valid.",
+        message: "Invalid verification code.",
       });
     }
 
@@ -157,7 +157,7 @@ async function resetPassword(req, res) {
     if (rowCount === 0) {
       return res.status(404).json({
         success: false,
-        message: "User tidak ditemukan.",
+        message: "User not found.",
       });
     }
 
@@ -165,13 +165,13 @@ async function resetPassword(req, res) {
 
     return res.json({
       success: true,
-      message: "Password berhasil diganti.",
+      message: "Password successfully changed.",
     });
   } catch (err) {
     console.error("Error in resetPassword:", err);
     return res.status(500).json({
       success: false,
-      message: "Terjadi kesalahan pada server.",
+      message: "An error occurred on the server.",
     });
   }
 }
