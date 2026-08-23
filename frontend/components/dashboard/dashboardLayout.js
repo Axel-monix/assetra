@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutGrid, Boxes, History, Users, Search, Bell, LogOut } from "lucide-react";
+import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
+import Header from "./header";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
@@ -10,14 +11,21 @@ const NAV_ITEMS = [
   { href: "/manage-items", label: "Manage Item", icon: Boxes },
   { href: "/history", label: "History", icon: History },
   // Manage Admin cuma muncul untuk super_admin, di-filter di bawah.
-  { href: "/manage-admin", label: "Manage Admin", icon: Users, requiresRole: ROLES.SUPER_ADMIN },
+  {
+    href: "/manage-admin",
+    label: "Manage Admin",
+    icon: Users,
+    requiresRole: ROLES.SUPER_ADMIN,
+  },
 ];
 
 export default function DashboardLayout({ role, userName, children }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const navItems = NAV_ITEMS.filter((item) => !item.requiresRole || item.requiresRole === role);
+  const navItems = NAV_ITEMS.filter(
+    (item) => !item.requiresRole || item.requiresRole === role,
+  );
   const roleLabel = role === ROLES.SUPER_ADMIN ? "Super Admin" : "Admin";
 
   function handleLogout() {
@@ -35,7 +43,9 @@ export default function DashboardLayout({ role, userName, children }) {
         <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>
 
         <div className="mb-6 px-2">
-          <div className="text-sm font-semibold text-[#8083FF]">{roleLabel}</div>
+          <div className="text-sm font-semibold text-[#8083FF]">
+            {roleLabel}
+          </div>
           <div className="text-xs text-[#71717A]">Inventory Manager</div>
         </div>
 
@@ -75,30 +85,8 @@ export default function DashboardLayout({ role, userName, children }) {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="flex items-center gap-4 border-b border-[#272D3D] px-6 py-3">
-          <div className="flex-1 flex items-center gap-2 rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 h-10 max-w-md">
-            <span className="text-[#555866]">
-              <Search size={16} strokeWidth={1.75} />
-            </span>
-            <input
-              type="text"
-              placeholder="Cari item, serial number, atau pengguna..."
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
-            />
-          </div>
-
-          <button type="button" className="text-[#A1A1AA] hover:text-white">
-            <Bell size={18} strokeWidth={1.75} />
-          </button>
-
-          <div className="flex items-center gap-2 text-sm text-[#E5E7EB]">
-            <div className="h-8 w-8 rounded-full bg-[#272D3D] flex items-center justify-center text-xs font-semibold">
-              {userName?.[0]?.toUpperCase() || "A"}
-            </div>
-            <span className="hidden sm:inline">{userName || "Admin User"}</span>
-          </div>
-        </header>
+        {/* Topbar - komponen terpisah, reusable buat semua halaman */}
+        <Header userName={userName} />
 
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
