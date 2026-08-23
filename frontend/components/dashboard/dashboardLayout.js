@@ -7,7 +7,7 @@ import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { href: "/manage-assets", label: "Manage Asset", icon: Boxes },
+  { href: "/manage-items", label: "Manage Item", icon: Boxes },
   { href: "/history", label: "History", icon: History },
   // Manage Admin cuma muncul untuk super_admin, di-filter di bawah.
   { href: "/manage-admin", label: "Manage Admin", icon: Users, requiresRole: ROLES.SUPER_ADMIN },
@@ -83,7 +83,7 @@ export default function DashboardLayout({ role, userName, children }) {
             </span>
             <input
               type="text"
-              placeholder="Cari aset, serial number, atau pengguna..."
+              placeholder="Cari item, serial number, atau pengguna..."
               className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
             />
           </div>

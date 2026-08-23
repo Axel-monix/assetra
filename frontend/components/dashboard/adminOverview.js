@@ -1,15 +1,15 @@
 "use client";
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
-import assetCard from "./assetCard";
+import StatCard from "./statCard";
 
-// TODO: ganti mock data dengan fetch ke backend, DIFILTER hanya aset milik
-// admin yang sedang login (bukan semua admin, beda dengan super admin):
-// - stats            -> GET /api/dashboard/stats?scope=mine
+// TODO: ganti mock data dengan fetch ke backend (endpoint tetap /api/assets,
+// database tetap nama "asset" — cuma UI/JS yang pakai istilah "Item"):
+// - stats            -> GET /api/assets/stats?scope=mine
 // - categoryBreakdown -> GET /api/assets/categories?scope=mine
 // - recentActivity   -> GET /api/history?scope=mine&limit=5
-// - attentionAssets  -> GET /api/assets?status=broken,maintenance&scope=mine
-const stats = { totalAssets: 1284, needMaintenance: 12, broken: 8 };
+// - attentionItems   -> GET /api/assets?status=broken,maintenance&scope=mine
+const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
 
 const categoryBreakdown = [
   { label: "Laptop & PC", count: 452, percent: 62, color: "bg-[#8083FF]" },
@@ -19,42 +19,16 @@ const categoryBreakdown = [
 ];
 
 const recentActivity = [
-  {
-    text: "Eji Prasono mengubah property MacBook Pro",
-    meta: "2m lalu · TR-8821",
-  },
-  {
-    text: "Irsyad Pramugyo menambahkan aset Sony A7 IV",
-    meta: "15m lalu · TR-8820",
-  },
+  { text: "Eji Prasono mengubah property MacBook Pro", meta: "2m lalu · TR-8821" },
+  { text: "Irsyad Pramugyo menambahkan item Sony A7 IV", meta: "15m lalu · TR-8820" },
   { text: "IT Support memulai service Server Rack", meta: "1j lalu · SV-412" },
 ];
 
-const attentionAssets = [
-  {
-    id: "AF-SRV-B4",
-    name: "Server Rack Unit #B4",
-    category: "Infrastruktur",
-    status: "Broken",
-  },
-  {
-    id: "AF-CAM-09",
-    name: "Sony A7 IV Body",
-    category: "Multimedia",
-    status: "Maintenance",
-  },
-  {
-    id: "AF-MON-21",
-    name: 'Monitor HP 19"',
-    category: "Display",
-    status: "Broken",
-  },
-  {
-    id: "AF-VHC-02",
-    name: "Asus ROG Zephyrus",
-    category: "Laptop",
-    status: "Maintenance",
-  },
+const attentionItems = [
+  { id: "AF-SRV-B4", name: "Server Rack Unit #B4", category: "Infrastruktur", status: "Broken" },
+  { id: "AF-CAM-09", name: "Sony A7 IV Body", category: "Multimedia", status: "Maintenance" },
+  { id: "AF-MON-21", name: 'Monitor HP 19"', category: "Display", status: "Broken" },
+  { id: "AF-VHC-02", name: "Asus ROG Zephyrus", category: "Laptop", status: "Maintenance" },
 ];
 
 const statusStyles = {
@@ -71,15 +45,15 @@ export default function AdminOverview() {
           type="button"
           className="flex items-center gap-1.5 rounded-lg bg-[#8083FF] px-4 py-2 text-sm font-semibold text-[#111323] hover:bg-[#9295FF]"
         >
-          + Tambahkan aset
+          + Tambahkan Item
         </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
-          label="Total Aset"
-          value={stats.totalAssets.toLocaleString("id-ID")}
+          label="Total Item"
+          value={stats.totalItems.toLocaleString("id-ID")}
           badgeText="+12 This Month"
           badgeColor="info"
         />
@@ -91,7 +65,7 @@ export default function AdminOverview() {
           badgeColor="urgent"
         />
         <StatCard
-          icon={<AlertIcon />}
+          icon={<AlertTriangle size={20} strokeWidth={1.75} />}
           label="Rusak"
           value={stats.broken}
           badgeText="Resiko Tinggi"
@@ -100,16 +74,11 @@ export default function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        {/* Distribusi kategori - hanya aset milik admin ini */}
+        {/* Distribusi kategori - hanya item milik admin ini */}
         <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold">
-              Distribusi aset dalam kategori
-            </h2>
-            <a
-              href="/manage-assets"
-              className="text-xs text-[#A5A7FF] hover:text-[#8083FF]"
-            >
+            <h2 className="text-sm font-semibold">Distribusi item dalam kategori</h2>
+            <a href="/manage-items" className="text-xs text-[#A5A7FF] hover:text-[#8083FF]">
               Lihat Detail
             </a>
           </div>
@@ -121,10 +90,7 @@ export default function AdminOverview() {
                   <span className="text-white font-medium">{cat.count}</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-[#272D3D] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${cat.color}`}
-                    style={{ width: `${cat.percent}%` }}
-                  />
+                  <div className={`h-full rounded-full ${cat.color}`} style={{ width: `${cat.percent}%` }} />
                 </div>
               </div>
             ))}
@@ -140,9 +106,7 @@ export default function AdminOverview() {
                 <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#8083FF] shrink-0" />
                 <div>
                   <p className="text-sm text-[#E5E7EB]">{activity.text}</p>
-                  <p className="text-[11px] text-[#71717A] uppercase tracking-wide mt-0.5">
-                    {activity.meta}
-                  </p>
+                  <p className="text-[11px] text-[#71717A] uppercase tracking-wide mt-0.5">{activity.meta}</p>
                 </div>
               </div>
             ))}
@@ -150,52 +114,36 @@ export default function AdminOverview() {
         </div>
       </div>
 
-      {/* Aset Perlu Perhatian */}
+      {/* Item Perlu Perhatian */}
       <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold flex items-center gap-2">
-            <AlertTriangle
-              size={16}
-              strokeWidth={1.75}
-              className="text-amber-400"
-            />
-            Aset Perlu Perhatian
+            <AlertTriangle size={16} strokeWidth={1.75} className="text-amber-400" />
+            Item Perlu Perhatian
           </h2>
           <span className="rounded-md bg-[#272D3D] px-2 py-0.5 text-[11px] text-[#A1A1AA]">
-            {attentionAssets.length} Total Issue
+            {attentionItems.length} Total Issue
           </span>
         </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
-              <th className="py-2 font-medium">ID Aset</th>
-              <th className="py-2 font-medium">Nama Aset</th>
+              <th className="py-2 font-medium">ID Item</th>
+              <th className="py-2 font-medium">Nama Item</th>
               <th className="py-2 font-medium">Kategori</th>
               <th className="py-2 font-medium">Status</th>
               <th className="py-2 font-medium">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {attentionAssets.map((asset) => (
-              <tr
-                key={asset.id}
-                className="border-b border-[#1D2230] last:border-0"
-              >
-                <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">
-                  {asset.id}
-                </td>
-                <td className="py-3">{asset.name}</td>
-                <td className="py-3 text-[#A1A1AA]">{asset.category}</td>
-                <td
-                  className={`py-3 text-xs font-medium ${statusStyles[asset.status]}`}
-                >
-                  ● {asset.status}
-                </td>
+            {attentionItems.map((item) => (
+              <tr key={item.id} className="border-b border-[#1D2230] last:border-0">
+                <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">{item.id}</td>
+                <td className="py-3">{item.name}</td>
+                <td className="py-3 text-[#A1A1AA]">{item.category}</td>
+                <td className={`py-3 text-xs font-medium ${statusStyles[item.status]}`}>● {item.status}</td>
                 <td className="py-3">
-                  <a
-                    href={`/manage-assets?asset=${asset.id}`}
-                    className="text-[#A5A7FF] hover:text-[#8083FF]"
-                  >
+                  <a href={`/manage-items?item=${item.id}`} className="text-[#A5A7FF] hover:text-[#8083FF]">
                     ↗
                   </a>
                 </td>

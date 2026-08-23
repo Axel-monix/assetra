@@ -1,20 +1,21 @@
 "use client";
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
-import StatCard from "./StatCard";
+import StatCard from "./statCard";
 
-// TODO: ganti mock data ini dengan fetch ke backend:
-// - stats        -> GET /api/dashboard/stats
+// TODO: ganti mock data ini dengan fetch ke backend (endpoint tetap /api/assets,
+// database tetap nama "asset" — cuma UI/JS yang pakai istilah "Item"):
+// - stats        -> GET /api/assets/stats
 // - recentActivity -> GET /api/history?limit=5 (semua admin, karena super admin)
 // - maintenanceAlerts -> GET /api/assets?status=critical
-const stats = { totalAssets: 1284, needMaintenance: 12, broken: 8 };
+const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
 
 const recentActivity = [
-  { assetId: "KL-MAC-8842", item: "MacBook Pro M3 14\"", user: "Fikar Sanjaya", status: "Operating", date: "20 Jul 2026" },
-  { assetId: "KL-MON-8129", item: "EPSON L3110", user: "Eji Prasono", status: "Need Maintenance", date: "18 Jul 2026" },
-  { assetId: "KL-TAB-8045", item: "iPad Pro 12.9\" Gen 6", user: "Irsyad Pramugyo", status: "Repairing", date: "12 Jul 2026" },
-  { assetId: "KL-CAM-8921", item: "Sony A7 IV Body", user: "Gilang Armada Putra", status: "Operating", date: "29 Jun 2026" },
-  { assetId: "KL-LPT-8332", item: "Asus ROG Zephyrus", user: "Muhammad Ilham", status: "Broken", date: "20 Jun 2026" },
+  { itemId: "KL-MAC-8842", name: "MacBook Pro M3 14\"", user: "Fikar Sanjaya", status: "Operating", date: "20 Jul 2026" },
+  { itemId: "KL-MON-8129", name: "EPSON L3110", user: "Eji Prasono", status: "Need Maintenance", date: "18 Jul 2026" },
+  { itemId: "KL-TAB-8045", name: "iPad Pro 12.9\" Gen 6", user: "Irsyad Pramugyo", status: "Repairing", date: "12 Jul 2026" },
+  { itemId: "KL-CAM-8921", name: "Sony A7 IV Body", user: "Gilang Armada Putra", status: "Operating", date: "29 Jun 2026" },
+  { itemId: "KL-LPT-8332", name: "Asus ROG Zephyrus", user: "Muhammad Ilham", status: "Broken", date: "20 Jun 2026" },
 ];
 
 const maintenanceAlerts = [
@@ -35,9 +36,27 @@ export default function SuperAdminOverview({ userName }) {
       <h1 className="text-2xl font-semibold mb-6">Halo, {userName || "Super Admin"}</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatCard icon={<Archive size={20} strokeWidth={1.75} />} label="Total Assets" value={stats.totalAssets.toLocaleString("id-ID")} badgeText="+12 This Month" badgeColor="info" />
-        <StatCard icon={<Wrench size={20} strokeWidth={1.75} />} label="Need Maintenance" value={stats.needMaintenance} badgeText="Urgent" badgeColor="urgent" />
-        <StatCard icon={<AlertIcon />} label="Broken" value={stats.broken} badgeText="High Risk" badgeColor="danger" />
+        <StatCard
+          icon={<Archive size={20} strokeWidth={1.75} />}
+          label="Total Item"
+          value={stats.totalItems.toLocaleString("id-ID")}
+          badgeText="+12 This Month"
+          badgeColor="info"
+        />
+        <StatCard
+          icon={<Wrench size={20} strokeWidth={1.75} />}
+          label="Need Maintenance"
+          value={stats.needMaintenance}
+          badgeText="Urgent"
+          badgeColor="urgent"
+        />
+        <StatCard
+          icon={<AlertTriangle size={20} strokeWidth={1.75} />}
+          label="Broken"
+          value={stats.broken}
+          badgeText="High Risk"
+          badgeColor="danger"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -52,7 +71,7 @@ export default function SuperAdminOverview({ userName }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
-                <th className="py-2 font-medium">Asset</th>
+                <th className="py-2 font-medium">Item</th>
                 <th className="py-2 font-medium">Item Name</th>
                 <th className="py-2 font-medium">User</th>
                 <th className="py-2 font-medium">Status</th>
@@ -61,9 +80,9 @@ export default function SuperAdminOverview({ userName }) {
             </thead>
             <tbody>
               {recentActivity.map((row) => (
-                <tr key={row.assetId} className="border-b border-[#1D2230] last:border-0">
-                  <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">{row.assetId}</td>
-                  <td className="py-3">{row.item}</td>
+                <tr key={row.itemId} className="border-b border-[#1D2230] last:border-0">
+                  <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">{row.itemId}</td>
+                  <td className="py-3">{row.name}</td>
                   <td className="py-3 text-[#A1A1AA]">{row.user}</td>
                   <td className="py-3">
                     <span className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${statusStyles[row.status]}`}>
