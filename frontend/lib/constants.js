@@ -9,6 +9,9 @@ export const ENDPOINTS = {
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`, // { email } -> cek terdaftar + kirim kode
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`, // { email, code } -> cek kode
   FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`, // { email, code, newPassword }
+
+  ADMINS: `${API_URL}/admins`, // GET (list) & POST (create)
+  ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`, // PATCH { action, reason?, type? }
 };
 
 export const ROLES = {
