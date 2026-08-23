@@ -67,7 +67,7 @@ function EyeOffIcon() {
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -87,7 +87,8 @@ export default function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email.trim(),
+          identifier: identifier.trim(),
+          email: identifier.trim(),
           password,
         }),
       });
@@ -140,10 +141,10 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleLogin}>
-          {/* Email */}
+          {/* Username or Email */}
           <div className="mb-7">
             <label
-              htmlFor="email"
+              htmlFor="identifier"
               className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]"
             >
               Username or Email
@@ -151,11 +152,12 @@ export default function LoginPage() {
 
             <div className="flex items-center rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="Enter your email"
+                id="identifier"
+                type="text"
+                value={identifier}
+                onChange={(event) => setIdentifier(event.target.value)}
+                placeholder="Enter your username or email"
+                autoComplete="username"
                 className="h-11 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
                 required
               />
