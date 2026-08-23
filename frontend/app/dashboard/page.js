@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import dashboardLayout from "@/components/dashboard/dashboardLayout";
-import superAdminOverview from "@/components/dashboard/superAdminOverview";
-import adminOverview from "@/components/dashboard/adminOverview";
+import DashboardLayout from "@/components/dashboard/dashboardLayout";
+import SuperAdminOverview from "@/components/dashboard/superadminOverview";
+import AdminOverview from "@/components/dashboard/adminOverview";
 import { AUTH_USER_KEY, ROLES } from "@/lib/constants";
 
 export default function DashboardPage() {
@@ -42,12 +42,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <dashboardLayout role={user.role} userName={user.name || user.username}>
+    <DashboardLayout role={user.role} userName={user.name || user.username}>
       {user.role === ROLES.SUPER_ADMIN ? (
-        <superAdminOverview userName={user.name || user.username} />
+        <SuperAdminOverview userName={user.name || user.username} />
       ) : (
-        <adminOverview />
+        <AdminOverview />
       )}
-    </dashboardLayout>
+    </DashboardLayout>
   );
 }
