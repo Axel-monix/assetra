@@ -130,9 +130,6 @@ async function resetPassword(req, res) {
 
     const normalizedEmail = email.trim().toLowerCase();
     const entry = Resetcode.getEntry(normalizedEmail);
-
-    // Re-validasi kode di step terakhir ini juga (bukan cuma percaya step verify),
-    // supaya endpoint ini tidak bisa dipanggil langsung tanpa verifikasi yang sah.
     if (!entry || Resetcode.isExpired(entry)) {
       return res.status(400).json({
         success: false,
