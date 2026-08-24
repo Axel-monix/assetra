@@ -14,9 +14,11 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
-  FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`, // { email } -> cek terdaftar + kirim kode
-  FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`, // { email, code } -> cek kode
-  FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`, // { email, code, newPassword }
+  FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`, 
+  FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
+  FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`, 
+  CATEGORIES: `${API_URL}/categories`,
+  ASSETS: `${API_URL}/assets`,
 
   ADMINS: `${API_URL}/admins`, // GET (list) & POST (create)
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`, // PATCH { action, reason?, type? }
@@ -24,17 +26,14 @@ export const ENDPOINTS = {
 };
 
 export const ROLES = {
-  ADMIN: "admin",
+  ADMINh: "admin",
   SUPER_ADMIN: "super_admin",
 };
-
-// Key storage token & user. Lokasi penyimpanan (localStorage vs sessionStorage)
-// ditentukan oleh checkbox "remember me" saat login, bukan oleh key-nya.
 export const AUTH_TOKEN_KEY = "token";
 export const AUTH_USER_KEY = "user";
 
 export const OTP_LENGTH = 6;
-export const OTP_EXPIRY_MINUTES = 5; // samain dengan backend (5 menit)
+export const OTP_EXPIRY_MINUTES = 5; 
 export const OTP_RESEND_COOLDOWN_SECONDS = 60;
 
 export const VALIDATION = {

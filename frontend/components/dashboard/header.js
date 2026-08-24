@@ -1,30 +1,24 @@
 "use client";
 
-import { Bell } from "lucide-react";
-import LanguageSwitcher from "./languageSwitcher";
 import { useTranslations } from "next-intl";
+import { User, ChevronDown } from "lucide-react";
 
 export default function Header({ userName }) {
   const t = useTranslations("dashboard");
+  
   return (
-    <header className="flex items-center justify-end gap-4 border-b border-[#272D3D] px-6 py-3">
-      <LanguageSwitcher />
-
-      <button
-        type="button"
-        className="text-[#A1A1AA] hover:text-white"
-        aria-label="Notifications"
-      >
-        <Bell size={18} strokeWidth={1.75} />
-      </button>
-
-      <div className="flex items-center gap-2 text-sm text-[#E5E7EB]">
-        <div className="h-8 w-8 rounded-full bg-[#272D3D] flex items-center justify-center text-xs font-semibold">
-          {userName?.[0]?.toUpperCase() || "A"}
-        </div>
-        <span className="hidden sm:inline">
-          {userName || t("header.profile")}
+    <header className="border-b border-[#272D3D] px-6 py-4 flex items-center justify-between">
+      <div className="text-sm text-[#A1A1AA]">
+        {/* breadcrumb atau apapun */}
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-[#E5E7EB]">
+          {userName || "User"}
         </span>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#272D3D]">
+          <User size={16} className="text-[#A1A1AA]" />
+        </div>
+        <ChevronDown size={16} className="text-[#A1A1AA]" />
       </div>
     </header>
   );

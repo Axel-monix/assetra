@@ -1,57 +1,69 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ItemCard from "@/components/items/itemCard";
 import ItemDetailPanel from "@/components/items/itemDetailPanel";
 import BulkActionBar from "@/components/items/bulkActionBar";
+import AddItemForm from "@/components/items/addItemForm";
 import { LayoutGrid, List, Plus, X } from "lucide-react";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
-
-// ============================================================
-// LOGIC SELECTION ITEM (ini bagian intinya):
-//
-// - Klik SATU item (saat belum ada yang ke-select / mode "none")
-//     -> masuk mode "single", panel detail item itu muncul.
-// - Klik item LAIN saat mode "single"
-//     -> detail panel GANTI ke item yang baru diklik (tetap mode "single").
-// - DOUBLE klik item LAIN saat mode "single"
-//     -> masuk mode "multi": kedua item (yang lama + yang di-double-click)
-//        jadi ke-select bareng, panel detail HILANG total, cuma bottom bar
-//        (print QR / nonaktifkan) yang aktif.
-// - Klik item (toggle in/out) saat mode "multi" -> tetap di mode multi.
-//
-// Catatan teknis: browser selalu fire "click" DULU sebelum "dblclick" /
-// event.detail === 2. Kalau logic single-click langsung dijalankan saat
-// event.detail === 1, maka pas detik terjadinya double-click, state udah
-// keburu ke-replace duluan oleh click pertama -> perbandingan "item lama
-// vs baru" jadi rusak. Makanya single-click SENGAJA ditunda pakai
-// setTimeout, dan dibatalkan kalau ternyata click kedua datang (jadi
-// double-click). Dengan begitu pas handleDoubleSelect jalan, state masih
-// murni kondisi SEBELUM sequence klik ini dimulai.
-// ============================================================
 
 const DOUBLE_CLICK_DELAY_MS = 220;
 
 export default function ManageItemsPage() {
   const router = useRouter();
+  const t = useTranslations("manageItem");
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
-  const [mode, setMode] = useState("none"); // "none" | "single" | "multi"
+  const [mode, setMode] = useState("none");
   const [viewMode, setViewMode] = useState("grid");
   const [activeFilters, setActiveFilters] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const clickTimerRef = useRef(null);
 
+  const fetchItems = useCallback(async () => {
+    const token =
+      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+      window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(ENDPOINTS.ASSETS, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Gagal mengambil data asset.");
+      }
+
+      setItems(result.data || []);
+    } catch (err) {
+      console.error("Fetch items error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
   useEffect(() => {
-    async function loadItems() {
+    async function init() {
       const raw =
         window.localStorage.getItem(AUTH_USER_KEY) ||
         window.sessionStorage.getItem(AUTH_USER_KEY);
+
       if (!raw) {
         router.replace("/login");
         return;
@@ -66,30 +78,12 @@ export default function ManageItemsPage() {
       }
 
       setUser(parsedUser);
-
-      try {
-        const token =
-          window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-          window.sessionStorage.getItem(AUTH_TOKEN_KEY);
-        const response = await fetch(ENDPOINTS.ASSETS, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.message || "Gagal mengambil data asset.");
-        }
-
-        setItems(result.data || []);
-      } catch (fetchError) {
-        setError(fetchError.message);
-      } finally {
-        setLoading(false);
-      }
+      setIsInitialized(true);
+      await fetchItems();
     }
 
-    loadItems();
-  }, [router]);
+    init();
+  }, [router, fetchItems]);
 
   useEffect(() => {
     return () => {
@@ -145,16 +139,115 @@ export default function ManageItemsPage() {
     setActiveFilters((prev) => prev.filter((f) => f !== filter));
   }
 
-  function handlePrintQr() {
-    // TODO: POST /api/assets/print-qr { ids: selectedIds }
-    console.log("Print QR untuk:", selectedIds);
+  async function handlePrintQr() {
+    try {
+      const token = getToken();
+      const response = await fetch(ENDPOINTS.PRINT_QR, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Gagal print QR");
+      }
+
+      if (result.data?.qrCode) {
+        window.open(result.data.qrCode, "_blank");
+      }
+    } catch (err) {
+      console.error("Print QR error:", err);
+      alert(err.message);
+    }
   }
 
-  function handleDeactivate(ids) {
-    // TODO: PATCH /api/assets/deactivate { ids }
-    console.log("Nonaktifkan:", ids);
-    clearSelection();
+  async function handleDeactivate(ids) {
+    const token = getToken();
+    try {
+      const response = await fetch(ENDPOINTS.DEACTIVATE_ASSETS, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ids }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Gagal menonaktifkan item.");
+      }
+
+      await fetchItems();
+      clearSelection();
+    } catch (err) {
+      console.error("Deactivate error:", err);
+      alert(err.message);
+    }
   }
+
+  function getToken() {
+    return (
+      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+      window.sessionStorage.getItem(AUTH_TOKEN_KEY)
+    );
+  }
+
+  async function handleAddItem(payload) {
+  const token = getToken();
+
+  console.log("🚀 Payload:", payload);
+  console.log("🔑 Token:", token);
+
+  try {
+    const response = await fetch(ENDPOINTS.ASSETS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        asset_name: payload.asset_name,
+        id_category: payload.id_category,
+        status: payload.status,
+        image_url: payload.image_url,
+      }),
+    });
+
+    console.log("📊 Response status:", response.status);
+    
+    // Coba baca response sebagai text dulu
+    const text = await response.text();
+    console.log("📄 Response text:", text);
+    
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (parseError) {
+      console.error("❌ Gagal parse JSON:", parseError);
+      throw new Error(`Server response: ${text.substring(0, 100)}`);
+    }
+
+    console.log("📦 Result:", result);
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Gagal menambahkan item.");
+    }
+
+    await fetchItems();
+  } catch (err) {
+    console.error("❌ Add item error:", err);
+    throw err;
+  }
+}
+
+  // =============================================
+  // 🔥 TAMBAHKAN INI - filteredItems & selectedItem
+  // =============================================
 
   const selectedItem =
     mode === "single" ? items.find((i) => i.id === selectedIds[0]) : null;
@@ -164,10 +257,20 @@ export default function ManageItemsPage() {
     return activeFilters.some((f) => f === item.category || f === item.status);
   });
 
-  if (!user) {
+  // =============================================
+
+  if (!isInitialized || loading) {
     return (
       <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-[#A1A1AA] text-sm">
-        Memuat...
+        {t("loading") || "Memuat..."}
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-red-400 text-sm">
+        Silakan login ulang.
       </div>
     );
   }
@@ -178,13 +281,15 @@ export default function ManageItemsPage() {
         <div className="flex-1 min-w-0">
           {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
           {loading && (
-            <p className="mb-4 text-sm text-[#A1A1AA]">Memuat asset...</p>
+            <p className="mb-4 text-sm text-[#A1A1AA]">
+              {t("loading") || "Memuat asset..."}
+            </p>
           )}
-          {/* Filter bar */}
+
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2 flex-wrap text-xs">
               <span className="text-[#71717A] uppercase tracking-wide mr-1">
-                Filters:
+                {t("filters")}
               </span>
               {activeFilters.map((filter) => (
                 <button
@@ -202,7 +307,7 @@ export default function ManageItemsPage() {
                   onClick={() => setActiveFilters([])}
                   className="text-[#A5A7FF] hover:text-[#8083FF] ml-1"
                 >
-                  Hapus Semua
+                  {t("clearAll")}
                 </button>
               )}
             </div>
@@ -225,7 +330,6 @@ export default function ManageItemsPage() {
             </div>
           </div>
 
-          {/* Grid item */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-24">
             {filteredItems.map((item) => (
               <ItemCard
@@ -236,33 +340,32 @@ export default function ManageItemsPage() {
               />
             ))}
 
-            {/* Tombol tambah item, ditaruh di grid biar konsisten sama desain */}
             <button
               type="button"
+              onClick={() => setShowAddForm(true)}
               className="rounded-xl border border-dashed border-[#272D3D] flex flex-col items-center justify-center gap-2 text-[#71717A] hover:border-[#8083FF] hover:text-[#8083FF] min-h-[168px]"
             >
               <Plus size={22} strokeWidth={1.9} />
-              <span className="text-xs">Tambah Item</span>
+              <span className="text-xs">{t("addItem")}</span>
             </button>
           </div>
         </div>
 
-        {/* Detail panel - cuma muncul di mode single */}
         {selectedItem && (
           <ItemDetailPanel
             item={selectedItem}
             onClose={clearSelection}
-            onEdit={
-              (item) => console.log("Edit:", item.id) /* TODO: buka form edit */
-            }
+            onEdit={(item) => {
+              console.log("Edit:", item.id);
+            }}
             onDelete={handleDeactivate}
           />
         )}
       </div>
 
-      {/* Floating add button (mobile-friendly, sesuai desain) */}
       <button
         type="button"
+        onClick={() => setShowAddForm(true)}
         className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-[#8083FF] text-[#111323] flex items-center justify-center shadow-2xl hover:bg-[#9295FF]"
       >
         <Plus size={22} strokeWidth={1.9} />
@@ -274,6 +377,13 @@ export default function ManageItemsPage() {
         onDeactivate={() => handleDeactivate(selectedIds)}
         onClose={clearSelection}
       />
+
+      {showAddForm && (
+        <AddItemForm
+          onClose={() => setShowAddForm(false)}
+          onSubmit={handleAddItem}
+        />
+      )}
     </DashboardLayout>
   );
 }

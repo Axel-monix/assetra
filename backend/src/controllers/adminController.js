@@ -5,10 +5,6 @@ const pool = require("../config/db");
 const PASSWORD_MIN_LENGTH = 8;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// ============================================================
-// GET /api/admins
-// Cuma nampilin role = 'admin' (super admin niatnya cuma 1, gak dikelola di sini)
-// ============================================================
 async function listAdmins(req, res) {
   try {
     const { rows } = await pool.query(
@@ -25,10 +21,6 @@ async function listAdmins(req, res) {
   }
 }
 
-// ============================================================
-// POST /api/admins
-// Body: { name, email, password }
-// ============================================================
 async function createAdmin(req, res) {
   try {
     const { name, email, password } = req.body;
@@ -66,13 +58,6 @@ async function createAdmin(req, res) {
   }
 }
 
-// ============================================================
-// PATCH /api/admins/:id/status
-// Body: { action: "deactivate" | "reactivate", reason?, type? }
-// - deactivate butuh "reason" (wajib, sesuai kolom admin_deactivation.reason)
-//   "type" optional, default "temporary" (nilai valid: temporary | permanent)
-// - reactivate cukup id-nya aja
-// ============================================================
 async function toggleAdminStatus(req, res) {
   const client = await pool.connect();
   try {
@@ -109,8 +94,6 @@ async function toggleAdminStatus(req, res) {
       );
     } else if (action === "reactivate") {
       await client.query("UPDATE users SET status = 'active', updated_at = CURRENT_TIMESTAMP WHERE id = $1", [id]);
-
-      // Tutup record deactivation TERBARU yang masih "terbuka" (belum direaktivasi)
       await client.query(
         `UPDATE admin_deactivation
          SET reactivated_at = CURRENT_TIMESTAMP, reactivated_by = $2

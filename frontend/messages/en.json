@@ -62,5 +62,43 @@
     "passwordPlaceholder": "Minimum 8 characters",
     "adding": "Adding...",
     "addAdmin": "Add Admin"
+  },
+  "manageItem": {
+    "title": "Manage Items",
+    "subtitle": "Add or manage inventory items.",
+    "addItem": "Add Item",
+    "addNewItem": "Add New Item",
+    "loading": "Loading...",
+    "filters": "Filters:",
+    "clearAll": "Clear All",
+    "itemName": "Item Name",
+    "itemNamePlaceholder": "e.g. MacBook Pro M3",
+    "codeItem": "Code Item",
+    "codeItemPlaceholder": "Auto generated",
+    "category": "Category",
+    "selectCategory": "Select Category",
+    "status": "Status",
+    "statusOptions": {
+      "functional": "Available",
+      "need_repair": "Need Repair",
+      "borrowed": "Borrowed",
+      "unavailable": "Unavailable"
+    },
+    "description": "Description",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Additional information about this item...",
+    "uploadImage": "Upload Image",
+    "uploadImageHere": "Upload Image Here",
+    "imageRequired": "Image is required",
+    "imageRecommended": "Recommended: 800×600px (JPG, PNG)",
+    "imageUploaded": "Uploaded",
+    "uploading": "Uploading...",
+    "cancel": "Cancel",
+    "adding": "Adding...",
+    "loadingCategories": "Loading categories...",
+    "noCategories": "No categories available",
+    "itemNameRequired": "Item name is required",
+    "categoryRequired": "Category is required",
+    "addFailed": "Failed to add item"
   }
 }

@@ -35,6 +35,15 @@ export default function DashboardLayout({ role, userName, children }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  // ← CEK KALAU role NULL
+  if (!role) {
+    return (
+      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-[#A1A1AA] text-sm">
+        Loading...
+      </div>
+    );
+  }
+
   const navItems = NAV_ITEMS.filter(
     (item) => !item.requiresRole || item.requiresRole === role,
   );
@@ -99,7 +108,7 @@ export default function DashboardLayout({ role, userName, children }) {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Header userName={userName} />
+        <Header userName={userName || "User"} />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>

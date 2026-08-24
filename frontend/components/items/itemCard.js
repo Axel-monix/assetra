@@ -1,20 +1,44 @@
 "use client";
 
 import { FONTS } from "../../lib/constants";
+import { useState } from "react";
 
 const statusDot = {
   Tersedia: "bg-emerald-400",
   Maintenance: "bg-amber-400",
   Rusak: "bg-red-400",
+  functional: "bg-emerald-400",
+  need_repair: "bg-amber-400",
+  borrowed: "bg-blue-400",
+  unavailable: "bg-red-400",
 };
 
 const statusText = {
   Tersedia: "text-emerald-400",
   Maintenance: "text-amber-400",
   Rusak: "text-red-400",
+  functional: "text-emerald-400",
+  need_repair: "text-amber-400",
+  borrowed: "text-blue-400",
+  unavailable: "text-red-400",
 };
 
 export default function ItemCard({ item, selected, onClick }) {
+  const [imageError, setImageError] = useState(false);
+  
+  // Cek apakah ada gambar
+  const hasImage = item.imageUrl && !imageError;
+  
+  // Format status biar konsisten
+  const statusMap = {
+    'functional': 'Tersedia',
+    'need_repair': 'Maintenance',
+    'borrowed': 'Dipinjam',
+    'unavailable': 'Tidak Tersedia',
+  };
+  
+  const displayStatus = statusMap[item.status] || item.status;
+
   return (
     <button
       type="button"
@@ -25,8 +49,19 @@ export default function ItemCard({ item, selected, onClick }) {
           : "border-[#272D3D] hover:border-[#3A4258]"
       }`}
     >
-      <div className="aspect-video bg-gradient-to-br from-[#1B2130] to-[#0D0D15] flex items-center justify-center">
-        <span className="text-3xl opacity-30">📦</span>
+      {/* Gambar */}
+      <div className="aspect-video bg-gradient-to-br from-[#1B2130] to-[#0D0D15] flex items-center justify-center relative overflow-hidden">
+        {hasImage ? (
+          <img
+            src={item.imageUrl}
+            alt={item.name}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+            loading="lazy"
+          />
+        ) : (
+          <span className="text-3xl opacity-30">📦</span>
+        )}
       </div>
 
       <div className="p-3.5">
@@ -45,14 +80,14 @@ export default function ItemCard({ item, selected, onClick }) {
 
         <div className="flex items-center justify-between text-xs">
           <span
-            className={`flex items-center gap-1.5 font-medium ${statusText[item.status]}`}
+            className={`flex items-center gap-1.5 font-medium ${statusText[item.status] || statusText[displayStatus]}`}
           >
             <span
-              className={`h-1.5 w-1.5 rounded-full ${statusDot[item.status]}`}
+              className={`h-1.5 w-1.5 rounded-full ${statusDot[item.status] || statusDot[displayStatus]}`}
             />
-            {item.status}
+            {displayStatus}
           </span>
-          <span className="text-[#71717A]">{item.location}</span>
+          <span className="text-[#71717A]">{item.location || ''}</span>
         </div>
       </div>
     </button>

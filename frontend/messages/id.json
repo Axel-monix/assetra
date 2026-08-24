@@ -62,5 +62,43 @@
     "passwordPlaceholder": "Minimal 8 karakter",
     "adding": "Menambahkan...",
     "addAdmin": "Tambah Admin"
+  },
+  "manageItem": {
+    "title": "Kelola Item",
+    "subtitle": "Tambah atau kelola item inventaris.",
+    "addItem": "Tambah Item",
+    "addNewItem": "Tambah Item Baru",
+    "loading": "Memuat...",
+    "filters": "Filter:",
+    "clearAll": "Hapus Semua",
+    "itemName": "Nama Item",
+    "itemNamePlaceholder": "Contoh: MacBook Pro M3",
+    "codeItem": "Kode Item",
+    "codeItemPlaceholder": "Otomatis dibuat",
+    "category": "Kategori",
+    "selectCategory": "Pilih Kategori",
+    "status": "Status",
+    "statusOptions": {
+      "functional": "Tersedia",
+      "need_repair": "Perlu Perbaikan",
+      "borrowed": "Dipinjam",
+      "unavailable": "Tidak Tersedia"
+    },
+    "description": "Deskripsi",
+    "descriptionOptional": "Deskripsi (Opsional)",
+    "descriptionPlaceholder": "Informasi tambahan tentang item ini...",
+    "uploadImage": "Unggah Gambar",
+    "uploadImageHere": "Unggah Gambar di Sini",
+    "imageRequired": "Gambar wajib diunggah",
+    "imageRecommended": "Direkomendasikan: 800×600px (JPG, PNG)",
+    "imageUploaded": "Terunggah",
+    "uploading": "Mengunggah...",
+    "cancel": "Batal",
+    "adding": "Menambahkan...",
+    "loadingCategories": "Memuat kategori...",
+    "noCategories": "Belum ada kategori",
+    "itemNameRequired": "Nama item wajib diisi",
+    "categoryRequired": "Kategori wajib dipilih",
+    "addFailed": "Gagal menambahkan item"
   }
 }

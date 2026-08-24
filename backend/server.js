@@ -3,16 +3,22 @@ const routes = require("./src/routes");
 const cors = require("cors");
 const adminRoutes = require("./src/routes/adminRoutes");
 const assetRoutes = require("./src/routes/assetRoutes");
+const categoryRoutes = require("./src/routes/categoryRoutes");
+const uploadRoutes = require("./src/routes/uploadRoutes");
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Register semua routes
 app.use("/api", routes);
 app.use("/api/admins", adminRoutes);
-app.use("/api/assets", assetRoutes);
+app.use("/api/assets", assetRoutes);     
+app.use("/api/categories", categoryRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-});
+}); 

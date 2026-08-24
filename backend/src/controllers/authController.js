@@ -5,10 +5,7 @@ const { hashPassword, comparePassword } = require("../utils/password");
 const login = async (req, res) => {
   try {
     const { identifier = req.body.email, password } = req.body;
-
-    // =========================
     // VALIDASI INPUT
-    // =========================
 
     if (!identifier || !password) {
       return res.status(400).json({
@@ -17,10 +14,7 @@ const login = async (req, res) => {
         data: null,
       });
     }
-
-    // =========================
     // CARI USER
-    // =========================
 
     const result = await pool.query(
       `
@@ -37,10 +31,7 @@ const login = async (req, res) => {
       `,
       [identifier.trim()],
     );
-
-    // =========================
     // USER TIDAK DITEMUKAN
-    // =========================
 
     if (result.rows.length === 0) {
       return res.status(401).json({
@@ -52,9 +43,7 @@ const login = async (req, res) => {
 
     const user = result.rows[0];
 
-    // =========================
     // CEK STATUS USER
-    // =========================
 
     if (user.status !== "active") {
       return res.status(403).json({
@@ -64,9 +53,7 @@ const login = async (req, res) => {
       });
     }
 
-    // =========================
     // CEK PASSWORD
-    // =========================
 
     let isPasswordValid = false;
 
@@ -92,26 +79,20 @@ const login = async (req, res) => {
       });
     }
 
-    // =========================
     // BUAT JWT PAYLOAD
-    // =========================
 
     const payload = {
       id: user.id,
       role: user.role,
     };
 
-    // =========================
     // BUAT TOKEN
-    // =========================
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    // =========================
     // RESPONSE LOGIN
-    // =========================
 
     return res.status(200).json({
       success: true,
@@ -137,10 +118,7 @@ const login = async (req, res) => {
   }
 };
 
-// ==========================================
 // GET CURRENT USER
-// ==========================================
-
 const getMe = async (req, res) => {
   try {
     return res.status(200).json({

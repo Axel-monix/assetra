@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { useTranslations } from "next-intl"; // ← TAMBAHKAN
+import { useTranslations } from "next-intl"; 
 
 export default function AddAdminModal({ onClose, onSubmit }) {
-  const t = useTranslations("manageAdmin"); // ← TAMBAHKAN
+  const t = useTranslations("manageAdmin"); 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,11 +20,11 @@ export default function AddAdminModal({ onClose, onSubmit }) {
     event.preventDefault();
 
     if (!form.name.trim() || !form.email.trim() || !form.password) {
-      setError(t("allFieldsRequired")); // ← PAKAI TERJEMAHAN
+      setError(t("allFieldsRequired")); 
       return;
     }
     if (form.password.length < 8) {
-      setError(t("passwordMinLength")); // ← PAKAI TERJEMAHAN
+      setError(t("passwordMinLength")); 
       return;
     }
 
