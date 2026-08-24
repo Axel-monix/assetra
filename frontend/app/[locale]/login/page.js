@@ -100,7 +100,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Guard: pastikan data yang diharapkan benar-benar ada sebelum dipakai.
       if (!result.data?.token || !result.data?.user) {
         setError(ERROR_MESSAGES.GENERIC_ERROR);
         return;
@@ -108,14 +107,10 @@ export default function LoginPage() {
 
       const { token, user } = result.data;
 
-      // remember me ON  -> localStorage   (tetap login walau tab/browser ditutup)
-      // remember me OFF -> sessionStorage (logout otomatis begitu tab ditutup)
+  
       const storage = rememberMe ? window.localStorage : window.sessionStorage;
       storage.setItem(AUTH_TOKEN_KEY, token);
       storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-
-      // super_admin dan admin sama-sama menuju satu dashboard yang sama;
-      // tampilan di dalamnya nanti dibedakan berdasarkan role (lihat AuthContext/dashboard).
       router.push("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
@@ -126,11 +121,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] font-sans flex flex-col items-center justify-center px-4">
-      {/* Logo */}
+    <main className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex flex-col items-center justify-center px-4">
       <div className="mb-12 text-2xl font-semibold">Assetra</div>
 
-      {/* Login Card */}
       <div className="w-full max-w-[405px] rounded-xl border border-[#272D3D] bg-[#131824] p-7 shadow-2xl">
         <div className="mb-8">
           <h1 className="text-xl font-semibold">Welcome back</h1>

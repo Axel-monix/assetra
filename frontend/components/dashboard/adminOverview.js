@@ -1,14 +1,11 @@
 "use client";
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { FONTS } from "../../lib/constants";
 import StatCard from "./statCard";
 
-// TODO: ganti mock data dengan fetch ke backend (endpoint tetap /api/assets,
-// database tetap nama "asset" — cuma UI/JS yang pakai istilah "Item"):
-// - stats            -> GET /api/assets/stats?scope=mine
-// - categoryBreakdown -> GET /api/assets/categories?scope=mine
-// - recentActivity   -> GET /api/history?scope=mine&limit=5
-// - attentionItems   -> GET /api/assets?status=broken,maintenance&scope=mine
+// TODO: ganti mock data dengan fetch ke backend
 const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
 
 const categoryBreakdown = [
@@ -37,36 +34,38 @@ const statusStyles = {
 };
 
 export default function AdminOverview() {
+  const t = useTranslations("dashboard");  // ← TAMBAHKAN INI
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Overview</h1>
+        <h1 className="text-2xl font-semibold">{t("admin.title") || "Overview"}</h1>
         <button
           type="button"
           className="flex items-center gap-1.5 rounded-lg bg-[#8083FF] px-4 py-2 text-sm font-semibold text-[#111323] hover:bg-[#9295FF]"
         >
-          + Tambahkan Item
+          + {t("admin.addItem") || "Tambahkan Item"}
         </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
-          label="Total Item"
+          label={t("admin.totalItems") || "Total Item"}
           value={stats.totalItems.toLocaleString("id-ID")}
           badgeText="+12 This Month"
           badgeColor="info"
         />
         <StatCard
           icon={<Wrench size={20} strokeWidth={1.75} />}
-          label="Butuh Perawatan"
+          label={t("admin.needMaintenance") || "Butuh Perawatan"}
           value={stats.needMaintenance}
           badgeText="Urgent"
           badgeColor="urgent"
         />
         <StatCard
           icon={<AlertTriangle size={20} strokeWidth={1.75} />}
-          label="Rusak"
+          label={t("admin.broken") || "Rusak"}
           value={stats.broken}
           badgeText="Resiko Tinggi"
           badgeColor="danger"
@@ -74,12 +73,12 @@ export default function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        {/* Distribusi kategori - hanya item milik admin ini */}
+        {/* Distribusi kategori */}
         <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold">Distribusi item dalam kategori</h2>
+            <h2 className="text-sm font-semibold">{t("admin.categoryDistribution") || "Distribusi item dalam kategori"}</h2>
             <a href="/manage-items" className="text-xs text-[#A5A7FF] hover:text-[#8083FF]">
-              Lihat Detail
+              {t("admin.viewDetail") || "Lihat Detail"}
             </a>
           </div>
           <div className="flex flex-col gap-4">
@@ -97,9 +96,9 @@ export default function AdminOverview() {
           </div>
         </div>
 
-        {/* Terkini - hanya aktivitas admin ini sendiri */}
+        {/* Terkini */}
         <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
-          <h2 className="text-sm font-semibold mb-4">Terkini</h2>
+          <h2 className="text-sm font-semibold mb-4">{t("admin.recentActivity") || "Terkini"}</h2>
           <div className="flex flex-col gap-4">
             {recentActivity.map((activity, index) => (
               <div key={index} className="flex items-start gap-3">
@@ -119,7 +118,7 @@ export default function AdminOverview() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold flex items-center gap-2">
             <AlertTriangle size={16} strokeWidth={1.75} className="text-amber-400" />
-            Item Perlu Perhatian
+            {t("admin.attentionItems") || "Item Perlu Perhatian"}
           </h2>
           <span className="rounded-md bg-[#272D3D] px-2 py-0.5 text-[11px] text-[#A1A1AA]">
             {attentionItems.length} Total Issue
@@ -128,17 +127,17 @@ export default function AdminOverview() {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
-              <th className="py-2 font-medium">ID Item</th>
-              <th className="py-2 font-medium">Nama Item</th>
-              <th className="py-2 font-medium">Kategori</th>
-              <th className="py-2 font-medium">Status</th>
-              <th className="py-2 font-medium">Aksi</th>
+              <th className="py-2 font-medium">{t("admin.itemId") || "ID Item"}</th>
+              <th className="py-2 font-medium">{t("admin.itemName") || "Nama Item"}</th>
+              <th className="py-2 font-medium">{t("admin.category") || "Kategori"}</th>
+              <th className="py-2 font-medium">{t("admin.status") || "Status"}</th>
+              <th className="py-2 font-medium">{t("admin.action") || "Aksi"}</th>
             </tr>
           </thead>
           <tbody>
             {attentionItems.map((item) => (
               <tr key={item.id} className="border-b border-[#1D2230] last:border-0">
-                <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">{item.id}</td>
+                <td className={`${FONTS.CODE} py-3 text-xs text-[#A1A1AA]`}>{item.id}</td>
                 <td className="py-3">{item.name}</td>
                 <td className="py-3 text-[#A1A1AA]">{item.category}</td>
                 <td className={`py-3 text-xs font-medium ${statusStyles[item.status]}`}>● {item.status}</td>

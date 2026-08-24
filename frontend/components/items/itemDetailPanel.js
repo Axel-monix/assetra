@@ -1,6 +1,7 @@
 "use client";
 
 import { X, Pencil, Trash2 } from "lucide-react";
+import { FONTS } from "../../lib/constants";
 
 const statusBadge = {
   Tersedia: "bg-emerald-500/15 text-emerald-400",
@@ -36,7 +37,7 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
           {item.status}
         </span>
       </div>
-      <p className="mb-5 font-[family-name:var(--font-code)] text-xs text-[#71717A]">
+      <p className={`${FONTS.CODE} mb-5 text-xs text-[#71717A]`}>
         {item.id}
       </p>
 
@@ -67,7 +68,7 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
                 className="flex items-center justify-between text-sm"
               >
                 <span className="text-[#71717A]">{key}</span>
-                <span className="font-[family-name:var(--font-desc)]">
+                <span className={FONTS.DESCRIPTION}>
                   {value}
                 </span>
               </div>

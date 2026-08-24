@@ -1,0 +1,32 @@
+{
+  "dashboard": {
+    "header": {
+      "profile": "Profile"
+    },
+    "admin": {
+      "title": "Overview",
+      "addItem": "Add Item",
+      "totalItems": "Total Items",
+      "needMaintenance": "Need Maintenance",
+      "broken": "Broken",
+      "categoryDistribution": "Category Distribution",
+      "viewDetail": "View Detail",
+      "recentActivity": "Recent Activity",
+      "attentionItems": "Items Needing Attention",
+      "itemId": "Item ID",
+      "itemName": "Item Name",
+      "category": "Category",
+      "status": "Status",
+      "action": "Action",
+      "user": "User",
+      "date": "Date"
+    },
+    "superadmin": {
+      "greeting": "Hello,",
+      "recentActivity": "Recent Activity",
+      "viewAll": "View All History",
+      "maintenanceAlerts": "Maintenance Alerts"
+    }
+  },
+  "logout=": "Logout"
+}

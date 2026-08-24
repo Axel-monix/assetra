@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useRouter, usePathname } from "@/i18n/navigation";  // ← PAKE INI
 import Header from "./header";
-import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ROLES } from "@/lib/constants";
+import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
+import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/manage-items", label: "Manage Item", icon: Boxes },
   { href: "/history", label: "History", icon: History },
-  // Manage Admin cuma muncul untuk super_admin, di-filter di bawah.
   {
     href: "/manage-admin",
     label: "Manage Admin",
@@ -20,6 +20,7 @@ const NAV_ITEMS = [
 ];
 
 export default function DashboardLayout({ role, userName, children }) {
+  const t = useTranslations("dashboard");  // ← TAMBAHKAN
   const pathname = usePathname();
   const router = useRouter();
 
@@ -37,7 +38,7 @@ export default function DashboardLayout({ role, userName, children }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex font-[family-name:var(--font-main)]">
+    <div className={`${FONTS.MAIN} min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex`}>
       {/* Sidebar */}
       <aside className="w-60 shrink-0 border-r border-[#272D3D] flex flex-col px-4 py-5">
         <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>
@@ -64,7 +65,7 @@ export default function DashboardLayout({ role, userName, children }) {
                 }`}
               >
                 <Icon size={18} strokeWidth={1.75} />
-                {item.label}
+                {t(item.label) || item.label}
               </Link>
             );
           })}
@@ -77,7 +78,7 @@ export default function DashboardLayout({ role, userName, children }) {
             className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-[#131824]"
           >
             <LogOut size={18} strokeWidth={1.75} />
-            Logout
+            {t("logout") || "Logout"}
           </button>
           <div className="mt-2 px-3 text-[10px] text-[#4B5162]">v1.0.4</div>
         </div>
@@ -85,9 +86,7 @@ export default function DashboardLayout({ role, userName, children }) {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar - komponen terpisah, reusable buat semua halaman */}
         <Header userName={userName} />
-
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>

@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/languageContext";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl"; 
 
 const LOCALES = [
   { code: "en", label: "EN", flag: "🇬🇧" },
@@ -10,7 +11,7 @@ const LOCALES = [
 ];
 
 export default function LanguageSwitcher() {
-  const { locale, setLocale } = useLanguage();
+  const { locale, setLocale } = useLocale();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
 

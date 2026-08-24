@@ -1,5 +1,7 @@
 "use client";
 
+import { FONTS } from "../../lib/constants";
+
 const statusDot = {
   Tersedia: "bg-emerald-400",
   Maintenance: "bg-amber-400",
@@ -35,7 +37,7 @@ export default function ItemCard({ item, selected, onClick }) {
           </span>
         </div>
 
-        <p className="mb-2.5 font-[family-name:var(--font-code)] text-[11px] text-[#71717A]">{item.id}</p>
+        <p className={`${FONTS.CODE} mb-2.5 text-[11px] text-[#71717A]`}>{item.id}</p>
 
         <div className="flex items-center justify-between text-xs">
           <span className={`flex items-center gap-1.5 font-medium ${statusText[item.status]}`}>

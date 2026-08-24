@@ -256,7 +256,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] font-sans flex flex-col items-center justify-center px-4 relative">
+    <main className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex flex-col items-center justify-center px-4 relative">
       <div className="mb-12 text-2xl font-semibold">Assetra</div>
 
       <div className="w-full max-w-[405px] rounded-xl border border-[#272D3D] bg-[#131824] p-7 shadow-2xl">

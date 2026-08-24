@@ -1,13 +1,10 @@
 "use client";
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { FONTS } from "../../lib/constants";
 import StatCard from "./statCard";
 
-// TODO: ganti mock data ini dengan fetch ke backend (endpoint tetap /api/assets,
-// database tetap nama "asset" — cuma UI/JS yang pakai istilah "Item"):
-// - stats        -> GET /api/assets/stats
-// - recentActivity -> GET /api/history?limit=5 (semua admin, karena super admin)
-// - maintenanceAlerts -> GET /api/assets?status=critical
 const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
 
 const recentActivity = [
@@ -31,28 +28,32 @@ const statusStyles = {
 };
 
 export default function SuperAdminOverview({ userName }) {
+  const t = useTranslations("dashboard");  // ← TAMBAHKAN INI
+
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Halo, {userName || "Super Admin"}</h1>
+      <h1 className="text-2xl font-semibold mb-6">
+        {t("superadmin.greeting") || "Halo,"} {userName || "Super Admin"}
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
-          label="Total Item"
+          label={t("admin.totalItems") || "Total Item"}
           value={stats.totalItems.toLocaleString("id-ID")}
           badgeText="+12 This Month"
           badgeColor="info"
         />
         <StatCard
           icon={<Wrench size={20} strokeWidth={1.75} />}
-          label="Need Maintenance"
+          label={t("admin.needMaintenance") || "Need Maintenance"}
           value={stats.needMaintenance}
           badgeText="Urgent"
           badgeColor="urgent"
         />
         <StatCard
           icon={<AlertTriangle size={20} strokeWidth={1.75} />}
-          label="Broken"
+          label={t("admin.broken") || "Broken"}
           value={stats.broken}
           badgeText="High Risk"
           badgeColor="danger"
@@ -60,28 +61,28 @@ export default function SuperAdminOverview({ userName }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Recent Activity - super admin melihat aktivitas SEMUA admin */}
+        {/* Recent Activity */}
         <div className="lg:col-span-2 rounded-xl border border-[#272D3D] bg-[#131824] p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold">Recent Activity</h2>
+            <h2 className="text-sm font-semibold">{t("superadmin.recentActivity") || "Recent Activity"}</h2>
             <a href="/history" className="text-xs text-[#A5A7FF] hover:text-[#8083FF]">
-              View All History
+              {t("superadmin.viewAll") || "View All History"}
             </a>
           </div>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
-                <th className="py-2 font-medium">Item</th>
-                <th className="py-2 font-medium">Item Name</th>
-                <th className="py-2 font-medium">User</th>
-                <th className="py-2 font-medium">Status</th>
-                <th className="py-2 font-medium">Date</th>
+                <th className="py-2 font-medium">{t("admin.itemId") || "Item"}</th>
+                <th className="py-2 font-medium">{t("admin.itemName") || "Item Name"}</th>
+                <th className="py-2 font-medium">{t("admin.user") || "User"}</th>
+                <th className="py-2 font-medium">{t("admin.status") || "Status"}</th>
+                <th className="py-2 font-medium">{t("admin.date") || "Date"}</th>
               </tr>
             </thead>
             <tbody>
               {recentActivity.map((row) => (
                 <tr key={row.itemId} className="border-b border-[#1D2230] last:border-0">
-                  <td className="py-3 font-[family-name:var(--font-code)] text-xs text-[#A1A1AA]">{row.itemId}</td>
+                  <td className={`${FONTS.CODE} py-3 text-xs text-[#A1A1AA]`}>{row.itemId}</td>
                   <td className="py-3">{row.name}</td>
                   <td className="py-3 text-[#A1A1AA]">{row.user}</td>
                   <td className="py-3">
@@ -95,10 +96,9 @@ export default function SuperAdminOverview({ userName }) {
             </tbody>
           </table>
         </div>
-
-        {/* Maintenance Alerts */}
+        
         <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
-          <h2 className="text-sm font-semibold mb-4">Maintenance Alerts</h2>
+          <h2 className="text-sm font-semibold mb-4">{t("superadmin.maintenanceAlerts") || "Maintenance Alerts"}</h2>
           <div className="flex flex-col gap-3">
             {maintenanceAlerts.map((alert) => (
               <div

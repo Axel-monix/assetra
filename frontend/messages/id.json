@@ -1,0 +1,31 @@
+{
+  "dashboard": {
+    "header": {
+      "profile": "Profil"
+    },
+    "admin": {
+      "title": "Overview",
+      "addItem": "Tambahkan Item",
+      "totalItems": "Total Item",
+      "needMaintenance": "Butuh Perawatan",
+      "broken": "Rusak",
+      "categoryDistribution": "Distribusi item dalam kategori",
+      "viewDetail": "Lihat Detail",
+      "recentActivity": "Terkini",
+      "attentionItems": "Item Perlu Perhatian",
+      "itemId": "ID Item",
+      "itemName": "Nama Item",
+      "category": "Kategori",
+      "status": "Status",
+      "action": "Aksi",
+      "user": "User",
+      "date": "Tanggal"
+    },
+    "superadmin": {
+      "greeting": "Halo,",
+      "recentActivity": "Aktivitas Terkini",
+      "viewAll": "Lihat Semua History",
+      "maintenanceAlerts": "Peringatan Maintenance"
+    }
+  }
+}

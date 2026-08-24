@@ -2,6 +2,14 @@
 // Nilai tetap (endpoint, key storage, aturan validasi) dikumpulkan di sini
 // supaya kalau ada perubahan cukup diubah di satu tempat.
 
+import { fontCode, fontDesc, fontMain } from "./fonts";
+
+export const FONTS = {
+  MAIN: fontMain.className,
+  CODE: fontCode.className,
+  DESCRIPTION: fontDesc.className,
+};
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
