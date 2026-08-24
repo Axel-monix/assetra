@@ -7,8 +7,7 @@ import ItemCard from "@/components/items/itemCard";
 import ItemDetailPanel from "@/components/items/itemDetailPanel";
 import BulkActionBar from "@/components/items/bulkActionBar";
 import { LayoutGrid, List, Plus, X } from "lucide-react";
-import mockItems from "@/components/items/mockItems";
-import { AUTH_USER_KEY } from "@/lib/constants";
+import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 
 // ============================================================
 // LOGIC SELECTION ITEM (ini bagian intinya):
@@ -38,21 +37,58 @@ const DOUBLE_CLICK_DELAY_MS = 220;
 export default function ManageItemsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [items] = useState(mockItems); // TODO: fetch GET /api/assets (backend tetap nama "asset")
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [mode, setMode] = useState("none"); // "none" | "single" | "multi"
   const [viewMode, setViewMode] = useState("grid");
-  const [activeFilters, setActiveFilters] = useState(["Laptop", "Monitor", "Tersedia"]);
+  const [activeFilters, setActiveFilters] = useState([]);
 
   const clickTimerRef = useRef(null);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(AUTH_USER_KEY) || window.sessionStorage.getItem(AUTH_USER_KEY);
-    if (!raw) {
-      router.replace("/login");
-      return;
+    async function loadItems() {
+      const raw =
+        window.localStorage.getItem(AUTH_USER_KEY) ||
+        window.sessionStorage.getItem(AUTH_USER_KEY);
+      if (!raw) {
+        router.replace("/login");
+        return;
+      }
+
+      let parsedUser;
+      try {
+        parsedUser = JSON.parse(raw);
+      } catch {
+        router.replace("/login");
+        return;
+      }
+
+      setUser(parsedUser);
+
+      try {
+        const token =
+          window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+          window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+        const response = await fetch(ENDPOINTS.ASSETS, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "Gagal mengambil data asset.");
+        }
+
+        setItems(result.data || []);
+      } catch (fetchError) {
+        setError(fetchError.message);
+      } finally {
+        setLoading(false);
+      }
     }
-    setUser(JSON.parse(raw));
+
+    loadItems();
   }, [router]);
 
   useEffect(() => {
@@ -63,7 +99,9 @@ export default function ManageItemsPage() {
 
   function handleSingleSelect(id) {
     if (mode === "multi") {
-      setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+      setSelectedIds((prev) =>
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+      );
       return;
     }
     setSelectedIds([id]);
@@ -118,7 +156,8 @@ export default function ManageItemsPage() {
     clearSelection();
   }
 
-  const selectedItem = mode === "single" ? items.find((i) => i.id === selectedIds[0]) : null;
+  const selectedItem =
+    mode === "single" ? items.find((i) => i.id === selectedIds[0]) : null;
 
   const filteredItems = items.filter((item) => {
     if (activeFilters.length === 0) return true;
@@ -137,10 +176,16 @@ export default function ManageItemsPage() {
     <DashboardLayout role={user.role} userName={user.name || user.username}>
       <div className="flex h-full">
         <div className="flex-1 min-w-0">
+          {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+          {loading && (
+            <p className="mb-4 text-sm text-[#A1A1AA]">Memuat asset...</p>
+          )}
           {/* Filter bar */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-[#71717A] uppercase tracking-wide mr-1">Filters:</span>
+              <span className="text-[#71717A] uppercase tracking-wide mr-1">
+                Filters:
+              </span>
               {activeFilters.map((filter) => (
                 <button
                   key={filter}
@@ -207,7 +252,9 @@ export default function ManageItemsPage() {
           <ItemDetailPanel
             item={selectedItem}
             onClose={clearSelection}
-            onEdit={(item) => console.log("Edit:", item.id) /* TODO: buka form edit */}
+            onEdit={
+              (item) => console.log("Edit:", item.id) /* TODO: buka form edit */
+            }
             onDelete={handleDeactivate}
           />
         )}

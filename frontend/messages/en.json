@@ -3,6 +3,12 @@
     "header": {
       "profile": "Profile"
     },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "manageItems": "Manage Item",
+      "history": "History",
+      "manageAdmin": "Manage Admin"
+    },
     "admin": {
       "title": "Overview",
       "addItem": "Add Item",
@@ -26,7 +32,35 @@
       "recentActivity": "Recent Activity",
       "viewAll": "View All History",
       "maintenanceAlerts": "Maintenance Alerts"
-    }
+    },
+    "logout": "Logout"
   },
-  "logout=": "Logout"
+
+  "manageAdmin": {
+    "title": "Manage Administrators",
+    "subtitle": "Add or manage admin accounts.",
+    "addNewAdmin": "Add New Admin",
+    "totalAdmins": "Total Admins",
+    "activeNow": "Active Now",
+    "administrator": "Administrator",
+    "joinedDate": "Joined Date",
+    "status": "Status",
+    "showing": "Showing {from} to {to} of {total} entries",
+    "active": "Active",
+    "inactive": "Inactive",
+    "adminProfile": "Admin Profile",
+    "joined": "Joined",
+    "accountStatus": "Account Status",
+    "allFieldsRequired": "All fields are required.",
+    "passwordMinLength": "Password must be at least 8 characters.",
+    "addFailed": "Failed to add admin.",
+    "name": "Name",
+    "namePlaceholder": "Full name",
+    "email": "Email",
+    "emailPlaceholder": "name@company.com",
+    "temporaryPassword": "Temporary Password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "adding": "Adding...",
+    "addAdmin": "Add Admin"
+  }
 }

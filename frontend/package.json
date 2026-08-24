@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "lucide-react": "^1.33.0",
-    "next": "^15.0.3",
+     "next": "15.0.3",
     "next-intl": "^3.19.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

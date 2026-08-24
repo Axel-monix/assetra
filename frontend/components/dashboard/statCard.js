@@ -1,10 +1,12 @@
 "use client";
 
-import { useTranslations } from "next-intl"; 
-
-export default function StatCard({ icon, label, value, badgeText, badgeColor = "default" }) {
-  const t = useTranslations("dashboard");
-
+export default function StatCard({
+  icon,
+  label,
+  value,
+  badgeText,
+  badgeColor = "default",
+}) {
   const badgeStyles = {
     default: "bg-[#272D3D] text-[#A1A1AA]",
     info: "bg-blue-500/20 text-blue-400",
@@ -19,13 +21,18 @@ export default function StatCard({ icon, label, value, badgeText, badgeColor = "
           <div className="rounded-lg bg-[#1D2230] p-2.5 text-[#8083FF]">
             {icon}
           </div>
+
           <div>
-            <p className="text-sm text-[#A1A1AA]">{t(label) || label}</p>
+            <p className="text-sm text-[#A1A1AA]">{label}</p>
+
             <p className="text-2xl font-semibold">{value}</p>
           </div>
         </div>
+
         {badgeText && (
-          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${badgeStyles[badgeColor]}`}>
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${badgeStyles[badgeColor]}`}
+          >
             {badgeText}
           </span>
         )}

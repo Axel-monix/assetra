@@ -5,7 +5,7 @@ import LanguageSwitcher from "./languageSwitcher";
 import { useTranslations } from "next-intl";
 
 export default function Header({ userName }) {
-  const { t } = useTranslations("dashboard");
+  const t = useTranslations("dashboard");
   return (
     <header className="flex items-center justify-end gap-4 border-b border-[#272D3D] px-6 py-3">
       <LanguageSwitcher />

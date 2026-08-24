@@ -20,6 +20,7 @@ export const ENDPOINTS = {
 
   ADMINS: `${API_URL}/admins`, // GET (list) & POST (create)
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`, // PATCH { action, reason?, type? }
+  ASSETS: `${API_URL}/assets`, // GET daftar asset dari database
 };
 
 export const ROLES = {

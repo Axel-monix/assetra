@@ -1,26 +1,37 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/navigation"; // ← PAKE INI
+import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import Header from "./header";
 import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { href: "/manage-items", label: "Manage Item", icon: Boxes },
-  { href: "/history", label: "History", icon: History },
+  {
+    href: "/",
+    label: "navigation.dashboard",
+    icon: LayoutGrid,
+  },
+  {
+    href: "/manage-items",
+    label: "navigation.manageItems",
+    icon: Boxes,
+  },
+  {
+    href: "/history",
+    label: "navigation.history",
+    icon: History,
+  },
   {
     href: "/manage-admin",
-    label: "Manage Admin",
+    label: "navigation.manageAdmin",
     icon: Users,
     requiresRole: ROLES.SUPER_ADMIN,
   },
 ];
 
 export default function DashboardLayout({ role, userName, children }) {
-  const t = useTranslations("dashboard"); // ← TAMBAHKAN
+  const t = useTranslations("dashboard");
   const pathname = usePathname();
   const router = useRouter();
 
@@ -67,7 +78,7 @@ export default function DashboardLayout({ role, userName, children }) {
                 }`}
               >
                 <Icon size={18} strokeWidth={1.75} />
-                {t(item.label) || item.label}
+                {t(item.label)}
               </Link>
             );
           })}
@@ -80,7 +91,7 @@ export default function DashboardLayout({ role, userName, children }) {
             className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-[#131824]"
           >
             <LogOut size={18} strokeWidth={1.75} />
-            {t("logout") || "Logout"}
+            {t("logout")}
           </button>
           <div className="mt-2 px-3 text-[10px] text-[#4B5162]">v1.0.4</div>
         </div>

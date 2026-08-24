@@ -3,29 +3,64 @@
     "header": {
       "profile": "Profil"
     },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "manageItems": "Kelola Item",
+      "history": "Riwayat",
+      "manageAdmin": "Kelola Admin"
+    },
     "admin": {
       "title": "Overview",
-      "addItem": "Tambahkan Item",
+      "addItem": "Tambah Item",
       "totalItems": "Total Item",
-      "needMaintenance": "Butuh Perawatan",
+      "needMaintenance": "Perlu Perawatan",
       "broken": "Rusak",
-      "categoryDistribution": "Distribusi item dalam kategori",
+      "categoryDistribution": "Distribusi Kategori",
       "viewDetail": "Lihat Detail",
-      "recentActivity": "Terkini",
+      "recentActivity": "Aktivitas Terbaru",
       "attentionItems": "Item Perlu Perhatian",
       "itemId": "ID Item",
       "itemName": "Nama Item",
       "category": "Kategori",
       "status": "Status",
       "action": "Aksi",
-      "user": "User",
+      "user": "Pengguna",
       "date": "Tanggal"
     },
     "superadmin": {
       "greeting": "Halo,",
-      "recentActivity": "Aktivitas Terkini",
-      "viewAll": "Lihat Semua History",
-      "maintenanceAlerts": "Peringatan Maintenance"
-    }
+      "recentActivity": "Aktivitas Terbaru",
+      "viewAll": "Lihat Semua Riwayat",
+      "maintenanceAlerts": "Alert Perawatan"
+    },
+    "logout": "Logout"
+  },
+
+  "manageAdmin": {
+    "title": "Kelola Administrator",
+    "subtitle": "Tambah atau kelola akun admin.",
+    "addNewAdmin": "Tambah Admin Baru",
+    "totalAdmins": "Total Admin",
+    "activeNow": "Aktif Sekarang",
+    "administrator": "Administrator",
+    "joinedDate": "Tanggal Bergabung",
+    "status": "Status",
+    "showing": "Menampilkan {from} sampai {to} dari {total} entri",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "adminProfile": "Profil Admin",
+    "joined": "Bergabung",
+    "accountStatus": "Status Akun",
+    "allFieldsRequired": "Semua field wajib diisi.",
+    "passwordMinLength": "Password minimal 8 karakter.",
+    "addFailed": "Gagal menambahkan admin.",
+    "name": "Nama",
+    "namePlaceholder": "Nama lengkap",
+    "email": "Email",
+    "emailPlaceholder": "nama@perusahaan.com",
+    "temporaryPassword": "Password Sementara",
+    "passwordPlaceholder": "Minimal 8 karakter",
+    "adding": "Menambahkan...",
+    "addAdmin": "Tambah Admin"
   }
 }

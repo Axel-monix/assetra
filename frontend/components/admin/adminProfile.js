@@ -1,20 +1,27 @@
 "use client";
 
 import { X, UserCircle2 } from "lucide-react";
+import { useTranslations } from "next-intl"; 
 import ToggleSwitch from "./toggleSwitch";
 
 export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
+  const t = useTranslations("manageAdmin"); 
+  
   if (!admin) return null;
 
   const joinedDate = admin.created_at
-    ? new Date(admin.created_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
+    ? new Date(admin.created_at).toLocaleDateString("id-ID", { 
+        day: "2-digit", 
+        month: "short", 
+        year: "numeric" 
+      })
     : "-";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
       <div className="w-full max-w-sm rounded-xl border border-[#272D3D] bg-[#131824] p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold">Admin Profile</h2>
+          <h2 className="text-base font-semibold">{t("adminProfile")}</h2>
           <button type="button" onClick={onClose} className="text-[#A1A1AA] hover:text-white">
             <X size={18} strokeWidth={1.75} />
           </button>
@@ -27,13 +34,18 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
         </div>
 
         <div className="rounded-lg border border-[#272D3D] p-3 mb-5">
-          <div className="text-[10px] uppercase tracking-wide text-[#71717A] mb-1">Joined</div>
+          <div className="text-[10px] uppercase tracking-wide text-[#71717A] mb-1">
+            {t("joined")} 
+          </div>
           <div className="text-sm">{joinedDate}</div>
         </div>
 
         <div className="flex items-center justify-between rounded-lg border border-[#272D3D] p-3">
-          <span className="text-sm text-[#A1A1AA]">Status Akun</span>
-          <ToggleSwitch checked={admin.active} onChange={(next) => onToggleActive(admin.id, next)} />
+          <span className="text-sm text-[#A1A1AA]">{t("accountStatus")}</span> 
+          <ToggleSwitch 
+            checked={admin.active} 
+            onChange={(next) => onToggleActive(admin.id, next)} 
+          />
         </div>
       </div>
     </div>

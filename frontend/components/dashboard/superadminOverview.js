@@ -2,62 +2,9 @@
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { FONTS } from "../../lib/constants";
 import StatCard from "./statCard";
-
-const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
-
-const recentActivity = [
-  {
-    itemId: "KL-MAC-8842",
-    name: 'MacBook Pro M3 14"',
-    user: "Fikar Sanjaya",
-    status: "Operating",
-    date: "20 Jul 2026",
-  },
-  {
-    itemId: "KL-MON-8129",
-    name: "EPSON L3110",
-    user: "Eji Prasono",
-    status: "Need Maintenance",
-    date: "18 Jul 2026",
-  },
-  {
-    itemId: "KL-TAB-8045",
-    name: 'iPad Pro 12.9" Gen 6',
-    user: "Irsyad Pramugyo",
-    status: "Repairing",
-    date: "12 Jul 2026",
-  },
-  {
-    itemId: "KL-CAM-8921",
-    name: "Sony A7 IV Body",
-    user: "Gilang Armada Putra",
-    status: "Operating",
-    date: "29 Jun 2026",
-  },
-  {
-    itemId: "KL-LPT-8332",
-    name: "Asus ROG Zephyrus",
-    user: "Muhammad Ilham",
-    status: "Broken",
-    date: "20 Jun 2026",
-  },
-];
-
-const maintenanceAlerts = [
-  {
-    title: "Critical Failure",
-    message:
-      "The living room chair is damaged, please have it repaired immediately!",
-    level: "danger",
-  },
-  {
-    title: "Scheduled Service",
-    message: "Office Computer Cleaning (cleaned 3 months ago)",
-    level: "default",
-  },
-];
 
 const statusStyles = {
   Operating: "bg-emerald-500/15 text-emerald-400",
@@ -66,11 +13,27 @@ const statusStyles = {
   Broken: "bg-red-500/15 text-red-400",
 };
 
-export default function SuperAdminOverview({ userName }) {
-  const t = useTranslations("dashboard"); // ← TAMBAHKAN INI
-
+export default function SuperAdminOverview({ userName, assets = [], error = "" }) {
+  const t = useTranslations("dashboard");
+  const stats = {
+    totalItems: assets.length,
+    needMaintenance: assets.filter((asset) => asset.status === "Maintenance").length,
+    broken: assets.filter(
+      (asset) => asset.status === "Rusak" || asset.status === "Broken",
+    ).length,
+  };
+  const recentActivity = assets.slice(0, 5).map((asset) => ({
+    itemId: asset.id,
+    name: asset.name,
+    user: "-",
+    status: asset.status,
+    date: asset.createdAt
+      ? new Date(asset.createdAt).toLocaleDateString("id-ID")
+      : "-",
+  }));
   return (
     <div>
+      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
       <h1 className="text-2xl font-semibold mb-6">
         {t("superadmin.greeting") || "Halo,"} {userName || "Super Admin"}
       </h1>
@@ -78,7 +41,7 @@ export default function SuperAdminOverview({ userName }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
-          label={t("admin.totalItems") || "Total Item"}
+          label={t("admin.totalItems")}
           value={stats.totalItems.toLocaleString("id-ID")}
           badgeText="+12 This Month"
           badgeColor="info"
@@ -106,12 +69,12 @@ export default function SuperAdminOverview({ userName }) {
             <h2 className="text-sm font-semibold">
               {t("superadmin.recentActivity") || "Recent Activity"}
             </h2>
-            <a
+            <Link
               href="/history"
               className="text-xs text-[#A5A7FF] hover:text-[#8083FF]"
             >
               {t("superadmin.viewAll") || "View All History"}
-            </a>
+            </Link>
           </div>
           <table className="w-full text-sm">
             <thead>
@@ -163,9 +126,23 @@ export default function SuperAdminOverview({ userName }) {
             {t("superadmin.maintenanceAlerts") || "Maintenance Alerts"}
           </h2>
           <div className="flex flex-col gap-3">
-            {maintenanceAlerts.map((alert) => (
+            {assets
+              .filter(
+                (asset) =>
+                  asset.status === "Maintenance" ||
+                  asset.status === "Rusak" ||
+                  asset.status === "Broken",
+              )
+              .slice(0, 3)
+              .map((asset) => {
+                const alert = {
+                  title: asset.status,
+                  message: `${asset.name} (${asset.id})`,
+                  level: asset.status === "Rusak" || asset.status === "Broken" ? "danger" : "default",
+                };
+                return (
               <div
-                key={alert.title}
+                key={asset.databaseId}
                 className={`rounded-lg p-3 ${
                   alert.level === "danger"
                     ? "bg-red-500/10 border border-red-500/20"
@@ -180,7 +157,8 @@ export default function SuperAdminOverview({ userName }) {
                 </div>
                 <p className="text-xs text-[#A1A1AA]">{alert.message}</p>
               </div>
-            ))}
+                );
+              })}
           </div>
         </div>
       </div>

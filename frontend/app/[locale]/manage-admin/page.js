@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { UserPlus, Users, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ToggleSwitch from "@/components/admin/toggleSwitch";
-import AddAdminModal from "@/components/admin/addAdminModal";
-import AdminProfile from "@/components/admin/adminProfile";
+import AddAdminModal from "@/components/admin/addAdmin";
+import AdminProfile from "@/components/admin/adminProfile"; // ← Perhatikan ini
 import {
   AUTH_USER_KEY,
   AUTH_TOKEN_KEY,
   ROLES,
   ENDPOINTS,
 } from "@/lib/constants";
-import { useLanguage } from "@/lib/i18n/languageContext";
+import { useTranslations } from "next-intl"; // ← PAKAI INI
 
 const PAGE_SIZE = 4;
 
@@ -26,7 +26,7 @@ function getToken() {
 
 export default function ManageAdminPage() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const t = useTranslations("manageAdmin"); 
 
   const [user, setUser] = useState(null);
   const [admins, setAdmins] = useState([]);
@@ -68,9 +68,8 @@ export default function ManageAdminPage() {
     }
     const parsed = JSON.parse(raw);
 
-    // Halaman ini KHUSUS super_admin. Admin biasa gak boleh manage admin lain.
     if (parsed.role !== ROLES.SUPER_ADMIN) {
-      router.replace("/dashboard");
+      router.replace("/");
       return;
     }
 
@@ -85,7 +84,7 @@ export default function ManageAdminPage() {
       body = { action: "reactivate" };
     } else {
       const reason = window.prompt("Alasan menonaktifkan admin ini?");
-      if (!reason || !reason.trim()) return; // dibatalkan
+      if (!reason || !reason.trim()) return;
       body = { action: "deactivate", reason: reason.trim(), type: "temporary" };
     }
 
@@ -163,9 +162,10 @@ export default function ManageAdminPage() {
 
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold">{t("manageAdmin.title")}</h1>
+            <h1 className="text-2xl font-semibold">{t("title")}</h1>{" "}
+            {/* ← HAPUS "manageAdmin." */}
             <p className="mt-1 text-sm text-[#A1A1AA]">
-              {t("manageAdmin.subtitle")}
+              {t("subtitle")} {/* ← HAPUS "manageAdmin." */}
             </p>
           </div>
           <button
@@ -174,7 +174,7 @@ export default function ManageAdminPage() {
             className="flex items-center gap-1.5 rounded-lg bg-[#8083FF] px-4 py-2.5 text-sm font-semibold text-[#111323] hover:bg-[#9295FF]"
           >
             <UserPlus size={16} strokeWidth={2} />
-            {t("manageAdmin.addNewAdmin")}
+            {t("addNewAdmin")} {/* ← HAPUS "manageAdmin." */}
           </button>
         </div>
 
@@ -188,7 +188,7 @@ export default function ManageAdminPage() {
           <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5 sm:col-span-2 sm:max-w-xs">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[11px] uppercase tracking-wide text-[#71717A]">
-                {t("manageAdmin.totalAdmins")}
+                {t("totalAdmins")} {/* ← HAPUS "manageAdmin." */}
               </span>
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#272D3D] text-[#A5A7FF]">
                 <Users size={14} strokeWidth={1.75} />
@@ -202,7 +202,7 @@ export default function ManageAdminPage() {
           <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5 sm:col-span-2 sm:max-w-xs">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[11px] uppercase tracking-wide text-[#71717A]">
-                {t("manageAdmin.activeNow")}
+                {t("activeNow")} {/* ← HAPUS "manageAdmin." */}
               </span>
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-cyan-400/15 text-cyan-400">
                 <Zap size={14} strokeWidth={1.75} />
@@ -219,13 +219,13 @@ export default function ManageAdminPage() {
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
                 <th className="py-3 px-5 font-medium">
-                  {t("manageAdmin.administrator")}
+                  {t("administrator")} {/* ← HAPUS "manageAdmin." */}
                 </th>
                 <th className="py-3 px-5 font-medium">
-                  {t("manageAdmin.joinedDate")}
+                  {t("joinedDate")} {/* ← HAPUS "manageAdmin." */}
                 </th>
                 <th className="py-3 px-5 font-medium">
-                  {t("manageAdmin.status")}
+                  {t("status")} {/* ← HAPUS "manageAdmin." */}
                 </th>
               </tr>
             </thead>
@@ -289,11 +289,12 @@ export default function ManageAdminPage() {
 
           <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#272D3D] text-xs text-[#71717A]">
             <span>
-              {t("manageAdmin.showing", {
+              {t("showing", {
                 from: totalAdmins === 0 ? 0 : (page - 1) * PAGE_SIZE + 1,
                 to: Math.min(page * PAGE_SIZE, totalAdmins),
                 total: totalAdmins,
-              })}
+              })}{" "}
+              {/* ← HAPUS "manageAdmin." */}
             </span>
             <div className="flex items-center gap-1.5">
               <button
@@ -339,7 +340,7 @@ export default function ManageAdminPage() {
       )}
 
       {selectedAdmin && (
-        <AdminProfileModal
+        <AdminProfile
           admin={{
             ...selectedAdmin,
             active: selectedAdmin.status === "active",

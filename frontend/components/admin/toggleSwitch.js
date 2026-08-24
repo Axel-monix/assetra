@@ -1,9 +1,9 @@
 "use client";
 
-import { useLanguage } from "@/lib/i18n/languageContext";
+import { useTranslations } from "next-intl"; 
 
 export default function ToggleSwitch({ checked, onChange, label }) {
-  const { t } = useLanguage();
+  const t = useTranslations("manageAdmin"); 
 
   return (
     <button
@@ -11,7 +11,7 @@ export default function ToggleSwitch({ checked, onChange, label }) {
       role="switch"
       aria-checked={checked}
       onClick={(event) => {
-        event.stopPropagation(); // biar klik toggle gak ikut ke-trigger klik baris (buka profil)
+        event.stopPropagation();
         onChange(!checked);
       }}
       className="flex items-center gap-2"
@@ -29,7 +29,7 @@ export default function ToggleSwitch({ checked, onChange, label }) {
         />
       </span>
       <span className={`text-xs font-medium ${checked ? "text-cyan-400" : "text-[#71717A]"}`}>
-        {label || (checked ? t("manageAdmin.active") : t("manageAdmin.inactive"))}
+        {label || (checked ? t("active") : t("inactive"))} 
       </span>
     </button>
   );

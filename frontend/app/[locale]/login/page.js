@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "@/i18n/navigation"; // ← PAKE INI!
+import { Link } from "@/i18n/navigation"; // ← PAKE INI!
 import {
   ENDPOINTS,
   AUTH_TOKEN_KEY,
@@ -65,7 +65,7 @@ function EyeOffIcon() {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
+  const router = useRouter(); // ← OTOMATIS PAKE LOCALE!
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -110,7 +110,9 @@ export default function LoginPage() {
       const storage = rememberMe ? window.localStorage : window.sessionStorage;
       storage.setItem(AUTH_TOKEN_KEY, token);
       storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-      router.push("/dashboard");
+
+      // Dashboard berada di halaman utama locale: /en atau /id.
+      router.push("/");
     } catch (err) {
       console.error("Login error:", err);
       setError(ERROR_MESSAGES.CONNECTION_ERROR);
@@ -209,7 +211,6 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
               {error}

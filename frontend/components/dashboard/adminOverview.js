@@ -2,68 +2,49 @@
 
 import { Archive, Wrench, AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { FONTS } from "../../lib/constants";
 import StatCard from "./statCard";
-
-// TODO: ganti mock data dengan fetch ke backend
-const stats = { totalItems: 1284, needMaintenance: 12, broken: 8 };
-
-const categoryBreakdown = [
-  { label: "Laptop & PC", count: 452, percent: 62, color: "bg-[#8083FF]" },
-  { label: "Monitor & Display", count: 312, percent: 45, color: "bg-cyan-400" },
-  { label: "Alat Dapur", count: 48, percent: 12, color: "bg-orange-400" },
-  { label: "Furniture Kantor", count: 472, percent: 68, color: "bg-[#A1A1AA]" },
-];
-
-const recentActivity = [
-  {
-    text: "Eji Prasono mengubah property MacBook Pro",
-    meta: "2m lalu · TR-8821",
-  },
-  {
-    text: "Irsyad Pramugyo menambahkan item Sony A7 IV",
-    meta: "15m lalu · TR-8820",
-  },
-  { text: "IT Support memulai service Server Rack", meta: "1j lalu · SV-412" },
-];
-
-const attentionItems = [
-  {
-    id: "AF-SRV-B4",
-    name: "Server Rack Unit #B4",
-    category: "Infrastruktur",
-    status: "Broken",
-  },
-  {
-    id: "AF-CAM-09",
-    name: "Sony A7 IV Body",
-    category: "Multimedia",
-    status: "Maintenance",
-  },
-  {
-    id: "AF-MON-21",
-    name: 'Monitor HP 19"',
-    category: "Display",
-    status: "Broken",
-  },
-  {
-    id: "AF-VHC-02",
-    name: "Asus ROG Zephyrus",
-    category: "Laptop",
-    status: "Maintenance",
-  },
-];
 
 const statusStyles = {
   Broken: "text-red-400",
   Maintenance: "text-amber-400",
 };
 
-export default function AdminOverview() {
-  const t = useTranslations("dashboard"); // ← TAMBAHKAN INI
+export default function AdminOverview({ assets = [], error = "" }) {
+  const t = useTranslations("dashboard");
+  const stats = {
+    totalItems: assets.length,
+    needMaintenance: assets.filter((asset) => asset.status === "Maintenance")
+      .length,
+    broken: assets.filter(
+      (asset) => asset.status === "Rusak" || asset.status === "Broken",
+    ).length,
+  };
+  const categoryCounts = assets.reduce((counts, asset) => {
+    counts[asset.category] = (counts[asset.category] || 0) + 1;
+    return counts;
+  }, {});
+  const categoryBreakdown = Object.entries(categoryCounts).map(
+    ([label, count], index) => ({
+      label,
+      count,
+      percent: Math.round((count / Math.max(assets.length, 1)) * 100),
+      color: ["bg-[#8083FF]", "bg-cyan-400", "bg-orange-400", "bg-[#A1A1AA]"][
+        index % 4
+      ],
+    }),
+  );
+  const attentionItems = assets.filter(
+    (asset) =>
+      asset.status === "Maintenance" ||
+      asset.status === "Rusak" ||
+      asset.status === "Broken",
+  );
 
   return (
     <div>
+      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">
           {t("admin.title") || "Overview"}
@@ -108,12 +89,12 @@ export default function AdminOverview() {
               {t("admin.categoryDistribution") ||
                 "Distribusi item dalam kategori"}
             </h2>
-            <a
+            <Link
               href="/manage-items"
               className="text-xs text-[#A5A7FF] hover:text-[#8083FF]"
             >
               {t("admin.viewDetail") || "Lihat Detail"}
-            </a>
+            </Link>
           </div>
           <div className="flex flex-col gap-4">
             {categoryBreakdown.map((cat) => (
@@ -139,13 +120,13 @@ export default function AdminOverview() {
             {t("admin.recentActivity") || "Terkini"}
           </h2>
           <div className="flex flex-col gap-4">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-start gap-3">
+            {assets.slice(0, 3).map((activity) => (
+              <div key={activity.databaseId} className="flex items-start gap-3">
                 <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#8083FF] shrink-0" />
                 <div>
-                  <p className="text-sm text-[#E5E7EB]">{activity.text}</p>
+                  <p className="text-sm text-[#E5E7EB]">{activity.name}</p>
                   <p className="text-[11px] text-[#71717A] uppercase tracking-wide mt-0.5">
-                    {activity.meta}
+                    {activity.id}
                   </p>
                 </div>
               </div>

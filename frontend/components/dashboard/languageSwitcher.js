@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl"; 
+import { useLocale } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 const LOCALES = [
   { code: "en", label: "EN", flag: "🇬🇧" },
@@ -11,7 +11,9 @@ const LOCALES = [
 ];
 
 export default function LanguageSwitcher() {
-  const { locale, setLocale } = useLocale();
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -46,7 +48,7 @@ export default function LanguageSwitcher() {
               key={l.code}
               type="button"
               onClick={() => {
-                setLocale(l.code);
+                router.replace(pathname, { locale: l.code });
                 setOpen(false);
               }}
               className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm hover:bg-[#0D0D15] ${
