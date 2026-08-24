@@ -37,9 +37,7 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
           {item.status}
         </span>
       </div>
-      <p className={`${FONTS.CODE} mb-5 text-xs text-[#71717A]`}>
-        {item.id}
-      </p>
+      <p className={`${FONTS.CODE} mb-5 text-xs text-[#71717A]`}>{item.id}</p>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
         <div className="rounded-lg border border-[#272D3D] p-3">
@@ -68,9 +66,7 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
                 className="flex items-center justify-between text-sm"
               >
                 <span className="text-[#71717A]">{key}</span>
-                <span className={FONTS.DESCRIPTION}>
-                  {value}
-                </span>
+                <span className={FONTS.DESCRIPTION}>{value}</span>
               </div>
             ))}
           </div>

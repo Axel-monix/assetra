@@ -14,7 +14,13 @@ import {
 
 function EyeIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"
         stroke="currentColor"
@@ -29,8 +35,19 @@ function EyeIcon() {
 
 function EyeOffIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M3 3l18 18"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
       <path
         d="M10.6 5.1A10.7 10.7 0 0 1 12 5c7 0 10.5 7 10.5 7a13.3 13.3 0 0 1-3.1 3.9M6.6 6.6C3.4 8.6 1.5 12 1.5 12S5 19 12 19a10.3 10.3 0 0 0 4.4-.9"
         stroke="currentColor"
@@ -51,16 +68,42 @@ function EyeOffIcon() {
 
 function MailIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M3.5 6.5 12 13l8.5-6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="2.5"
+        y="4.5"
+        width="19"
+        height="15"
+        rx="2.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M3.5 6.5 12 13l8.5-6.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
 function CheckCircleIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M6 12.5 10 16.5 18 8"
         stroke="currentColor"
@@ -296,7 +339,9 @@ export default function ForgotPasswordPage() {
                     required
                   />
                 </div>
-                {fieldError && <p className="mt-2 text-xs text-red-400">{fieldError}</p>}
+                {fieldError && (
+                  <p className="mt-2 text-xs text-red-400">{fieldError}</p>
+                )}
               </div>
 
               {serverError && (
@@ -344,7 +389,9 @@ export default function ForgotPasswordPage() {
                     inputMode="numeric"
                     maxLength={1}
                     value={digit}
-                    onChange={(event) => handleCodeChange(index, event.target.value)}
+                    onChange={(event) =>
+                      handleCodeChange(index, event.target.value)
+                    }
                     onKeyDown={(event) => handleCodeKeyDown(index, event)}
                     className="h-12 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] text-center text-lg font-semibold text-white outline-none focus:border-[#8083FF]"
                   />
@@ -419,7 +466,11 @@ export default function ForgotPasswordPage() {
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                     className="ml-2 text-[#8D8FA0] hover:text-white"
-                    aria-label={showNewPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    aria-label={
+                      showNewPassword
+                        ? "Sembunyikan password"
+                        : "Tampilkan password"
+                    }
                   >
                     {showNewPassword ? <EyeIcon /> : <EyeOffIcon />}
                   </button>
@@ -450,7 +501,11 @@ export default function ForgotPasswordPage() {
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="ml-2 text-[#8D8FA0] hover:text-white"
-                    aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Sembunyikan password"
+                        : "Tampilkan password"
+                    }
                   >
                     {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
                   </button>

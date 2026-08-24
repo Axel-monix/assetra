@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/navigation";  // ← PAKE INI
+import { useRouter, usePathname } from "@/i18n/navigation"; // ← PAKE INI
 import Header from "./header";
 import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
@@ -20,7 +20,7 @@ const NAV_ITEMS = [
 ];
 
 export default function DashboardLayout({ role, userName, children }) {
-  const t = useTranslations("dashboard");  // ← TAMBAHKAN
+  const t = useTranslations("dashboard"); // ← TAMBAHKAN
   const pathname = usePathname();
   const router = useRouter();
 
@@ -38,7 +38,9 @@ export default function DashboardLayout({ role, userName, children }) {
   }
 
   return (
-    <div className={`${FONTS.MAIN} min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex`}>
+    <div
+      className={`${FONTS.MAIN} min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex`}
+    >
       {/* Sidebar */}
       <aside className="w-60 shrink-0 border-r border-[#272D3D] flex flex-col px-4 py-5">
         <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>

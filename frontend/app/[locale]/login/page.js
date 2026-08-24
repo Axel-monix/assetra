@@ -107,7 +107,6 @@ export default function LoginPage() {
 
       const { token, user } = result.data;
 
-  
       const storage = rememberMe ? window.localStorage : window.sessionStorage;
       storage.setItem(AUTH_TOKEN_KEY, token);
       storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
