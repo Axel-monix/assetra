@@ -80,7 +80,7 @@
     "status": "Status",
     "statusOptions": {
       "functional": "Tersedia",
-      "need_repair": "Perlu Perbaikan",
+      "needs_repair": "Perlu Perbaikan",
       "borrowed": "Dipinjam",
       "unavailable": "Tidak Tersedia"
     },

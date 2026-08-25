@@ -1,39 +1,38 @@
 // lib/constants.js
-// Nilai tetap (endpoint, key storage, aturan validasi) dikumpulkan di sini
-// supaya kalau ada perubahan cukup diubah di satu tempat.
-
+import colors from "./colors";
 import { fontCode, fontDesc, fontMain } from "./fonts";
 
 export const FONTS = {
   MAIN: fontMain.className,
   CODE: fontCode.className,
-  DESCRIPTION: fontDesc.className,
+  DESC: fontDesc.className,
 };
+
+export const COLORS = colors;
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
-  FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`, 
+  FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
-  FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`, 
+  FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`,
   CATEGORIES: `${API_URL}/categories`,
   ASSETS: `${API_URL}/assets`,
-
-  ADMINS: `${API_URL}/admins`, // GET (list) & POST (create)
-  ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`, // PATCH { action, reason?, type? }
-  ASSETS: `${API_URL}/assets`, // GET daftar asset dari database
+  ADMINS: `${API_URL}/admins`,
+  ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`,
 };
 
 export const ROLES = {
-  ADMINh: "admin",
+  ADMIN: "admin",
   SUPER_ADMIN: "super_admin",
 };
+
 export const AUTH_TOKEN_KEY = "token";
 export const AUTH_USER_KEY = "user";
 
 export const OTP_LENGTH = 6;
-export const OTP_EXPIRY_MINUTES = 5; 
+export const OTP_EXPIRY_MINUTES = 5;
 export const OTP_RESEND_COOLDOWN_SECONDS = 60;
 
 export const VALIDATION = {

@@ -80,7 +80,7 @@
     "status": "Status",
     "statusOptions": {
       "functional": "Available",
-      "need_repair": "Need Repair",
+      "needs_repair": "Need Repair",
       "borrowed": "Borrowed",
       "unavailable": "Unavailable"
     },

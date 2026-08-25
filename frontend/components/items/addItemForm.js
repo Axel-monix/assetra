@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 
 const STATUS_OPTIONS = [
   { value: "functional", label: "functional" },
-  { value: "need_repair", label: "need_repair" },
+  { value: "needs_repair", label: "needs_repair" },
   { value: "borrowed", label: "borrowed" },
   { value: "unavailable", label: "unavailable" },
 ];

@@ -8,7 +8,7 @@ const statusDot = {
   Maintenance: "bg-amber-400",
   Rusak: "bg-red-400",
   functional: "bg-emerald-400",
-  need_repair: "bg-amber-400",
+  needs_repair: "bg-amber-400",
   borrowed: "bg-blue-400",
   unavailable: "bg-red-400",
 };
@@ -18,25 +18,25 @@ const statusText = {
   Maintenance: "text-amber-400",
   Rusak: "text-red-400",
   functional: "text-emerald-400",
-  need_repair: "text-amber-400",
+  needs_repair: "text-amber-400",
   borrowed: "text-blue-400",
   unavailable: "text-red-400",
 };
 
 export default function ItemCard({ item, selected, onClick }) {
   const [imageError, setImageError] = useState(false);
-  
+
   // Cek apakah ada gambar
   const hasImage = item.imageUrl && !imageError;
-  
+
   // Format status biar konsisten
   const statusMap = {
-    'functional': 'Tersedia',
-    'need_repair': 'Maintenance',
-    'borrowed': 'Dipinjam',
-    'unavailable': 'Tidak Tersedia',
+    functional: "Tersedia",
+    needs_repair: "Maintenance",
+    borrowed: "Dipinjam",
+    unavailable: "Tidak Tersedia",
   };
-  
+
   const displayStatus = statusMap[item.status] || item.status;
 
   return (
@@ -87,7 +87,7 @@ export default function ItemCard({ item, selected, onClick }) {
             />
             {displayStatus}
           </span>
-          <span className="text-[#71717A]">{item.location || ''}</span>
+          <span className="text-[#71717A]">{item.location || ""}</span>
         </div>
       </div>
     </button>
