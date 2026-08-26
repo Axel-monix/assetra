@@ -35,4 +35,4 @@ yarn-error.log*
 
 *.tsbuildinfo
 next-env.d.ts
-C:\Users\Dessray\Documents\Assetra\backend\public
+pubic/qrcodes
