@@ -7,7 +7,6 @@ const { success, error } = require("../../constants/response");
 
 const router = express.Router();
 
-// Setup multer untuk upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = path.join(__dirname, "../../uploads");
@@ -25,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  limits: { fileSize: 2 * 1024 * 1024 }, 
   fileFilter: function (req, file, cb) {
     if (!file.mimetype.startsWith('image/')) {
       return cb(new Error('Hanya file gambar yang diizinkan'), false);
@@ -34,14 +33,12 @@ const upload = multer({
   }
 });
 
-// Upload endpoint
 router.post("/", authenticateToken, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
       return error(res, { message: "Tidak ada file yang diupload", statusCode: 400 });
     }
 
-    // URL gambar (bisa disesuaikan dengan domain)
     const imageUrl = `/uploads/${req.file.filename}`;
     
     return success(res, {

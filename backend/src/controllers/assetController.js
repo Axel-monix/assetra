@@ -10,17 +10,19 @@ function generateCodePrefix(name) {
 async function listAssets(req, res) {
   try {
     const { rows } = await pool.query(
-      `SELECT id, id_category, asset_name, asset_code, status,
-              image_url, qr_code_url, created_at, updated_at
-       FROM asset
-       ORDER BY created_at DESC NULLS LAST, id DESC`,
+      `SELECT asset.id, asset.id_category, category.category_name,
+              asset.asset_name, asset.asset_code, asset.status,
+              asset.image_url, asset.qr_code_url, asset.created_at, asset.updated_at
+             FROM asset
+             LEFT JOIN category ON category.id = asset.id_category
+      ORDER BY asset.created_at DESC NULLS LAST, asset.id DESC`,
     );
 
     const assets = rows.map((asset) => ({
       id: asset.asset_code,
       databaseId: asset.id,
       name: asset.asset_name,
-      category: String(asset.id_category),
+      category: asset.category_name || String(asset.id_category),
       status: asset.status || "Unknown",
       imageUrl: asset.image_url, // ← Ini udah bener
       qrCodeUrl: asset.qr_code_url,
