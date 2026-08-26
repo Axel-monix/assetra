@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import SuperAdminOverview from "@/components/dashboard/superadminOverview";
 import AdminOverview from "@/components/dashboard/adminOverview";
@@ -14,6 +15,7 @@ import {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const t = useTranslations("manageItem");
   const [user, setUser] = useState(null);
   const [assets, setAssets] = useState([]);
   const [assetError, setAssetError] = useState("");
@@ -50,7 +52,7 @@ export default function DashboardPage() {
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          throw new Error(result.message || "Gagal mengambil data asset.");
+          throw new Error(result.message || t("admin.loadError"));
         }
 
         setAssets(result.data || []);
@@ -62,12 +64,12 @@ export default function DashboardPage() {
     }
 
     loadDashboard();
-  }, [router]);
+  }, [router, t]);
 
   if (checking || !user) {
     return (
-      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-[#A1A1AA] text-sm">
-        Memuat...
+      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
+        {t("loading")}
       </div>
     );
   }

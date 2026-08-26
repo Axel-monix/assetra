@@ -6,6 +6,7 @@ export const FONTS = {
   MAIN: fontMain.className,
   CODE: fontCode.className,
   DESC: fontDesc.className,
+  DESCRIPTION: fontDesc.className,
 };
 
 export const COLORS = colors;

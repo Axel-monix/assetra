@@ -2,29 +2,39 @@
 
 import { FONTS } from "../../lib/constants";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const statusDot = {
-  Tersedia: "bg-emerald-400",
-  Maintenance: "bg-amber-400",
-  Rusak: "bg-red-400",
-  functional: "bg-emerald-400",
-  needs_repair: "bg-amber-400",
-  borrowed: "bg-blue-400",
-  unavailable: "bg-red-400",
+  Tersedia: "assetra-status-success",
+  Maintenance: "assetra-status-warning",
+  Rusak: "assetra-status-danger",
+  functional: "assetra-status-success",
+  needs_repair: "assetra-status-warning",
+  borrowed: "assetra-status-success",
+  unavailable: "assetra-status-danger",
 };
 
 const statusText = {
-  Tersedia: "text-emerald-400",
-  Maintenance: "text-amber-400",
-  Rusak: "text-red-400",
-  functional: "text-emerald-400",
-  needs_repair: "text-amber-400",
-  borrowed: "text-blue-400",
-  unavailable: "text-red-400",
+  Tersedia: "assetra-status-success",
+  Maintenance: "assetra-status-warning",
+  Rusak: "assetra-status-danger",
+  functional: "assetra-status-success",
+  needs_repair: "assetra-status-warning",
+  borrowed: "assetra-status-success",
+  unavailable: "assetra-status-danger",
 };
 
+function getCategoryName(item) {
+  if (typeof item.category === "object" && item.category !== null) {
+    return item.category.category_name || item.category.name || "-";
+  }
+  return item.categoryName || item.category_name || item.category || "-";
+}
+
 export default function ItemCard({ item, selected, onClick }) {
+  const t = useTranslations("manageItem");
   const [imageError, setImageError] = useState(false);
+  const categoryName = getCategoryName(item);
 
   // Cek apakah ada gambar
   const hasImage = item.imageUrl && !imageError;
@@ -37,20 +47,20 @@ export default function ItemCard({ item, selected, onClick }) {
     unavailable: "Tidak Tersedia",
   };
 
-  const displayStatus = statusMap[item.status] || item.status;
+  const displayStatus = t(`statusOptions.${item.status}`, {
+    defaultValue: statusMap[item.status] || item.status,
+  });
 
   return (
     <button
       type="button"
       onClick={(event) => onClick(item.id, event)}
-      className={`text-left rounded-xl border bg-[#131824] overflow-hidden transition ${
-        selected
-          ? "border-[#8083FF] ring-1 ring-[#8083FF]"
-          : "border-[#272D3D] hover:border-[#3A4258]"
+      className={`assetra-item-card text-left overflow-hidden ${
+        selected ? "is-selected" : ""
       }`}
     >
       {/* Gambar */}
-      <div className="aspect-video bg-gradient-to-br from-[#1B2130] to-[#0D0D15] flex items-center justify-center relative overflow-hidden">
+      <div className="aspect-video bg-gradient-to-br from-[var(--color-media-start)] to-[var(--color-input)] flex items-center justify-center relative overflow-hidden">
         {hasImage ? (
           <img
             src={item.imageUrl}
@@ -69,12 +79,14 @@ export default function ItemCard({ item, selected, onClick }) {
           <h3 className="text-sm font-medium leading-snug pr-2 line-clamp-1">
             {item.name}
           </h3>
-          <span className="shrink-0 rounded-md bg-[#272D3D] px-1.5 py-0.5 text-[10px] font-medium uppercase text-[#A5A7FF]">
-            {item.category}
+          <span className="shrink-0 rounded-md bg-[var(--color-border)] px-1.5 py-0.5 text-[10px] font-medium uppercase text-[var(--color-primary-soft)]">
+            {categoryName}
           </span>
         </div>
 
-        <p className={`${FONTS.CODE} mb-2.5 text-[11px] text-[#71717A]`}>
+        <p
+          className={`${FONTS.CODE} mb-2.5 text-[11px] text-[var(--color-text-muted)]`}
+        >
           {item.id}
         </p>
 
@@ -83,11 +95,13 @@ export default function ItemCard({ item, selected, onClick }) {
             className={`flex items-center gap-1.5 font-medium ${statusText[item.status] || statusText[displayStatus]}`}
           >
             <span
-              className={`h-1.5 w-1.5 rounded-full ${statusDot[item.status] || statusDot[displayStatus]}`}
+              className={`assetra-status-dot ${statusDot[item.status] || statusDot[displayStatus]}`}
             />
             {displayStatus}
           </span>
-          <span className="text-[#71717A]">{item.location || ""}</span>
+          <span className="text-[var(--color-text-muted)]">
+            {item.location || ""}
+          </span>
         </div>
       </div>
     </button>

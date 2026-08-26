@@ -8,22 +8,24 @@ export default function StatCard({
   badgeColor = "default",
 }) {
   const badgeStyles = {
-    default: "bg-[#272D3D] text-[#A1A1AA]",
-    info: "bg-blue-500/20 text-blue-400",
-    urgent: "bg-amber-500/20 text-amber-400",
-    danger: "bg-red-500/20 text-red-400",
+    default: "bg-[var(--color-border)] text-[var(--color-text-secondary)]",
+    info: "bg-[var(--color-info)]/20 text-[var(--color-info)]",
+    urgent: "bg-[var(--color-warning)]/20 text-[var(--color-warning)]",
+    danger: "bg-[var(--color-danger-background)]/20 text-[var(--color-danger)]",
   };
 
   return (
-    <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-[#1D2230] p-2.5 text-[#8083FF]">
+          <div className="rounded-lg bg-[var(--color-surface)] p-2.5 text-[var(--color-primary)]">
             {icon}
           </div>
 
           <div>
-            <p className="text-sm text-[#A1A1AA]">{label}</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {label}
+            </p>
 
             <p className="text-2xl font-semibold">{value}</p>
           </div>

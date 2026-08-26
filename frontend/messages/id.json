@@ -1,4 +1,20 @@
 {
+  "login": {
+    "title": "Selamat datang kembali",
+    "subtitle": "Masuk untuk melanjutkan ke akun Assetra Anda.",
+    "identifierLabel": "Username atau Email",
+    "identifierPlaceholder": "Masukkan username atau email Anda",
+    "passwordLabel": "Kata Sandi",
+    "passwordPlaceholder": "Masukkan kata sandi Anda",
+    "showPassword": "Tampilkan kata sandi",
+    "hidePassword": "Sembunyikan kata sandi",
+    "rememberMe": "Ingat saya",
+    "forgotPassword": "Lupa kata sandi?",
+    "signingIn": "Sedang masuk...",
+    "signIn": "Masuk →",
+    "accessRestricted": "🛡 Akses terbatas untuk pengguna Assetra yang berwenang."
+  },
+
   "dashboard": {
     "header": {
       "profile": "Profil"
@@ -25,7 +41,12 @@
       "status": "Status",
       "action": "Aksi",
       "user": "Pengguna",
-      "date": "Tanggal"
+      "date": "Tanggal",
+      "thisMonth": "+12 Bulan Ini",
+      "urgent": "Mendesak",
+      "highRisk": "Risiko Tinggi",
+      "totalIssues": "{count} Total Masalah",
+      "loadError": "Gagal memuat data aset."
     },
     "superadmin": {
       "greeting": "Halo,",
@@ -33,10 +54,17 @@
       "viewAll": "Lihat Semua Riwayat",
       "maintenanceAlerts": "Alert Perawatan"
     },
+    "roles": {
+      "admin": "Admin",
+      "superAdmin": "Super Admin"
+    },
+    "inventoryManager": "Pengelola Inventaris",
+    "user": "Pengguna",
     "logout": "Logout"
   },
 
   "manageAdmin": {
+    "loading": "Memuat...",
     "title": "Kelola Administrator",
     "subtitle": "Tambah atau kelola akun admin.",
     "addNewAdmin": "Tambah Admin Baru",
@@ -61,7 +89,12 @@
     "temporaryPassword": "Password Sementara",
     "passwordPlaceholder": "Minimal 8 karakter",
     "adding": "Menambahkan...",
-    "addAdmin": "Tambah Admin"
+    "addAdmin": "Tambah Admin",
+    "loadError": "Gagal memuat admin.",
+    "connectionError": "Tidak dapat terhubung ke server.",
+    "deactivateReason": "Mengapa admin ini dinonaktifkan?",
+    "statusUpdateFailed": "Gagal memperbarui status admin.",
+    "empty": "Belum ada admin."
   },
   "manageItem": {
     "title": "Kelola Item",
@@ -99,6 +132,88 @@
     "noCategories": "Belum ada kategori",
     "itemNameRequired": "Nama item wajib diisi",
     "categoryRequired": "Kategori wajib dipilih",
-    "addFailed": "Gagal menambahkan item"
+    "addFailed": "Gagal menambahkan item",
+    "loadingItems": "Memuat item...",
+    "loadError": "Gagal memuat item.",
+    "loginRequired": "Silakan login kembali.",
+    "uploadError": "Gagal mengunggah.",
+    "fileMustBeImage": "File harus berupa gambar.",
+    "fileTooLarge": "Ukuran gambar maksimal 5MB.",
+    "categoryLoadError": "Gagal memuat kategori.",
+    "printQrError": "Gagal mencetak kode QR.",
+    "deactivateError": "Gagal menonaktifkan item."
+  },
+  "profile": {
+    "title": "Profil Saya",
+    "subtitle": "Lihat informasi akun Anda.",
+    "name": "Nama",
+    "email": "Email",
+    "role": "Peran",
+    "status": "Status",
+    "joined": "Bergabung",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "admin": "Admin",
+    "superAdmin": "Super Admin",
+    "backToDashboard": "Kembali ke Dashboard"
+  },
+  "forgotPassword": {
+    "title": "Atur Ulang Kata Sandi",
+    "subtitle": "Masukkan alamat email terdaftar dan kami akan mengirimkan kode verifikasi.",
+    "emailLabel": "Alamat Email",
+    "emailPlaceholder": "Masukkan email terdaftar",
+    "sendCode": "Kirim Kode →",
+    "sending": "Mengirim...",
+    "resendCode": "Kirim ulang kode",
+    "resendCooldown": "Kirim ulang ({seconds}s)",
+    "codeTitle": "Masukkan Kode Verifikasi",
+    "codeSubtitle": "Kami mengirim kode ke {email}. Berlaku 5 menit.",
+    "verifyCode": "Verifikasi Kode →",
+    "verifying": "Memverifikasi...",
+    "newPasswordTitle": "Buat Kata Sandi Baru",
+    "newPasswordSubtitle": "Pilih kata sandi baru untuk akun Anda.",
+    "newPasswordLabel": "Kata Sandi Baru",
+    "confirmPasswordLabel": "Konfirmasi Kata Sandi Baru",
+    "resetPassword": "Atur Ulang →",
+    "saving": "Menyimpan...",
+    "successTitle": "Kata Sandi Berhasil Diatur Ulang",
+    "successSubtitle": "Kata sandi Anda telah berhasil diubah. Silakan masuk dengan kata sandi baru.",
+    "backToSignIn": "Kembali ke Masuk",
+    "backToLogin": "‹ Kembali ke Masuk",
+    "emailRequired": "Email wajib diisi.",
+    "emailInvalid": "Masukkan alamat email yang valid.",
+    "emailNotRegistered": "Email ini tidak terdaftar.",
+    "otpInvalid": "Kode verifikasi tidak valid atau kadaluarsa.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "connectionError": "Tidak dapat terhubung ke server. Periksa jaringan.",
+    "passwordRequired": "Password wajib diisi.",
+    "passwordTooShort": "Password minimal {length} karakter.",
+    "passwordMismatch": "Konfirmasi password tidak sama.",
+    "newPasswordPlaceholder": "Masukkan password baru",
+    "confirmPasswordPlaceholder": "Konfirmasi password baru",
+    "showPassword": "Tampilkan password",
+    "hidePassword": "Sembunyikan password"
+  },
+
+  "bulkAction": {
+    "selectedItems": "{count} Item Dipilih",
+    "printQr": "Cetak QR",
+    "deactivate": "Nonaktifkan",
+    "deactivateConfirm": "Nonaktifkan"
+  },
+  "itemDetail": {
+    "title": "Detail Item",
+    "category": "Kategori",
+    "location": "Lokasi",
+    "specifications": "Spesifikasi Lengkap",
+    "treatmentHistory": "Riwayat Perawatan",
+    "edit": "Edit",
+    "deactivate": "Nonaktifkan",
+    "statusOptions": {
+      "functional": "Tersedia",
+      "needs_repair": "Perlu Perbaikan",
+      "borrowed": "Dipinjam",
+      "unavailable": "Tidak Tersedia"
+    }
   }
 }

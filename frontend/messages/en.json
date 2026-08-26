@@ -1,4 +1,20 @@
 {
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to continue to your Assetra account.",
+    "identifierLabel": "Username or Email",
+    "identifierPlaceholder": "Enter your username or email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In →",
+    "accessRestricted": "🛡 Access restricted to authorized Assetra users."
+  },
+
   "dashboard": {
     "header": {
       "profile": "Profile"
@@ -25,7 +41,12 @@
       "status": "Status",
       "action": "Action",
       "user": "User",
-      "date": "Date"
+      "date": "Date",
+      "thisMonth": "+12 This Month",
+      "urgent": "Urgent",
+      "highRisk": "High Risk",
+      "totalIssues": "{count} Total Issues",
+      "loadError": "Failed to load asset data."
     },
     "superadmin": {
       "greeting": "Hello,",
@@ -33,10 +54,17 @@
       "viewAll": "View All History",
       "maintenanceAlerts": "Maintenance Alerts"
     },
+    "roles": {
+      "admin": "Admin",
+      "superAdmin": "Super Admin"
+    },
+    "inventoryManager": "Inventory Manager",
+    "user": "User",
     "logout": "Logout"
   },
 
   "manageAdmin": {
+    "loading": "Loading...",
     "title": "Manage Administrators",
     "subtitle": "Add or manage admin accounts.",
     "addNewAdmin": "Add New Admin",
@@ -61,7 +89,12 @@
     "temporaryPassword": "Temporary Password",
     "passwordPlaceholder": "Minimum 8 characters",
     "adding": "Adding...",
-    "addAdmin": "Add Admin"
+    "addAdmin": "Add Admin",
+    "loadError": "Failed to load administrators.",
+    "connectionError": "Unable to connect to server.",
+    "deactivateReason": "Why are you deactivating this administrator?",
+    "statusUpdateFailed": "Failed to update administrator status.",
+    "empty": "No administrators yet."
   },
   "manageItem": {
     "title": "Manage Items",
@@ -84,6 +117,13 @@
       "borrowed": "Borrowed",
       "unavailable": "Unavailable"
     },
+    "loadingItems": "Loading items...",
+    "loadError": "Failed to load items.",
+    "loginRequired": "Please login again.",
+    "uploadError": "Upload failed.",
+    "fileMustBeImage": "File must be an image.",
+    "fileTooLarge": "Maximum image size is 5MB.",
+    "categoryLoadError": "Failed to load categories.",
     "description": "Description",
     "descriptionOptional": "Description (Optional)",
     "descriptionPlaceholder": "Additional information about this item...",
@@ -99,6 +139,81 @@
     "noCategories": "No categories available",
     "itemNameRequired": "Item name is required",
     "categoryRequired": "Category is required",
-    "addFailed": "Failed to add item"
+    "addFailed": "Failed to add item",
+    "printQrError": "Failed to print QR code.",
+    "deactivateError": "Failed to deactivate item."
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "View your account information.",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "joined": "Joined",
+    "active": "Active",
+    "inactive": "Inactive",
+    "admin": "Admin",
+    "superAdmin": "Super Admin",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "forgotPassword": {
+    "title": "Reset Password",
+    "subtitle": "Enter your registered email address and we'll send you a verification code.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your registered email",
+    "sendCode": "Send Code →",
+    "sending": "Sending...",
+    "resendCode": "Resend code",
+    "resendCooldown": "Resend code ({seconds}s)",
+    "codeTitle": "Enter Verification Code",
+    "codeSubtitle": "We sent a code to {email}. It expires in 5 minutes.",
+    "verifyCode": "Verify Code →",
+    "verifying": "Verifying...",
+    "newPasswordTitle": "Set New Password",
+    "newPasswordSubtitle": "Choose a new password for your account.",
+    "newPasswordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "resetPassword": "Reset Password →",
+    "saving": "Saving...",
+    "successTitle": "Password Reset",
+    "successSubtitle": "Your password has been changed successfully. You can now sign in with your new password.",
+    "backToSignIn": "Back to Sign In",
+    "backToLogin": "‹ Back to Sign In",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Please enter a valid email address.",
+    "emailNotRegistered": "This email is not registered.",
+    "otpInvalid": "Invalid or expired verification code.",
+    "genericError": "Something went wrong. Please try again.",
+    "connectionError": "Cannot connect to server. Check your network.",
+    "passwordRequired": "Password is required.",
+    "passwordTooShort": "Password must be at least {length} characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  },
+
+  "bulkAction": {
+    "selectedItems": "{count} Selected Item{plural}",
+    "printQr": "Print QR",
+    "deactivate": "Deactivate",
+    "deactivateConfirm": "Deactivate"
+  },
+  "itemDetail": {
+    "title": "Item Details",
+    "category": "Category",
+    "location": "Location",
+    "specifications": "Full Specifications",
+    "treatmentHistory": "Treatment History",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "statusOptions": {
+      "functional": "Available",
+      "needs_repair": "Need Repair",
+      "borrowed": "Borrowed",
+      "unavailable": "Unavailable"
+    }
   }
 }

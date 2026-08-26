@@ -25,10 +25,10 @@ function generateCodeFromName(name) {
 
 export default function AddItemForm({ onClose, onSubmit }) {
   const t = useTranslations("manageItem");
-  const [form, setForm] = useState({ 
-    asset_name: "", 
+  const [form, setForm] = useState({
+    asset_name: "",
     code_item: "",
-    id_category: "", 
+    id_category: "",
     status: "functional",
     description: "",
     image_url: "",
@@ -52,11 +52,14 @@ export default function AddItemForm({ onClose, onSubmit }) {
         });
         const result = await response.json();
         if (!response.ok || !result.success) {
-          throw new Error(result.message || "Gagal mengambil data kategori.");
+          throw new Error(result.message || t("categoryLoadError"));
         }
         setCategories(result.data || []);
         if (result.data?.length) {
-          setForm((prev) => ({ ...prev, id_category: String(result.data[0].id) }));
+          setForm((prev) => ({
+            ...prev,
+            id_category: String(result.data[0].id),
+          }));
         }
       } catch (err) {
         setError(err.message);
@@ -65,7 +68,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
       }
     }
     loadCategories();
-  }, []);
+  }, [t]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -86,7 +89,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
     try {
       console.log("📤 Uploading to proxy...");
-      
+
       const response = await fetch("/api/upload-proxy", {
         method: "POST",
         body: formData,
@@ -104,7 +107,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
       console.log("📥 Upload result:", result);
 
       if (!result.success) {
-        throw new Error(result.message || "Gagal upload gambar");
+        throw new Error(result.message || t("uploadError"));
       }
 
       return result.foto;
@@ -118,12 +121,12 @@ export default function AddItemForm({ onClose, onSubmit }) {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setError("File harus berupa gambar");
+    if (!file.type.startsWith("image/")) {
+      setError(t("fileMustBeImage"));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setError("Ukuran gambar maksimal 5MB");
+      setError(t("fileTooLarge"));
       return;
     }
 
@@ -144,11 +147,11 @@ export default function AddItemForm({ onClose, onSubmit }) {
       console.log("✅ Image uploaded successfully:", imageUrl);
     } catch (err) {
       console.error("❌ Upload error:", err);
-      setError(err.message || "Gagal upload gambar. Coba lagi.");
+      setError(err.message || t("uploadError"));
       setIsUploading(false);
       setImagePreview(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
     }
   }
@@ -158,7 +161,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
     setImagePreview(null);
     setError("");
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   }
 
@@ -197,19 +200,21 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
   return (
     <>
-      <div 
-        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+      <div
+        className="fixed inset-0 z-40 bg-[var(--color-overlay)]/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-xl border border-[#272D3D] bg-[#131824] p-6 max-h-[90vh] overflow-y-auto">
+        <div className="w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-white">{t("addNewItem")}</h2>
-            <button 
-              type="button" 
-              onClick={onClose} 
-              className="text-[#A1A1AA] hover:text-white transition"
+            <h2 className="text-lg font-semibold text-[var(--color-white)]">
+              {t("addNewItem")}
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition"
             >
               <X size={20} strokeWidth={1.75} />
             </button>
@@ -218,21 +223,22 @@ export default function AddItemForm({ onClose, onSubmit }) {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Upload Gambar */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
-                {t("uploadImage")} <span className="text-red-400">*</span>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                {t("uploadImage")}{" "}
+                <span className="text-[var(--color-danger)]">*</span>
               </label>
               <div className="flex flex-col gap-2">
                 {imagePreview ? (
-                  <div className="relative rounded-lg border border-[#272D3D] overflow-hidden">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
+                  <div className="relative rounded-lg border border-[var(--color-border)] overflow-hidden">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
                       className="w-full h-48 object-cover"
                     />
                     {isUploading && (
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <div className="flex items-center gap-2 text-white">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#8083FF] border-t-transparent" />
+                      <div className="absolute inset-0 bg-[var(--color-overlay)]/60 flex items-center justify-center">
+                        <div className="flex items-center gap-2 text-[var(--color-white)]">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--color-primary)] border-t-transparent" />
                           {t("uploading")}
                         </div>
                       </div>
@@ -241,12 +247,12 @@ export default function AddItemForm({ onClose, onSubmit }) {
                       type="button"
                       onClick={removeImage}
                       disabled={isUploading}
-                      className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full hover:bg-red-500 transition disabled:opacity-50"
+                      className="absolute top-2 right-2 p-1.5 bg-[var(--color-danger-background)]/80 rounded-full hover:bg-[var(--color-danger-background)] transition disabled:opacity-50"
                     >
                       <X size={14} />
                     </button>
                     {form.image_url && !isUploading && (
-                      <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[10px] text-green-400">
+                      <div className="absolute bottom-2 left-2 bg-[var(--color-overlay)]/60 px-2 py-1 rounded text-[10px] text-[var(--color-success)]">
                         ✅ {t("imageUploaded")}
                       </div>
                     )}
@@ -256,18 +262,18 @@ export default function AddItemForm({ onClose, onSubmit }) {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="flex flex-col items-center justify-center gap-2 h-48 w-full rounded-lg border-2 border-dashed border-[#272D3D] bg-[#0D0D15] text-[#71717A] hover:border-[#8083FF] hover:text-[#8083FF] transition disabled:opacity-50"
+                    className="flex flex-col items-center justify-center gap-2 h-48 w-full rounded-lg border-2 border-dashed border-[var(--color-border)] bg-[var(--color-input)] text-[var(--color-text-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition disabled:opacity-50"
                   >
                     {isUploading ? (
                       <>
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#8083FF] border-t-transparent" />
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--color-primary)] border-t-transparent" />
                         <span className="text-xs">{t("uploading")}</span>
                       </>
                     ) : (
                       <>
                         <Upload size={32} strokeWidth={1.5} />
                         <span className="text-sm">{t("uploadImageHere")}</span>
-                        <span className="text-[10px] text-[#555866]">
+                        <span className="text-[10px] text-[var(--color-text-placeholder)]">
                           {t("imageRecommended")}
                         </span>
                       </>
@@ -288,19 +294,20 @@ export default function AddItemForm({ onClose, onSubmit }) {
             {/* Nama Item + Code Item */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
-                  {t("itemName")} <span className="text-red-400">*</span>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                  {t("itemName")}{" "}
+                  <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   name="asset_name"
                   value={form.asset_name}
                   onChange={handleChange}
                   placeholder={t("itemNamePlaceholder")}
-                  className="h-11 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 text-sm text-white outline-none placeholder:text-[#555866] focus:border-[#8083FF] transition"
+                  className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] transition"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
                   {t("codeItem")}
                 </label>
                 <input
@@ -308,28 +315,33 @@ export default function AddItemForm({ onClose, onSubmit }) {
                   value={form.code_item}
                   readOnly
                   placeholder={t("codeItemPlaceholder")}
-                  className="h-11 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 text-sm text-[#71717A] outline-none cursor-not-allowed"
+                  className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-text-muted)] outline-none cursor-not-allowed"
                 />
               </div>
             </div>
 
             {/* Kategori */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
-                {t("category")} <span className="text-red-400">*</span>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                {t("category")}{" "}
+                <span className="text-[var(--color-danger)]">*</span>
               </label>
               <select
                 name="id_category"
                 value={form.id_category}
                 onChange={handleChange}
                 disabled={loadingCategories}
-                className="h-11 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 text-sm text-white outline-none focus:border-[#8083FF] transition disabled:opacity-50"
+                className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none focus:border-[var(--color-primary)] transition disabled:opacity-50"
               >
-                {loadingCategories && <option value="">{t("loadingCategories")}</option>}
+                {loadingCategories && (
+                  <option value="">{t("loadingCategories")}</option>
+                )}
                 {!loadingCategories && categories.length === 0 && (
                   <option value="">{t("noCategories")}</option>
                 )}
-                <option value="" disabled>{t("selectCategory")}</option>
+                <option value="" disabled>
+                  {t("selectCategory")}
+                </option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.category_name}
@@ -340,14 +352,15 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
             {/* Status */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
-                {t("status")} <span className="text-red-400">*</span>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                {t("status")}{" "}
+                <span className="text-[var(--color-danger)]">*</span>
               </label>
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="h-11 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 text-sm text-white outline-none focus:border-[#8083FF] transition"
+                className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none focus:border-[var(--color-primary)] transition"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -359,7 +372,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
             {/* Deskripsi */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#A1A1AA]">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
                 {t("descriptionOptional")}
               </label>
               <textarea
@@ -368,12 +381,12 @@ export default function AddItemForm({ onClose, onSubmit }) {
                 onChange={handleChange}
                 placeholder={t("descriptionPlaceholder")}
                 rows={3}
-                className="w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3 py-2 text-sm text-white outline-none placeholder:text-[#555866] focus:border-[#8083FF] transition resize-none"
+                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 py-2 text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] transition resize-none"
               />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+              <div className="flex items-center gap-2 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-xs text-[var(--color-danger)]">
                 <AlertCircle size={14} />
                 {error}
               </div>
@@ -383,14 +396,14 @@ export default function AddItemForm({ onClose, onSubmit }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 h-11 rounded-lg border border-[#272D3D] text-sm font-medium text-[#A1A1AA] hover:bg-[#1D2230] transition"
+                className="flex-1 h-11 rounded-lg border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] transition"
               >
                 {t("cancel")}
               </button>
               <button
                 type="submit"
                 disabled={loading || isUploading || !form.image_url}
-                className="flex-1 h-11 rounded-lg bg-[#8083FF] text-sm font-semibold text-[#111323] hover:bg-[#9295FF] transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 h-11 rounded-lg bg-[var(--color-primary)] text-sm font-semibold text-[var(--color-primary-contrast)] hover:bg-[var(--color-primary-hover)] transition disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? t("adding") : t("addItem")}
               </button>

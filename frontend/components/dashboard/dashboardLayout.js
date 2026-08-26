@@ -35,19 +35,24 @@ export default function DashboardLayout({ role, userName, children }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // ← CEK KALAU role NULL
+  const normalizedRole =
+    typeof role === "object" ? role.name || role.role || role.role_name : role;
+
   if (!role) {
     return (
-      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-[#A1A1AA] text-sm">
-        Loading...
+      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
+        {t("loading")}
       </div>
     );
   }
 
   const navItems = NAV_ITEMS.filter(
-    (item) => !item.requiresRole || item.requiresRole === role,
+    (item) => !item.requiresRole || item.requiresRole === normalizedRole,
   );
-  const roleLabel = role === ROLES.SUPER_ADMIN ? "Super Admin" : "Admin";
+  const roleLabel =
+    normalizedRole === ROLES.SUPER_ADMIN
+      ? t("roles.superAdmin")
+      : t("roles.admin");
 
   function handleLogout() {
     window.localStorage.removeItem(AUTH_TOKEN_KEY);
@@ -59,17 +64,19 @@ export default function DashboardLayout({ role, userName, children }) {
 
   return (
     <div
-      className={`${FONTS.MAIN} min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex`}
+      className={`${FONTS.MAIN} min-h-screen bg-[var(--color-background)] text-[var(--color-text)] flex`}
     >
       {/* Sidebar */}
-      <aside className="w-60 shrink-0 border-r border-[#272D3D] flex flex-col px-4 py-5">
+      <aside className="w-60 shrink-0 border-r border-[var(--color-border)] flex flex-col px-4 py-5">
         <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>
 
         <div className="mb-6 px-2">
-          <div className="text-sm font-semibold text-[#8083FF]">
+          <div className="text-sm font-semibold text-[var(--color-primary)]">
             {roleLabel}
           </div>
-          <div className="text-xs text-[#71717A]">Inventory Manager</div>
+          <div className="text-xs text-[var(--color-text-muted)]">
+            {t("inventoryManager")}
+          </div>
         </div>
 
         <nav className="flex-1 flex flex-col gap-1">
@@ -82,8 +89,8 @@ export default function DashboardLayout({ role, userName, children }) {
                 href={item.href}
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition ${
                   active
-                    ? "bg-[#8083FF] text-[#111323] font-medium"
-                    : "text-[#A1A1AA] hover:bg-[#131824] hover:text-white"
+                    ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)] font-medium"
+                    : "text-[var(--color-text-secondary)] hover:bg-[var(--color-card)] hover:text-[var(--color-white)]"
                 }`}
               >
                 <Icon size={18} strokeWidth={1.75} />
@@ -93,22 +100,24 @@ export default function DashboardLayout({ role, userName, children }) {
           })}
         </nav>
 
-        <div className="mt-auto pt-4 border-t border-[#272D3D]">
+        <div className="mt-auto pt-4 border-t border-[var(--color-border)]">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-[#131824]"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-card)]"
           >
             <LogOut size={18} strokeWidth={1.75} />
             {t("logout")}
           </button>
-          <div className="mt-2 px-3 text-[10px] text-[#4B5162]">v1.0.4</div>
+          <div className="mt-2 px-3 text-[10px] text-[var(--color-text-subtle)]">
+            v1.0.4
+          </div>
         </div>
       </aside>
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Header userName={userName || "User"} />
+        <Header userName={userName || t("user")} />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>

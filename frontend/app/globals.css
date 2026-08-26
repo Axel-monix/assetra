@@ -1,26 +1,179 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #0b0f17;
+  --foreground: #e5e7eb;
+  --assetra-background: #0b0f17;
+  --assetra-primary: #8083ff;
+  --assetra-primary-hover: #9295ff;
+  --assetra-primary-soft: #a5a7ff;
+  --assetra-primary-contrast: #111323;
+  --assetra-card: #131824;
+  --assetra-input: #0d0d15;
+  --assetra-surface: #1d2230;
+  --assetra-media-start: #1b2130;
+  --assetra-border: #272d3d;
+  --assetra-border-hover: #3a4258;
+  --assetra-divider: #2a2f3d;
+  --assetra-text: #e5e7eb;
+  --assetra-text-secondary: #a1a1aa;
+  --assetra-text-muted: #71717a;
+  --assetra-text-subtle: #4b5162;
+  --assetra-text-placeholder: #555866;
+  --assetra-icon-muted: #8d8fa0;
+  --assetra-white: #ffffff;
+  --assetra-danger: #f87171;
+  --assetra-danger-hover: #fca5a5;
+  --assetra-danger-background: #ef4444;
+  --assetra-warning: #fbbf24;
+  --assetra-info: #60a5fa;
+  --assetra-success: #4caf50;
+  --assetra-cyan: #22d3ee;
+  --assetra-orange: #fb923c;
+  --assetra-overlay: #000000;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-main);
-  --font-mono: var(--font-code);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Compatibility aliases for components that use the shared token names. */
+  --color-background: var(--assetra-background);
+  --color-primary: var(--assetra-primary);
+  --color-primary-hover: var(--assetra-primary-hover);
+  --color-primary-soft: var(--assetra-primary-soft);
+  --color-primary-contrast: var(--assetra-primary-contrast);
+  --color-card: var(--assetra-card);
+  --color-input: var(--assetra-input);
+  --color-surface: var(--assetra-surface);
+  --color-media-start: var(--assetra-media-start);
+  --color-border: var(--assetra-border);
+  --color-border-hover: var(--assetra-border-hover);
+  --color-divider: var(--assetra-divider);
+  --color-text: var(--assetra-text);
+  --color-text-secondary: var(--assetra-text-secondary);
+  --color-text-muted: var(--assetra-text-muted);
+  --color-text-subtle: var(--assetra-text-subtle);
+  --color-text-placeholder: var(--assetra-text-placeholder);
+  --color-icon-muted: var(--assetra-icon-muted);
+  --color-white: var(--assetra-white);
+  --color-danger: var(--assetra-danger);
+  --color-danger-hover: var(--assetra-danger-hover);
+  --color-danger-background: var(--assetra-danger-background);
+  --color-warning: var(--assetra-warning);
+  --color-info: var(--assetra-info);
+  --color-success: var(--assetra-success);
+  --color-cyan: var(--assetra-cyan);
+  --color-orange: var(--assetra-orange);
+  --color-overlay: var(--assetra-overlay);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-main);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--assetra-primary);
+  outline-offset: 2px;
+}
+
+.assetra-card {
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.75rem;
+  background: var(--assetra-card);
+}
+
+.assetra-item-card {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.75rem;
+  background: var(--assetra-card);
+  text-align: left;
+  transition: border-color 150ms ease;
+}
+
+.assetra-item-card:hover {
+  border-color: var(--assetra-border-hover);
+}
+
+.assetra-item-card.is-selected {
+  border-color: var(--assetra-primary);
+  box-shadow: 0 0 0 1px var(--assetra-primary);
+}
+
+.assetra-status-dot {
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+}
+
+.assetra-input {
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.5rem;
+  background: var(--assetra-input);
+  color: var(--assetra-text);
+}
+
+.assetra-input:focus {
+  border-color: var(--assetra-primary);
+  outline: none;
+}
+
+.assetra-button-primary {
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--assetra-primary);
+  color: var(--assetra-primary-contrast);
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.assetra-button-primary:hover {
+  background: var(--assetra-primary-hover);
+}
+
+.assetra-text-muted {
+  color: var(--assetra-text-muted);
+}
+
+.assetra-text-secondary {
+  color: var(--assetra-text-secondary);
+}
+
+.assetra-status-success {
+  color: var(--assetra-success);
+}
+
+.assetra-status-warning {
+  color: var(--assetra-warning);
+}
+
+.assetra-status-danger {
+  color: var(--assetra-danger);
+}
+
+.assetra-status-dot.assetra-status-success {
+  background-color: var(--assetra-success);
+}
+
+.assetra-status-dot.assetra-status-warning {
+  background-color: var(--assetra-warning);
+}
+
+.assetra-status-dot.assetra-status-danger {
+  background-color: var(--assetra-danger);
 }

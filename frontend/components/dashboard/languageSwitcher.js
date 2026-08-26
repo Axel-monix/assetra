@@ -34,7 +34,7 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[#A1A1AA] hover:bg-[#131824] hover:text-white"
+        className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-card)] hover:text-[var(--color-white)]"
       >
         <span>{current.flag}</span>
         <span>{current.label}</span>
@@ -42,7 +42,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-1.5 w-28 overflow-hidden rounded-lg border border-[#272D3D] bg-[#131824] py-1 shadow-2xl">
+        <div className="absolute right-0 z-20 mt-1.5 w-28 overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] py-1 shadow-2xl">
           {LOCALES.map((l) => (
             <button
               key={l.code}
@@ -51,8 +51,8 @@ export default function LanguageSwitcher() {
                 router.replace(pathname, { locale: l.code });
                 setOpen(false);
               }}
-              className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm hover:bg-[#0D0D15] ${
-                l.code === locale ? "text-[#8083FF]" : "text-[#E5E7EB]"
+              className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm hover:bg-[var(--color-input)] ${
+                l.code === locale ? "text-[var(--color-primary)]" : "text-[var(--color-text)]"
               }`}
             >
               <span>{l.flag}</span> {l.label}

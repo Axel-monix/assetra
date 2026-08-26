@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import {
   ENDPOINTS,
   VALIDATION,
-  ERROR_MESSAGES,
   OTP_LENGTH,
   OTP_RESEND_COOLDOWN_SECONDS,
   FORGOT_PASSWORD_STEP,
@@ -117,6 +116,7 @@ function CheckCircleIcon() {
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
+  const t = useTranslations("forgotPassword");
 
   const [step, setStep] = useState(FORGOT_PASSWORD_STEP.EMAIL);
   const [email, setEmail] = useState("");
@@ -146,11 +146,11 @@ export default function ForgotPasswordPage() {
     setFieldError("");
 
     if (!email.trim()) {
-      setFieldError(ERROR_MESSAGES.EMAIL_REQUIRED);
+      setFieldError(t("emailRequired"));
       return;
     }
     if (!VALIDATION.EMAIL_REGEX.test(email.trim())) {
-      setFieldError(ERROR_MESSAGES.EMAIL_INVALID);
+      setFieldError(t("emailInvalid"));
       return;
     }
 
@@ -166,15 +166,15 @@ export default function ForgotPasswordPage() {
       // Backend mengecek apakah email terdaftar. Kalau tidak terdaftar,
       // backend mengembalikan success:false dengan message yang jelas.
       if (!res.ok || !result.success) {
-        setServerError(result.message || ERROR_MESSAGES.EMAIL_NOT_REGISTERED);
+        setServerError(result.message || t("emailNotRegistered"));
         return;
       }
 
       setStep(FORGOT_PASSWORD_STEP.VERIFY_CODE);
       setCooldown(OTP_RESEND_COOLDOWN_SECONDS);
-    } catch (err) {
+    } catch {
       console.error("Send code error:", err);
-      setServerError(ERROR_MESSAGES.CONNECTION_ERROR);
+      setServerError(t("connectionError"));
     } finally {
       setLoading(false);
     }
@@ -191,12 +191,12 @@ export default function ForgotPasswordPage() {
       });
       const result = await res.json();
       if (!res.ok || !result.success) {
-        setServerError(result.message || ERROR_MESSAGES.GENERIC_ERROR);
+        setServerError(result.message || t("genericError"));
         return;
       }
       setCooldown(OTP_RESEND_COOLDOWN_SECONDS);
-    } catch (err) {
-      setServerError(ERROR_MESSAGES.CONNECTION_ERROR);
+    } catch {
+      setServerError(t("connectionError"));
     }
   }
 
@@ -225,7 +225,7 @@ export default function ForgotPasswordPage() {
 
     const fullCode = code.join("");
     if (fullCode.length < OTP_LENGTH) {
-      setServerError(ERROR_MESSAGES.OTP_INVALID);
+      setServerError(t("otpInvalid"));
       return;
     }
 
@@ -239,14 +239,14 @@ export default function ForgotPasswordPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        setServerError(result.message || ERROR_MESSAGES.OTP_INVALID);
+        setServerError(result.message || t("otpInvalid"));
         return;
       }
 
       setStep(FORGOT_PASSWORD_STEP.NEW_PASSWORD);
     } catch (err) {
       console.error("Verify code error:", err);
-      setServerError(ERROR_MESSAGES.CONNECTION_ERROR);
+      setServerError(t("connectionError"));
     } finally {
       setLoading(false);
     }
@@ -259,15 +259,17 @@ export default function ForgotPasswordPage() {
     setFieldError("");
 
     if (!newPassword) {
-      setFieldError(ERROR_MESSAGES.PASSWORD_REQUIRED);
+      setFieldError(t("passwordRequired"));
       return;
     }
     if (newPassword.length < VALIDATION.PASSWORD_MIN_LENGTH) {
-      setFieldError(ERROR_MESSAGES.PASSWORD_TOO_SHORT);
+      setFieldError(
+        t("passwordTooShort", { length: VALIDATION.PASSWORD_MIN_LENGTH }),
+      );
       return;
     }
     if (confirmPassword !== newPassword) {
-      setFieldError(ERROR_MESSAGES.PASSWORD_MISMATCH);
+      setFieldError(t("passwordMismatch"));
       return;
     }
 
@@ -285,32 +287,31 @@ export default function ForgotPasswordPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        setServerError(result.message || ERROR_MESSAGES.GENERIC_ERROR);
+        setServerError(result.message || t("genericError"));
         return;
       }
 
       setStep(FORGOT_PASSWORD_STEP.SUCCESS);
     } catch (err) {
       console.error("Reset password error:", err);
-      setServerError(ERROR_MESSAGES.CONNECTION_ERROR);
+      setServerError(t("connectionError"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0F17] text-[#E5E7EB] flex flex-col items-center justify-center px-4 relative">
+    <main className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] flex flex-col items-center justify-center px-4 relative">
       <div className="mb-12 text-2xl font-semibold">Assetra</div>
 
-      <div className="w-full max-w-[405px] rounded-xl border border-[#272D3D] bg-[#131824] p-7 shadow-2xl">
+      <div className="w-full max-w-[405px] rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-7 shadow-2xl">
         {/* ---------- STEP 1: EMAIL ---------- */}
         {step === FORGOT_PASSWORD_STEP.EMAIL && (
           <>
             <div className="mb-8 text-center">
-              <h1 className="text-xl font-semibold">Reset Password</h1>
-              <p className="mt-2 text-sm text-[#A1A1AA]">
-                Enter your registered email address and we&apos;ll send you a
-                verification code.
+              <h1 className="text-xl font-semibold">{t("title")}</h1>
+              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                {t("subtitle")}
               </p>
             </div>
 
@@ -318,12 +319,12 @@ export default function ForgotPasswordPage() {
               <div className="mb-6">
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]"
                 >
-                  Email Address
+                  {t("emailLabel")}
                 </label>
-                <div className="flex items-center gap-2 rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
-                  <span className="text-[#555866]">
+                <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
+                  <span className="text-[var(--color-text-placeholder)]">
                     <MailIcon />
                   </span>
                   <input
@@ -334,18 +335,20 @@ export default function ForgotPasswordPage() {
                       setEmail(event.target.value);
                       setFieldError("");
                     }}
-                    placeholder="Enter your registered email"
-                    className="h-11 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
+                    placeholder={t("emailPlaceholder")}
+                    className="h-11 w-full bg-transparent text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)]"
                     required
                   />
                 </div>
                 {fieldError && (
-                  <p className="mt-2 text-xs text-red-400">{fieldError}</p>
+                  <p className="mt-2 text-xs text-[var(--color-danger)]">
+                    {fieldError}
+                  </p>
                 )}
               </div>
 
               {serverError && (
-                <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
                   {serverError}
                 </div>
               )}
@@ -353,16 +356,16 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="h-11 w-full rounded-lg bg-[#8083FF] font-semibold text-[#111323] transition hover:bg-[#9295FF] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-11 w-full rounded-lg bg-[var(--color-primary)] font-semibold text-[var(--color-primary-contrast)] transition hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "Sending..." : "Send Code →"}
+                {loading ? t("sending") : t("sendCode")}
               </button>
 
               <Link
                 href="/login"
-                className="mt-5 block text-center text-xs text-[#A1A1AA] hover:text-white"
+                className="mt-5 block text-center text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-white)]"
               >
-                ‹ Back to Sign In
+                {t("backToLogin")}
               </Link>
             </form>
           </>
@@ -372,10 +375,9 @@ export default function ForgotPasswordPage() {
         {step === FORGOT_PASSWORD_STEP.VERIFY_CODE && (
           <>
             <div className="mb-8 text-center">
-              <h1 className="text-xl font-semibold">Enter Verification Code</h1>
-              <p className="mt-2 text-sm text-[#A1A1AA]">
-                We sent a code to <span className="text-white">{email}</span>.
-                It expires in 5 minutes.
+              <h1 className="text-xl font-semibold">{t("codeTitle")}</h1>
+              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                {t("codeSubtitle", { email })}
               </p>
             </div>
 
@@ -393,13 +395,13 @@ export default function ForgotPasswordPage() {
                       handleCodeChange(index, event.target.value)
                     }
                     onKeyDown={(event) => handleCodeKeyDown(index, event)}
-                    className="h-12 w-full rounded-lg border border-[#272D3D] bg-[#0D0D15] text-center text-lg font-semibold text-white outline-none focus:border-[#8083FF]"
+                    className="h-12 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] text-center text-lg font-semibold text-[var(--color-white)] outline-none focus:border-[var(--color-primary)]"
                   />
                 ))}
               </div>
 
               {serverError && (
-                <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
                   {serverError}
                 </div>
               )}
@@ -407,25 +409,27 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="h-11 w-full rounded-lg bg-[#8083FF] font-semibold text-[#111323] transition hover:bg-[#9295FF] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-11 w-full rounded-lg bg-[var(--color-primary)] font-semibold text-[var(--color-primary-contrast)] transition hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "Verifying..." : "Verify Code →"}
+                {loading ? t("verifying") : t("verifyCode")}
               </button>
 
               <button
                 type="button"
                 onClick={handleResendCode}
                 disabled={cooldown > 0}
-                className="mt-4 block w-full text-center text-xs text-[#A5A7FF] hover:text-[#8083FF] disabled:cursor-not-allowed disabled:text-[#555866]"
+                className="mt-4 block w-full text-center text-xs text-[var(--color-primary-soft)] hover:text-[var(--color-primary)] disabled:cursor-not-allowed disabled:text-[var(--color-text-placeholder)]"
               >
-                {cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
+                {cooldown > 0
+                  ? t("resendCooldown", { seconds: cooldown })
+                  : t("resendCode")}
               </button>
 
               <Link
                 href="/login"
-                className="mt-3 block text-center text-xs text-[#A1A1AA] hover:text-white"
+                className="mt-3 block text-center text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-white)]"
               >
-                ‹ Back to Sign In
+                {t("backToLogin")}
               </Link>
             </form>
           </>
@@ -435,9 +439,9 @@ export default function ForgotPasswordPage() {
         {step === FORGOT_PASSWORD_STEP.NEW_PASSWORD && (
           <>
             <div className="mb-8 text-center">
-              <h1 className="text-xl font-semibold">Set New Password</h1>
-              <p className="mt-2 text-sm text-[#A1A1AA]">
-                Choose a new password for your account.
+              <h1 className="text-xl font-semibold">{t("newPasswordTitle")}</h1>
+              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                {t("newPasswordSubtitle")}
               </p>
             </div>
 
@@ -445,11 +449,11 @@ export default function ForgotPasswordPage() {
               <div className="mb-5">
                 <label
                   htmlFor="newPassword"
-                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]"
                 >
-                  New Password
+                  {t("newPasswordLabel")}
                 </label>
-                <div className="flex items-center rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
+                <div className="flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
                   <input
                     id="newPassword"
                     type={showNewPassword ? "text" : "password"}
@@ -458,18 +462,16 @@ export default function ForgotPasswordPage() {
                       setNewPassword(event.target.value);
                       setFieldError("");
                     }}
-                    placeholder="Enter new password"
-                    className="h-11 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
+                    placeholder={t("newPasswordPlaceholder")}
+                    className="h-11 w-full bg-transparent text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)]"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="ml-2 text-[#8D8FA0] hover:text-white"
+                    className="ml-2 text-[var(--color-icon-muted)] hover:text-[var(--color-white)]"
                     aria-label={
-                      showNewPassword
-                        ? "Sembunyikan password"
-                        : "Tampilkan password"
+                      showNewPassword ? t("hidePassword") : t("showPassword")
                     }
                   >
                     {showNewPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -480,11 +482,11 @@ export default function ForgotPasswordPage() {
               <div className="mb-6">
                 <label
                   htmlFor="confirmPassword"
-                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]"
                 >
-                  Confirm New Password
+                  {t("confirmPasswordLabel")}
                 </label>
-                <div className="flex items-center rounded-lg border border-[#272D3D] bg-[#0D0D15] px-3">
+                <div className="flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
@@ -493,18 +495,18 @@ export default function ForgotPasswordPage() {
                       setConfirmPassword(event.target.value);
                       setFieldError("");
                     }}
-                    placeholder="Confirm new password"
-                    className="h-11 w-full bg-transparent text-sm text-white outline-none placeholder:text-[#555866]"
+                    placeholder={t("confirmPasswordPlaceholder")}
+                    className="h-11 w-full bg-transparent text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)]"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="ml-2 text-[#8D8FA0] hover:text-white"
+                    className="ml-2 text-[var(--color-icon-muted)] hover:text-[var(--color-white)]"
                     aria-label={
                       showConfirmPassword
-                        ? "Sembunyikan password"
-                        : "Tampilkan password"
+                        ? t("hidePassword")
+                        : t("showPassword")
                     }
                   >
                     {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -513,12 +515,12 @@ export default function ForgotPasswordPage() {
               </div>
 
               {fieldError && (
-                <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
                   {fieldError}
                 </div>
               )}
               {serverError && (
-                <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
                   {serverError}
                 </div>
               )}
@@ -526,9 +528,9 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="h-11 w-full rounded-lg bg-[#8083FF] font-semibold text-[#111323] transition hover:bg-[#9295FF] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-11 w-full rounded-lg bg-[var(--color-primary)] font-semibold text-[var(--color-primary-contrast)] transition hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "Saving..." : "Reset Password →"}
+                {loading ? t("saving") : t("resetPassword")}
               </button>
             </form>
           </>
@@ -540,23 +542,22 @@ export default function ForgotPasswordPage() {
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-teal-500/15 text-teal-400">
               <CheckCircleIcon />
             </div>
-            <h1 className="text-xl font-semibold">Password Reset</h1>
-            <p className="mt-2 text-sm text-[#A1A1AA]">
-              Your password has been changed successfully. You can now sign in
-              with your new password.
+            <h1 className="text-xl font-semibold">{t("successTitle")}</h1>
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+              {t("successSubtitle")}
             </p>
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="mt-6 h-11 w-full rounded-lg bg-[#8083FF] font-semibold text-[#111323] transition hover:bg-[#9295FF]"
+              className="mt-6 h-11 w-full rounded-lg bg-[var(--color-primary)] font-semibold text-[var(--color-primary-contrast)] transition hover:bg-[var(--color-primary-hover)]"
             >
-              Back to Sign In
+              {t("backToSignIn")}
             </button>
           </div>
         )}
       </div>
 
-      <div className="absolute bottom-6 left-6 text-[10px] tracking-widest text-[#2A2F3D]">
+      <div className="absolute bottom-6 left-6 text-[10px] tracking-widest text-[var(--color-divider)]">
         SECURITY_PROTOCOL_v1.0.4
       </div>
     </main>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { UserPlus, Users, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ToggleSwitch from "@/components/admin/toggleSwitch";
@@ -26,7 +26,7 @@ function getToken() {
 
 export default function ManageAdminPage() {
   const router = useRouter();
-  const t = useTranslations("manageAdmin"); 
+  const t = useTranslations("manageAdmin");
 
   const [user, setUser] = useState(null);
   const [admins, setAdmins] = useState([]);
@@ -46,17 +46,17 @@ export default function ManageAdminPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        setError(result.message || "Gagal memuat data admin.");
+        setError(result.message || t("loadError"));
         return;
       }
       setAdmins(result.data);
     } catch (err) {
       console.error("Fetch admins error:", err);
-      setError("Tidak bisa terhubung ke server.");
+      setError(t("connectionError"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const raw =
@@ -73,6 +73,7 @@ export default function ManageAdminPage() {
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(parsed);
     fetchAdmins();
   }, [router, fetchAdmins]);
@@ -83,7 +84,7 @@ export default function ManageAdminPage() {
     if (nextActive) {
       body = { action: "reactivate" };
     } else {
-      const reason = window.prompt("Alasan menonaktifkan admin ini?");
+      const reason = window.prompt(t("deactivateReason"));
       if (!reason || !reason.trim()) return;
       body = { action: "deactivate", reason: reason.trim(), type: "temporary" };
     }
@@ -100,7 +101,7 @@ export default function ManageAdminPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        alert(result.message || "Gagal memperbarui status admin.");
+        alert(result.message || t("statusUpdateFailed"));
         return;
       }
 
@@ -118,7 +119,7 @@ export default function ManageAdminPage() {
       );
     } catch (err) {
       console.error("Toggle status error:", err);
-      alert("Tidak bisa terhubung ke server.");
+      alert(t("connectionError"));
     }
   }
 
@@ -134,7 +135,7 @@ export default function ManageAdminPage() {
     const result = await res.json();
 
     if (!res.ok || !result.success) {
-      throw new Error(result.message || "Gagal menambahkan admin.");
+      throw new Error(result.message || t("addFailed"));
     }
 
     setAdmins((prev) => [result.data, ...prev]);
@@ -147,8 +148,8 @@ export default function ManageAdminPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center text-[#A1A1AA] text-sm">
-        Memuat...
+      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
+        {t("loading")}
       </div>
     );
   }
@@ -156,22 +157,18 @@ export default function ManageAdminPage() {
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
       <div>
-        <div className="text-xs text-[#71717A] uppercase tracking-wide mb-1">
-          Main Content Canvas
-        </div>
-
         <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="text-2xl font-semibold">{t("title")}</h1>{" "}
             {/* ← HAPUS "manageAdmin." */}
-            <p className="mt-1 text-sm text-[#A1A1AA]">
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               {t("subtitle")} {/* ← HAPUS "manageAdmin." */}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#8083FF] px-4 py-2.5 text-sm font-semibold text-[#111323] hover:bg-[#9295FF]"
+            className="flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary-contrast)] hover:bg-[var(--color-primary-hover)]"
           >
             <UserPlus size={16} strokeWidth={2} />
             {t("addNewAdmin")} {/* ← HAPUS "manageAdmin." */}
@@ -179,54 +176,48 @@ export default function ManageAdminPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5 sm:col-span-2 sm:max-w-xs">
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 sm:col-span-2 sm:max-w-xs">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-wide text-[#71717A]">
+              <span className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)]">
                 {t("totalAdmins")} {/* ← HAPUS "manageAdmin." */}
               </span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#272D3D] text-[#A5A7FF]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-border)] text-[var(--color-primary-soft)]">
                 <Users size={14} strokeWidth={1.75} />
               </span>
             </div>
-            <div className="text-2xl font-semibold text-[#8083FF]">
+            <div className="text-2xl font-semibold text-[var(--color-primary)]">
               {totalAdmins}
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#272D3D] bg-[#131824] p-5 sm:col-span-2 sm:max-w-xs">
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 sm:col-span-2 sm:max-w-xs">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-wide text-[#71717A]">
+              <span className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)]">
                 {t("activeNow")} {/* ← HAPUS "manageAdmin." */}
               </span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-cyan-400/15 text-cyan-400">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-cyan)]/15 text-[var(--color-cyan)]">
                 <Zap size={14} strokeWidth={1.75} />
               </span>
             </div>
-            <div className="text-2xl font-semibold text-cyan-400">
+            <div className="text-2xl font-semibold text-[var(--color-cyan)]">
               {activeNow}
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-[#272D3D] bg-[#131824] overflow-hidden">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-[10px] uppercase tracking-wide text-[#71717A] border-b border-[#272D3D]">
-                <th className="py-3 px-5 font-medium">
-                  {t("administrator")} {/* ← HAPUS "manageAdmin." */}
-                </th>
-                <th className="py-3 px-5 font-medium">
-                  {t("joinedDate")} {/* ← HAPUS "manageAdmin." */}
-                </th>
-                <th className="py-3 px-5 font-medium">
-                  {t("status")} {/* ← HAPUS "manageAdmin." */}
-                </th>
+              <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+                <th className="py-3 px-5 font-medium">{t("administrator")}</th>
+                <th className="py-3 px-5 font-medium">{t("joinedDate")}</th>
+                <th className="py-3 px-5 font-medium">{t("status")}</th>
               </tr>
             </thead>
             <tbody>
@@ -234,18 +225,18 @@ export default function ManageAdminPage() {
                 <tr>
                   <td
                     colSpan={3}
-                    className="py-8 text-center text-sm text-[#71717A]"
+                    className="py-8 text-center text-sm text-[var(--color-text-muted)]"
                   >
-                    Memuat...
+                    {t("loading")}
                   </td>
                 </tr>
               ) : pageAdmins.length === 0 ? (
                 <tr>
                   <td
                     colSpan={3}
-                    className="py-8 text-center text-sm text-[#71717A]"
+                    className="py-8 text-center text-sm text-[var(--color-text-muted)]"
                   >
-                    Belum ada admin.
+                    {t("empty")}
                   </td>
                 </tr>
               ) : (
@@ -253,22 +244,22 @@ export default function ManageAdminPage() {
                   <tr
                     key={admin.id}
                     onClick={() => setSelectedAdmin(admin)}
-                    className="cursor-pointer border-b border-[#1D2230] last:border-0 hover:bg-[#0D0D15]"
+                    className="cursor-pointer border-b border-[var(--color-surface)] last:border-0 hover:bg-[var(--color-input)]"
                   >
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-[#272D3D] flex items-center justify-center text-xs font-semibold text-[#A1A1AA]">
+                        <div className="h-9 w-9 rounded-full bg-[var(--color-border)] flex items-center justify-center text-xs font-semibold text-[var(--color-text-secondary)]">
                           {admin.name[0]}
                         </div>
                         <div>
                           <div className="font-medium">{admin.name}</div>
-                          <div className="text-xs text-[#71717A]">
+                          <div className="text-xs text-[var(--color-text-muted)]">
                             {admin.email}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3.5 px-5 text-[#A1A1AA]">
+                    <td className="py-3.5 px-5 text-[var(--color-text-secondary)]">
                       {new Date(admin.created_at).toLocaleDateString("id-ID", {
                         day: "2-digit",
                         month: "short",
@@ -287,7 +278,7 @@ export default function ManageAdminPage() {
             </tbody>
           </table>
 
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#272D3D] text-xs text-[#71717A]">
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[var(--color-border)] text-xs text-[var(--color-text-muted)]">
             <span>
               {t("showing", {
                 from: totalAdmins === 0 ? 0 : (page - 1) * PAGE_SIZE + 1,
@@ -301,7 +292,7 @@ export default function ManageAdminPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-[#272D3D] disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] disabled:opacity-40"
               >
                 <ChevronLeft size={14} strokeWidth={1.75} />
               </button>
@@ -312,8 +303,8 @@ export default function ManageAdminPage() {
                   onClick={() => setPage(p)}
                   className={`flex h-7 w-7 items-center justify-center rounded-md ${
                     p === page
-                      ? "bg-[#8083FF] text-[#111323] font-semibold"
-                      : "border border-[#272D3D] text-[#A1A1AA]"
+                      ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)] font-semibold"
+                      : "border border-[var(--color-border)] text-[var(--color-text-secondary)]"
                   }`}
                 >
                   {p}
@@ -323,7 +314,7 @@ export default function ManageAdminPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-[#272D3D] disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] disabled:opacity-40"
               >
                 <ChevronRight size={14} strokeWidth={1.75} />
               </button>
