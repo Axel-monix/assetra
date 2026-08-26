@@ -25,10 +25,22 @@
       "history": "Riwayat",
       "manageAdmin": "Kelola Admin"
     },
+    "status": {
+      "functional": "Tersedia",
+      "operating": "Berfungsi",
+      "needs_repair": "Perlu Perbaikan",
+      "needsRepair": "Perlu Perbaikan",
+      "repairing": "Sedang Diperbaiki",
+      "broken": "Rusak",
+      "unavailable": "Tidak Tersedia",
+      "borrowed": "Dipinjam"
+    },
     "admin": {
       "title": "Overview",
       "addItem": "Tambah Item",
       "totalItems": "Total Item",
+      "available": "Tersedia",
+      "availableBadge": "Siap Digunakan",
       "needMaintenance": "Perlu Perawatan",
       "broken": "Rusak",
       "categoryDistribution": "Distribusi Kategori",
@@ -70,6 +82,7 @@
     "addNewAdmin": "Tambah Admin Baru",
     "totalAdmins": "Total Admin",
     "activeNow": "Aktif Sekarang",
+    "lastActivity": "AKTIVITAS TERAKHIR",
     "administrator": "Administrator",
     "joinedDate": "Tanggal Bergabung",
     "status": "Status",
@@ -194,7 +207,6 @@
     "showPassword": "Tampilkan password",
     "hidePassword": "Sembunyikan password"
   },
-
   "bulkAction": {
     "selectedItems": "{count} Item Dipilih",
     "printQr": "Cetak QR",

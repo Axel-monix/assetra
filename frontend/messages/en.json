@@ -19,6 +19,16 @@
     "header": {
       "profile": "Profile"
     },
+    "status": {
+      "functional": "Available",
+      "operating": "Operating",
+      "needs_repair": "Need Repair",
+      "needsRepair": "Needs Repair",
+      "repairing": "Repairing",
+      "broken": "Broken",
+      "unavailable": "Unavailable",
+      "borrowed": "Borrowed"
+    },
     "navigation": {
       "dashboard": "Dashboard",
       "manageItems": "Manage Item",
@@ -29,6 +39,8 @@
       "title": "Overview",
       "addItem": "Add Item",
       "totalItems": "Total Items",
+      "available": "Available",
+      "availableBadge": "Ready",
       "needMaintenance": "Need Maintenance",
       "broken": "Broken",
       "categoryDistribution": "Category Distribution",
@@ -70,6 +82,7 @@
     "addNewAdmin": "Add New Admin",
     "totalAdmins": "Total Admins",
     "activeNow": "Active Now",
+    "lastActivity": "LAST ACTIVITY",
     "administrator": "Administrator",
     "joinedDate": "Joined Date",
     "status": "Status",
@@ -194,7 +207,6 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password"
   },
-
   "bulkAction": {
     "selectedItems": "{count} Selected Item{plural}",
     "printQr": "Print QR",

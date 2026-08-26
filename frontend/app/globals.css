@@ -177,3 +177,28 @@ textarea:focus-visible {
 .assetra-status-dot.assetra-status-danger {
   background-color: var(--assetra-danger);
 }
+  /*TOGGLE SWITCH STYLES*/
+
+/* Landasan Switch (Track) saat posisi Nonaktif */
+.toggle-track {
+  background-color: var(--color-border, #cbd5e1);
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Landasan Switch (Track) saat posisi Aktif */
+.toggle-track[aria-checked="true"] {
+  background-color: var(--color-primary, #4f46e5);
+}
+
+/* Bulatan Geser (Thumb/Knob) */
+.toggle-thumb {
+  background-color: var(--color-card, #ffffff);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Focus ring untuk aksesibilitas keyboard */
+.toggle-track:focus-visible {
+  outline: 2px solid var(--color-primary, #4f46e5);
+  outline-offset: 2px;
+}

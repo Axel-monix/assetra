@@ -15,29 +15,32 @@ export default function StatCard({
   };
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-[var(--color-surface)] p-2.5 text-[var(--color-primary)]">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 flex flex-col justify-between min-h-[110px]">
+      {/* Baris Atas: Icon + Label (Kiri), Badge (Kanan) */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5">
+          <div className="rounded-lg bg-[var(--color-surface)] p-2 text-[var(--color-primary)] shrink-0">
             {icon}
           </div>
-
-          <div>
-            <p className="text-sm text-[var(--color-text-secondary)]">
-              {label}
-            </p>
-
-            <p className="text-2xl font-semibold">{value}</p>
-          </div>
+          <p className="text-sm text-[var(--color-text-secondary)] font-medium">
+            {label}
+          </p>
         </div>
 
         {badgeText && (
           <span
-            className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${badgeStyles[badgeColor]}`}
+            className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium shrink-0 ${badgeStyles[badgeColor]}`}
           >
             {badgeText}
           </span>
         )}
+      </div>
+
+      {/* Baris Bawah: Value / Angka Utama */}
+      <div className="mt-3">
+        <p className="text-3xl font-bold tracking-tight text-[var(--color-text)]">
+          {value}
+        </p>
       </div>
     </div>
   );

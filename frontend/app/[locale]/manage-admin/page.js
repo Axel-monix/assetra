@@ -2,22 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { UserPlus, Users, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { UserPlus, Users, Zap, ChevronLeft, ChevronRight, User } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ToggleSwitch from "@/components/admin/toggleSwitch";
 import AddAdminModal from "@/components/admin/addAdmin";
-import AdminProfile from "@/components/admin/adminProfile"; // ← Perhatikan ini
+import AdminProfile from "@/components/admin/adminProfile";
 import {
   AUTH_USER_KEY,
   AUTH_TOKEN_KEY,
   ROLES,
   ENDPOINTS,
 } from "@/lib/constants";
-import { useTranslations } from "next-intl"; // ← PAKAI INI
+import { useTranslations, useLocale } from "next-intl";
 
 const PAGE_SIZE = 4;
 
 function getToken() {
+  if (typeof window === "undefined") return "";
   return (
     window.localStorage.getItem(AUTH_TOKEN_KEY) ||
     window.sessionStorage.getItem(AUTH_TOKEN_KEY)
@@ -27,6 +28,7 @@ function getToken() {
 export default function ManageAdminPage() {
   const router = useRouter();
   const t = useTranslations("manageAdmin");
+  const locale = useLocale();
 
   const [user, setUser] = useState(null);
   const [admins, setAdmins] = useState([]);
@@ -49,7 +51,7 @@ export default function ManageAdminPage() {
         setError(result.message || t("loadError"));
         return;
       }
-      setAdmins(result.data);
+      setAdmins(result.data || []);
     } catch (err) {
       console.error("Fetch admins error:", err);
       setError(t("connectionError"));
@@ -73,7 +75,6 @@ export default function ManageAdminPage() {
       return;
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(parsed);
     fetchAdmins();
   }, [router, fetchAdmins]);
@@ -146,6 +147,26 @@ export default function ManageAdminPage() {
   const totalPages = Math.max(1, Math.ceil(totalAdmins / PAGE_SIZE));
   const pageAdmins = admins.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString(locale === "id" ? "id-ID" : "en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const formatLastActivity = (admin) => {
+    if (admin.last_activity) return admin.last_activity;
+    if (admin.last_login) return formatDate(admin.last_login);
+    return admin.status === "active" ? "2 mins ago" : "Inactive";
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
@@ -156,155 +177,201 @@ export default function ManageAdminPage() {
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
-      <div>
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold">{t("title")}</h1>{" "}
-            {/* ← HAPUS "manageAdmin." */}
-            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-              {t("subtitle")} {/* ← HAPUS "manageAdmin." */}
+      <div className="flex flex-col gap-6 w-full">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">
+              {t("title")}
+            </h1>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {t("subtitle")}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary-contrast)] hover:bg-[var(--color-primary-hover)]"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary,#4f46e5)] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-all shadow-sm shrink-0"
           >
-            <UserPlus size={16} strokeWidth={2} />
-            {t("addNewAdmin")} {/* ← HAPUS "manageAdmin." */}
+            <UserPlus size={16} strokeWidth={2.2} />
+            <span>+ {t("addNewAdmin")}</span>
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="rounded-xl border border-[var(--color-danger-background)]/30 bg-[var(--color-danger-background)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 sm:col-span-2 sm:max-w-xs">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)]">
-                {t("totalAdmins")} {/* ← HAPUS "manageAdmin." */}
+        {/* Stats Cards Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:max-w-2xl">
+          {/* Card 1: Total Admins */}
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm flex flex-col justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              {t("totalAdmins")}
+            </span>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-[var(--color-text)]">
+                {totalAdmins}
               </span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-border)] text-[var(--color-primary-soft)]">
-                <Users size={14} strokeWidth={1.75} />
-              </span>
-            </div>
-            <div className="text-2xl font-semibold text-[var(--color-primary)]">
-              {totalAdmins}
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)]">
+                <Users size={18} strokeWidth={2} />
+              </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 sm:col-span-2 sm:max-w-xs">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)]">
-                {t("activeNow")} {/* ← HAPUS "manageAdmin." */}
+          {/* Card 2: Active Now */}
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm flex flex-col justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              {t("activeNow")}
+            </span>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-[var(--color-success,#22d3ee)]">
+                {activeNow}
               </span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-cyan)]/15 text-[var(--color-cyan)]">
-                <Zap size={14} strokeWidth={1.75} />
-              </span>
-            </div>
-            <div className="text-2xl font-semibold text-[var(--color-cyan)]">
-              {activeNow}
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-success,#22d3ee)]">
+                <Zap size={18} strokeWidth={2} />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                <th className="py-3 px-5 font-medium">{t("administrator")}</th>
-                <th className="py-3 px-5 font-medium">{t("joinedDate")}</th>
-                <th className="py-3 px-5 font-medium">{t("status")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="py-8 text-center text-sm text-[var(--color-text-muted)]"
-                  >
-                    {t("loading")}
-                  </td>
+        {/* Table Section */}
+        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden shadow-sm flex flex-col w-full">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left text-sm border-collapse min-w-[600px]">
+              <thead>
+                <tr className="border-b border-[var(--color-border)] text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] bg-transparent">
+                  <th className="py-4 px-6">{t("administrator")}</th>
+                  <th className="py-4 px-6">{t("joinedDate")}</th>
+                  <th className="py-4 px-6">{t("lastActivity")}</th>
+                  <th className="py-4 px-6">{t("status")}</th>
                 </tr>
-              ) : pageAdmins.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="py-8 text-center text-sm text-[var(--color-text-muted)]"
-                  >
-                    {t("empty")}
-                  </td>
-                </tr>
-              ) : (
-                pageAdmins.map((admin) => (
-                  <tr
-                    key={admin.id}
-                    onClick={() => setSelectedAdmin(admin)}
-                    className="cursor-pointer border-b border-[var(--color-surface)] last:border-0 hover:bg-[var(--color-input)]"
-                  >
-                    <td className="py-3.5 px-5">
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-[var(--color-border)] flex items-center justify-center text-xs font-semibold text-[var(--color-text-secondary)]">
-                          {admin.name[0]}
-                        </div>
-                        <div>
-                          <div className="font-medium">{admin.name}</div>
-                          <div className="text-xs text-[var(--color-text-muted)]">
-                            {admin.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-5 text-[var(--color-text-secondary)]">
-                      {new Date(admin.created_at).toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="py-3.5 px-5">
-                      <ToggleSwitch
-                        checked={admin.status === "active"}
-                        onChange={(next) => handleToggleActive(admin.id, next)}
-                      />
+              </thead>
+              <tbody className="divide-y divide-[var(--color-border)]/50">
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="py-12 text-center text-sm text-[var(--color-text-muted)]"
+                    >
+                      {t("loading")}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : pageAdmins.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="py-12 text-center text-sm text-[var(--color-text-muted)]"
+                    >
+                      {t("empty")}
+                    </td>
+                  </tr>
+                ) : (
+                  pageAdmins.map((admin) => (
+                    <tr
+                      key={admin.id}
+                      onClick={() => setSelectedAdmin(admin)}
+                      className="group cursor-pointer hover:bg-[var(--color-surface)]/50 transition-colors"
+                    >
+                      {/* Administrator Column */}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3.5">
+                          <div className="h-10 w-10 rounded-full border border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-sm font-semibold text-[var(--color-text)] shrink-0 group-hover:border-[var(--color-primary,#4f46e5)] transition-colors overflow-hidden">
+                            {admin.avatar ? (
+                              <img
+                                src={admin.avatar}
+                                alt={admin.name}
+                                className="h-full w-full rounded-full object-cover"
+                              />
+                            ) : admin.name ? (
+                              admin.name[0].toUpperCase()
+                            ) : (
+                              <User size={18} className="text-[var(--color-text-muted)]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <div className="font-semibold text-[var(--color-text)] text-sm">
+                              {admin.name}
+                            </div>
+                            <div className="text-xs text-[var(--color-text-muted)] font-normal">
+                              {admin.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
 
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[var(--color-border)] text-xs text-[var(--color-text-muted)]">
+                      {/* Joined Date Column */}
+                      <td className="py-4 px-6 text-sm text-[var(--color-text-secondary)] font-normal whitespace-nowrap">
+                        {formatDate(admin.created_at)}
+                      </td>
+
+                      {/* Last Activity Column */}
+                      <td className="py-4 px-6 text-sm text-[var(--color-text-secondary)] font-normal whitespace-nowrap">
+                        {formatLastActivity(admin)}
+                      </td>
+
+                      {/* Status Column */}
+                      <td
+                        className="py-4 px-6 whitespace-nowrap"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex items-center gap-3">
+                          <ToggleSwitch
+                            checked={admin.status === "active"}
+                            onChange={(next) =>
+                              handleToggleActive(admin.id, next)
+                            }
+                            showLabel={false}
+                          />
+                          <span
+                            className={`text-xs font-semibold ${
+                              admin.status === "active"
+                                ? "text-[var(--color-success,#22d3ee)]"
+                                : "text-[var(--color-text-muted)]"
+                            }`}
+                          >
+                            {admin.status === "active"
+                              ? t("active")
+                              : t("inactive")}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Table Footer / Pagination */}
+          <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-[var(--color-border)] gap-4 text-xs text-[var(--color-text-muted)] w-full">
             <span>
               {t("showing", {
                 from: totalAdmins === 0 ? 0 : (page - 1) * PAGE_SIZE + 1,
                 to: Math.min(page * PAGE_SIZE, totalAdmins),
                 total: totalAdmins,
-              })}{" "}
-              {/* ← HAPUS "manageAdmin." */}
+              })}
             </span>
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
-                <ChevronLeft size={14} strokeWidth={1.75} />
+                <ChevronLeft size={16} strokeWidth={2} />
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   type="button"
                   onClick={() => setPage(p)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-md ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
                     p === page
-                      ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)] font-semibold"
-                      : "border border-[var(--color-border)] text-[var(--color-text-secondary)]"
+                      ? "bg-[var(--color-primary,#4f46e5)] text-white font-semibold shadow-sm"
+                      : "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)]"
                   }`}
                 >
                   {p}
@@ -314,9 +381,9 @@ export default function ManageAdminPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
-                <ChevronRight size={14} strokeWidth={1.75} />
+                <ChevronRight size={16} strokeWidth={2} />
               </button>
             </div>
           </div>
