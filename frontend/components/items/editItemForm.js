@@ -36,7 +36,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   const t = useTranslations("manageItem");
 
   const [form, setForm] = useState({
-    asset_name: item?.name || "",
+    name: item?.name || "",
     id_category: "",
     status: normalizeStatus(item?.status),
     location: item?.location || "",
@@ -197,7 +197,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!form.asset_name.trim()) {
+    if (!form.name.trim()) {
       setError(t("itemNameRequired"));
       return;
     }
@@ -211,7 +211,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
     try {
       await onSubmit(item.id, {
-        asset_name: form.asset_name.trim(),
+        name: form.name.trim(),
         id_category: Number(form.id_category),
         status: form.status,
         location: form.location.trim(),
@@ -310,8 +310,8 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               </label>
 
               <input
-                name="asset_name"
-                value={form.asset_name}
+                name="name"
+                value={form.name}
                 onChange={handleChange}
                 placeholder={t("itemNamePlaceholder")}
                 className="assetra-form-input"

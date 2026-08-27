@@ -59,7 +59,7 @@ export default function AddItemForm({
   const t = useTranslations("manageItem");
 
   const [form, setForm] = useState({
-    asset_name: "",
+    name: "",
     code_item: "",
     id_category: "",
     status: ASSET_STATUS.FUNCTIONAL,
@@ -169,7 +169,7 @@ export default function AddItemForm({
         [name]: value,
       };
 
-      if (name === "asset_name") {
+      if (name === "name") {
         next.code_item =
           generateCodeFromName(value);
       }
@@ -290,7 +290,7 @@ export default function AddItemForm({
       return;
     }
 
-    if (!form.asset_name.trim()) {
+    if (!form.name.trim()) {
       setError(t("itemNameRequired"));
       return;
     }
@@ -304,8 +304,8 @@ export default function AddItemForm({
 
     try {
       await onSubmit({
-        asset_name:
-          form.asset_name.trim(),
+        name:
+          form.name.trim(),
 
         id_category:
           Number(form.id_category),
@@ -472,8 +472,8 @@ export default function AddItemForm({
                 </label>
 
                 <input
-                  name="asset_name"
-                  value={form.asset_name}
+                  name="name"
+                  value={form.name}
                   onChange={handleChange}
                   placeholder={t(
                     "itemNamePlaceholder",
