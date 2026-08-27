@@ -24,9 +24,9 @@ const colors = {
 
   white: "#FFFFFF",
 
-  danger: "#F87171",
+  dangerBackground: "#F87171",
   dangerHover: "#FCA5A5",
-  dangerBackground: "#EF4444",
+  danger: "#EF4444",
 
   warning: "#FBBF24",
   info: "#60A5FA",
