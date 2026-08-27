@@ -1,64 +1,121 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { X, Upload, AlertCircle } from "lucide-react";
-import { ENDPOINTS, AUTH_TOKEN_KEY } from "@/lib/constants";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  X,
+  Upload,
+  AlertCircle,
+} from "lucide-react";
+
+import {
+  ENDPOINTS,
+  AUTH_TOKEN_KEY,
+} from "@/lib/constants";
+
+import {
+  ASSET_STATUS,
+} from "@/lib/assetStatus";
+
+import {
+  getSpecTemplate,
+  buildSpecsPayload,
+} from "@/lib/itemHelper";
+
 import { useTranslations } from "next-intl";
 
 const STATUS_OPTIONS = [
-  { value: "functional", label: "functional" },
-  { value: "needs_repair", label: "needs_repair" },
-  { value: "borrowed", label: "borrowed" },
-  { value: "unavailable", label: "unavailable" },
+  ASSET_STATUS.FUNCTIONAL,
+  ASSET_STATUS.NEEDS_REPAIR,
+  ASSET_STATUS.BORROWED,
+  ASSET_STATUS.UNAVAILABLE,
 ];
 
 function generateCodeFromName(name) {
   if (!name) return "";
+
   const prefix = name
     .replace(/[^a-zA-Z0-9]/g, "")
     .toUpperCase()
     .slice(0, 3)
     .padEnd(3, "X");
-  const random = String(Math.floor(1000 + Math.random() * 9000));
+
+  const random = String(
+    Math.floor(1000 + Math.random() * 9000),
+  );
+
   return `${prefix}-${random}`;
 }
 
-export default function AddItemForm({ onClose, onSubmit }) {
+export default function AddItemForm({
+  onClose,
+  onSubmit,
+}) {
   const t = useTranslations("manageItem");
+
   const [form, setForm] = useState({
     asset_name: "",
     code_item: "",
     id_category: "",
-    status: "functional",
+    status: ASSET_STATUS.FUNCTIONAL,
+    location: "",
     description: "",
     image_url: "",
   });
+
+  const [specValues, setSpecValues] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingCategories, setLoadingCategories] =
+    useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     async function loadCategories() {
       try {
         const token =
-          window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-          window.sessionStorage.getItem(AUTH_TOKEN_KEY);
-        const response = await fetch(ENDPOINTS.CATEGORIES, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+          window.localStorage.getItem(
+            AUTH_TOKEN_KEY,
+          ) ||
+          window.sessionStorage.getItem(
+            AUTH_TOKEN_KEY,
+          );
+
+        const response = await fetch(
+          ENDPOINTS.CATEGORIES,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
         const result = await response.json();
+
         if (!response.ok || !result.success) {
-          throw new Error(result.message || t("categoryLoadError"));
+          throw new Error(
+            result.message ||
+              t("categoryLoadError"),
+          );
         }
+
         setCategories(result.data || []);
+
         if (result.data?.length) {
           setForm((prev) => ({
             ...prev,
-            id_category: String(result.data[0].id),
+            id_category: String(
+              result.data[0].id,
+            ),
           }));
         }
       } catch (err) {
@@ -67,99 +124,159 @@ export default function AddItemForm({ onClose, onSubmit }) {
         setLoadingCategories(false);
       }
     }
+
     loadCategories();
   }, [t]);
 
+  const selectedCategoryName = useMemo(() => {
+    const match = categories.find(
+      (cat) =>
+        String(cat.id) ===
+        String(form.id_category),
+    );
+
+    return match?.category_name || "";
+  }, [categories, form.id_category]);
+
+  const specTemplate = useMemo(
+    () =>
+      getSpecTemplate(
+        selectedCategoryName,
+      ),
+    [selectedCategoryName],
+  );
+
+  useEffect(() => {
+    setSpecValues((prev) => {
+      const next = {};
+
+      specTemplate.forEach(({ key }) => {
+        if (prev[key] !== undefined) {
+          next[key] = prev[key];
+        }
+      });
+
+      return next;
+    });
+  }, [specTemplate]);
+
   function handleChange(event) {
     const { name, value } = event.target;
+
     setForm((prev) => {
-      const newForm = { ...prev, [name]: value };
+      const next = {
+        ...prev,
+        [name]: value,
+      };
+
       if (name === "asset_name") {
-        newForm.code_item = generateCodeFromName(value);
+        next.code_item =
+          generateCodeFromName(value);
       }
-      return newForm;
+
+      return next;
     });
+
     setError("");
   }
 
-  // 🔥 FIX: UPLOAD PAKE PROXY
+  function handleSpecChange(key, value) {
+    setSpecValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  }
+
   async function uploadImageToServer(file) {
     const formData = new FormData();
+
     formData.append("foto", file);
 
-    try {
-      console.log("📤 Uploading to proxy...");
-
-      const response = await fetch("/api/upload-proxy", {
+    const response = await fetch(
+      "/api/upload-proxy",
+      {
         method: "POST",
         body: formData,
-      });
+      },
+    );
 
-      console.log("📊 Response status:", response.status);
-
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("Response text:", text);
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log("📥 Upload result:", result);
-
-      if (!result.success) {
-        throw new Error(result.message || t("uploadError"));
-      }
-
-      return result.foto;
-    } catch (err) {
-      console.error("❌ Upload error:", err);
-      throw err;
+    if (!response.ok) {
+      throw new Error(
+        t("uploadError"),
+      );
     }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(
+        result.message ||
+          t("uploadError"),
+      );
+    }
+
+    return result.foto;
   }
 
   async function handleImageChange(event) {
     const file = event.target.files[0];
+
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       setError(t("fileMustBeImage"));
       return;
     }
+
     if (file.size > 5 * 1024 * 1024) {
       setError(t("fileTooLarge"));
       return;
     }
 
-    // Preview
     const reader = new FileReader();
+
     reader.onloadend = () => {
       setImagePreview(reader.result);
     };
+
     reader.readAsDataURL(file);
 
     setError("");
     setIsUploading(true);
 
     try {
-      const imageUrl = await uploadImageToServer(file);
-      setForm((prev) => ({ ...prev, image_url: imageUrl }));
-      setIsUploading(false);
-      console.log("✅ Image uploaded successfully:", imageUrl);
+      const imageUrl =
+        await uploadImageToServer(file);
+
+      setForm((prev) => ({
+        ...prev,
+        image_url: imageUrl,
+      }));
     } catch (err) {
-      console.error("❌ Upload error:", err);
-      setError(err.message || t("uploadError"));
-      setIsUploading(false);
+      setError(
+        err.message ||
+          t("uploadError"),
+      );
+
       setImagePreview(null);
+
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+    } finally {
+      setIsUploading(false);
     }
   }
 
   function removeImage() {
-    setForm((prev) => ({ ...prev, image_url: "" }));
+    setForm((prev) => ({
+      ...prev,
+      image_url: "",
+    }));
+
     setImagePreview(null);
     setError("");
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -172,27 +289,50 @@ export default function AddItemForm({ onClose, onSubmit }) {
       setError(t("imageRequired"));
       return;
     }
+
     if (!form.asset_name.trim()) {
       setError(t("itemNameRequired"));
       return;
     }
+
     if (!form.id_category) {
       setError(t("categoryRequired"));
       return;
     }
 
     setLoading(true);
+
     try {
       await onSubmit({
-        asset_name: form.asset_name.trim(),
-        id_category: Number(form.id_category),
+        asset_name:
+          form.asset_name.trim(),
+
+        id_category:
+          Number(form.id_category),
+
         status: form.status,
-        description: form.description.trim(),
-        image_url: form.image_url,
+
+        location:
+          form.location.trim(),
+
+        description:
+          form.description.trim(),
+
+        image_url:
+          form.image_url,
+
+        specs: buildSpecsPayload(
+          specTemplate,
+          specValues,
+        ),
       });
+
       onClose();
     } catch (err) {
-      setError(err.message || t("addFailed"));
+      setError(
+        err.message ||
+          t("addFailed"),
+      );
     } finally {
       setLoading(false);
     }
@@ -201,40 +341,54 @@ export default function AddItemForm({ onClose, onSubmit }) {
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[var(--color-overlay)]/60 backdrop-blur-sm"
-        onClick={onClose}
+        className="assetra-modal-overlay"
+        onClick={
+          loading ? undefined : onClose
+        }
       />
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 max-h-[90vh] overflow-y-auto">
+      <div className="assetra-modal-wrapper">
+        <div className="assetra-modal-card">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-semibold text-[var(--color-white)]">
               {t("addNewItem")}
             </h2>
+
             <button
               type="button"
               onClick={onClose}
-              className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition"
+              disabled={loading}
+              aria-label={t("close")}
+              className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition disabled:opacity-50"
             >
-              <X size={20} strokeWidth={1.75} />
+              <X
+                size={20}
+                strokeWidth={1.75}
+              />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            {/* Upload Gambar */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-5"
+          >
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+              <label className="assetra-form-label">
                 {t("uploadImage")}{" "}
-                <span className="text-[var(--color-danger)]">*</span>
+                <span className="text-[var(--color-danger)]">
+                  *
+                </span>
               </label>
+
               <div className="flex flex-col gap-2">
                 {imagePreview ? (
                   <div className="relative rounded-lg border border-[var(--color-border)] overflow-hidden">
                     <img
                       src={imagePreview}
-                      alt="Preview"
+                      alt={t("imagePreview")}
                       className="w-full h-48 object-cover"
                     />
+
                     {isUploading && (
                       <div className="absolute inset-0 bg-[var(--color-overlay)]/60 flex items-center justify-center">
                         <div className="flex items-center gap-2 text-[var(--color-white)]">
@@ -243,36 +397,52 @@ export default function AddItemForm({ onClose, onSubmit }) {
                         </div>
                       </div>
                     )}
+
                     <button
                       type="button"
                       onClick={removeImage}
                       disabled={isUploading}
+                      aria-label={t("removeImage")}
                       className="absolute top-2 right-2 p-1.5 bg-[var(--color-danger-background)]/80 rounded-full hover:bg-[var(--color-danger-background)] transition disabled:opacity-50"
                     >
                       <X size={14} />
                     </button>
-                    {form.image_url && !isUploading && (
-                      <div className="absolute bottom-2 left-2 bg-[var(--color-overlay)]/60 px-2 py-1 rounded text-[10px] text-[var(--color-success)]">
-                        ✅ {t("imageUploaded")}
-                      </div>
-                    )}
+
+                    {form.image_url &&
+                      !isUploading && (
+                        <div className="absolute bottom-2 left-2 bg-[var(--color-overlay)]/60 px-2 py-1 rounded text-[10px] text-[var(--color-success)]">
+                          {t("imageUploaded")}
+                        </div>
+                      )}
                   </div>
                 ) : (
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() =>
+                      fileInputRef.current?.click()
+                    }
                     disabled={isUploading}
-                    className="flex flex-col items-center justify-center gap-2 h-48 w-full rounded-lg border-2 border-dashed border-[var(--color-border)] bg-[var(--color-input)] text-[var(--color-text-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition disabled:opacity-50"
+                    className="assetra-upload-drop"
                   >
                     {isUploading ? (
                       <>
                         <div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--color-primary)] border-t-transparent" />
-                        <span className="text-xs">{t("uploading")}</span>
+
+                        <span className="text-xs">
+                          {t("uploading")}
+                        </span>
                       </>
                     ) : (
                       <>
-                        <Upload size={32} strokeWidth={1.5} />
-                        <span className="text-sm">{t("uploadImageHere")}</span>
+                        <Upload
+                          size={32}
+                          strokeWidth={1.5}
+                        />
+
+                        <span className="text-sm">
+                          {t("uploadImageHere")}
+                        </span>
+
                         <span className="text-[10px] text-[var(--color-text-placeholder)]">
                           {t("imageRecommended")}
                         </span>
@@ -280,6 +450,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
                     )}
                   </button>
                 )}
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -291,102 +462,186 @@ export default function AddItemForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Nama Item + Code Item */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                <label className="assetra-form-label">
                   {t("itemName")}{" "}
-                  <span className="text-[var(--color-danger)]">*</span>
+                  <span className="text-[var(--color-danger)]">
+                    *
+                  </span>
                 </label>
+
                 <input
                   name="asset_name"
                   value={form.asset_name}
                   onChange={handleChange}
-                  placeholder={t("itemNamePlaceholder")}
-                  className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] transition"
+                  placeholder={t(
+                    "itemNamePlaceholder",
+                  )}
+                  className="assetra-form-input"
                 />
               </div>
+
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                <label className="assetra-form-label">
                   {t("codeItem")}
                 </label>
+
                 <input
                   name="code_item"
                   value={form.code_item}
                   readOnly
-                  placeholder={t("codeItemPlaceholder")}
-                  className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-text-muted)] outline-none cursor-not-allowed"
+                  placeholder={t(
+                    "codeItemPlaceholder",
+                  )}
+                  className={`${"assetra-form-input"} ${"font-mono"}`}
                 />
               </div>
             </div>
 
-            {/* Kategori */}
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
-                {t("category")}{" "}
-                <span className="text-[var(--color-danger)]">*</span>
-              </label>
-              <select
-                name="id_category"
-                value={form.id_category}
-                onChange={handleChange}
-                disabled={loadingCategories}
-                className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none focus:border-[var(--color-primary)] transition disabled:opacity-50"
-              >
-                {loadingCategories && (
-                  <option value="">{t("loadingCategories")}</option>
-                )}
-                {!loadingCategories && categories.length === 0 && (
-                  <option value="">{t("noCategories")}</option>
-                )}
-                <option value="" disabled>
-                  {t("selectCategory")}
-                </option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.category_name}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="assetra-form-label">
+                  {t("category")}{" "}
+                  <span className="text-[var(--color-danger)]">
+                    *
+                  </span>
+                </label>
+
+                <select
+                  name="id_category"
+                  value={form.id_category}
+                  onChange={handleChange}
+                  disabled={loadingCategories}
+                  className="assetra-form-input"
+                >
+                  {loadingCategories && (
+                    <option value="">
+                      {t("loadingCategories")}
+                    </option>
+                  )}
+
+                  {!loadingCategories &&
+                    categories.length === 0 && (
+                      <option value="">
+                        {t("noCategories")}
+                      </option>
+                    )}
+
+                  <option value="" disabled>
+                    {t("selectCategory")}
                   </option>
-                ))}
-              </select>
+
+                  {categories.map((cat) => (
+                    <option
+                      key={cat.id}
+                      value={cat.id}
+                    >
+                      {cat.category_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="assetra-form-label">
+                  {t("location")}
+                </label>
+
+                <input
+                  name="location"
+                  value={form.location}
+                  onChange={handleChange}
+                  placeholder={t(
+                    "locationPlaceholder",
+                  )}
+                  className="assetra-form-input"
+                />
+              </div>
             </div>
 
-            {/* Status */}
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+              <label className="assetra-form-label">
                 {t("status")}{" "}
-                <span className="text-[var(--color-danger)]">*</span>
+                <span className="text-[var(--color-danger)]">
+                  *
+                </span>
               </label>
+
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="h-11 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 text-sm text-[var(--color-white)] outline-none focus:border-[var(--color-primary)] transition"
+                className="assetra-form-input"
               >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {t(`statusOptions.${opt.value}`)}
-                  </option>
-                ))}
+                {STATUS_OPTIONS.map(
+                  (status) => (
+                    <option
+                      key={status}
+                      value={status}
+                    >
+                      {t(
+                        `statusOptions.${status}`,
+                      )}
+                    </option>
+                  ),
+                )}
               </select>
             </div>
 
-            {/* Deskripsi */}
+            {specTemplate.length > 0 && (
+              <div>
+                <label className="assetra-form-label">
+                  {t("specifications")}
+                </label>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {specTemplate.map(
+                    (field) => (
+                      <input
+                        key={field.key}
+                        value={
+                          specValues[
+                            field.key
+                          ] || ""
+                        }
+                        onChange={(event) =>
+                          handleSpecChange(
+                            field.key,
+                            event.target
+                              .value,
+                          )
+                        }
+                        placeholder={
+                          field.label
+                        }
+                        className="assetra-form-input"
+                      />
+                    ),
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+              <label className="assetra-form-label">
                 {t("descriptionOptional")}
               </label>
+
               <textarea
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                placeholder={t("descriptionPlaceholder")}
+                placeholder={t(
+                  "descriptionPlaceholder",
+                )}
                 rows={3}
-                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3 py-2 text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] transition resize-none"
+                className="assetra-form-input"
               />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-xs text-[var(--color-danger)]">
+              <div className="assetra-error-box">
                 <AlertCircle size={14} />
                 {error}
               </div>
@@ -396,16 +651,24 @@ export default function AddItemForm({ onClose, onSubmit }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 h-11 rounded-lg border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] transition"
+                disabled={loading}
+                className="assetra-btn assetra-btn-secondary flex-1"
               >
                 {t("cancel")}
               </button>
+
               <button
                 type="submit"
-                disabled={loading || isUploading || !form.image_url}
-                className="flex-1 h-11 rounded-lg bg-[var(--color-primary)] text-sm font-semibold text-[var(--color-primary-contrast)] hover:bg-[var(--color-primary-hover)] transition disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={
+                  loading ||
+                  isUploading ||
+                  !form.image_url
+                }
+                className="assetra-btn assetra-btn-primary flex-1"
               >
-                {loading ? t("adding") : t("addItem")}
+                {loading
+                  ? t("adding")
+                  : t("addItem")}
               </button>
             </div>
           </form>

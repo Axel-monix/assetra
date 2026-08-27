@@ -1,65 +1,51 @@
 "use client";
 
-import { FONTS } from "../../lib/constants";
 import { useState } from "react";
+import { FONTS } from "@/lib/constants";
+import {
+  getAssetStatusLabelKey,
+  getAssetStatusStyle,
+} from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
-
-const statusDot = {
-  Tersedia: "assetra-status-success",
-  Maintenance: "assetra-status-warning",
-  Rusak: "assetra-status-danger",
-  functional: "assetra-status-success",
-  needs_repair: "assetra-status-warning",
-  borrowed: "assetra-status-success",
-  unavailable: "assetra-status-danger",
-};
-
-const statusText = {
-  Tersedia: "assetra-status-success",
-  Maintenance: "assetra-status-warning",
-  Rusak: "assetra-status-danger",
-  functional: "assetra-status-success",
-  needs_repair: "assetra-status-warning",
-  borrowed: "assetra-status-success",
-  unavailable: "assetra-status-danger",
-};
 
 function getCategoryName(item) {
   if (typeof item.category === "object" && item.category !== null) {
     return item.category.category_name || item.category.name || "-";
   }
-  return item.categoryName || item.category_name || item.category || "-";
+
+  return (
+    item.categoryName ||
+    item.category_name ||
+    item.category ||
+    "-"
+  );
 }
 
 export default function ItemCard({ item, selected, onClick }) {
   const t = useTranslations("manageItem");
   const [imageError, setImageError] = useState(false);
-  const categoryName = getCategoryName(item);
 
-  // Cek apakah ada gambar
+  const categoryName = getCategoryName(item);
   const hasImage = item.imageUrl && !imageError;
 
-  // Format status biar konsisten
-  const statusMap = {
-    functional: "Tersedia",
-    needs_repair: "Maintenance",
-    borrowed: "Dipinjam",
-    unavailable: "Tidak Tersedia",
-  };
+  const statusKey = getAssetStatusLabelKey(item.status);
 
-  const displayStatus = t(`statusOptions.${item.status}`, {
-    defaultValue: statusMap[item.status] || item.status,
-  });
+  const displayStatus = statusKey
+    ? t(statusKey, {
+        defaultValue: item.status,
+      })
+    : item.status;
+
+  const statusStyle = getAssetStatusStyle(item.status);
 
   return (
     <button
       type="button"
       onClick={(event) => onClick(item.id, event)}
-      className={`assetra-item-card text-left overflow-hidden ${
+      className={`assetra-item-card text-left ${
         selected ? "is-selected" : ""
       }`}
     >
-      {/* Gambar */}
       <div className="aspect-video bg-gradient-to-br from-[var(--color-media-start)] to-[var(--color-input)] flex items-center justify-center relative overflow-hidden">
         {hasImage ? (
           <img
@@ -70,7 +56,12 @@ export default function ItemCard({ item, selected, onClick }) {
             loading="lazy"
           />
         ) : (
-          <span className="text-3xl opacity-30">📦</span>
+          <span
+            aria-hidden="true"
+            className="text-3xl opacity-30"
+          >
+            📦
+          </span>
         )}
       </div>
 
@@ -79,6 +70,7 @@ export default function ItemCard({ item, selected, onClick }) {
           <h3 className="text-sm font-medium leading-snug pr-2 line-clamp-1">
             {item.name}
           </h3>
+
           <span className="shrink-0 rounded-md bg-[var(--color-border)] px-1.5 py-0.5 text-[10px] font-medium uppercase text-[var(--color-primary-soft)]">
             {categoryName}
           </span>
@@ -92,13 +84,15 @@ export default function ItemCard({ item, selected, onClick }) {
 
         <div className="flex items-center justify-between text-xs">
           <span
-            className={`flex items-center gap-1.5 font-medium ${statusText[item.status] || statusText[displayStatus]}`}
+            className={`flex items-center gap-1.5 font-medium ${statusStyle}`}
           >
             <span
-              className={`assetra-status-dot ${statusDot[item.status] || statusDot[displayStatus]}`}
+              className={`assetra-status-dot ${statusStyle}`}
             />
+
             {displayStatus}
           </span>
+
           <span className="text-[var(--color-text-muted)]">
             {item.location || ""}
           </span>
