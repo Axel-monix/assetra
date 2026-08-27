@@ -1,5 +1,6 @@
 const colors = {
   background: "#0B0F17",
+
   primary: "#8083FF",
   primaryHover: "#9295FF",
   primarySoft: "#A5A7FF",
@@ -22,14 +23,18 @@ const colors = {
   iconMuted: "#8D8FA0",
 
   white: "#FFFFFF",
+
   danger: "#F87171",
   dangerHover: "#FCA5A5",
   dangerBackground: "#EF4444",
+
   warning: "#FBBF24",
   info: "#60A5FA",
   success: "#4CAF50",
+
   accentCyan: "#22D3EE",
   accentOrange: "#FB923C",
+
   overlay: "#000000",
 };
 

@@ -1,42 +1,41 @@
 export const ASSET_STATUS = {
   FUNCTIONAL: "functional",
-  OPERATING: "operating",
   NEEDS_REPAIR: "needs_repair",
-  REPAIRING: "repairing",
-  BROKEN: "broken",
   BORROWED: "borrowed",
   UNAVAILABLE: "unavailable",
 };
 
-// Map warna badge berdasarkan string status dari database
 export const ASSET_STATUS_STYLES = {
-  // Tersedia / Berfungsi (Hijau)
-  functional: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
-  operating: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
+  functional:
+    "assetra-status-success bg-[var(--assetra-success)]/10 border border-[var(--assetra-success)]/20",
+  needs_repair:
+    "assetra-status-warning bg-[var(--assetra-warning)]/10 border border-[var(--assetra-warning)]/20",
 
-  // Perlu Perbaikan / Maintenance (Kuning/Oranye)
-  needs_repair: "bg-[var(--color-warning)]/15 text-[var(--color-warning)] border border-[var(--color-warning)]/20",
-  needsRepair: "bg-[var(--color-warning)]/15 text-[var(--color-warning)] border border-[var(--color-warning)]/20",
-  repairing: "bg-amber-500/15 text-amber-400 border border-amber-500/20",
+  borrowed:
+    "assetra-status-info bg-[var(--assetra-info)]/10 border border-[var(--assetra-info)]/20",
 
-  // Rusak (Merah)
-  broken: "bg-[var(--color-danger-background)]/15 text-[var(--color-danger)] border border-[var(--color-danger-background)]/20",
-
-  // Dipinjam (Biru)
-  borrowed: "bg-blue-500/15 text-blue-400 border border-blue-400/20",
-
-  // Tidak Tersedia (Abu-abu/Rose)
-  unavailable: "bg-rose-500/15 text-rose-400 border border-rose-500/20",
+  unavailable:
+    "assetra-status-muted bg-[var(--assetra-text-muted)]/10 border border-[var(--assetra-text-muted)]/20",
 };
 
-// Map translation key ke dashboard.status
 export const ASSET_STATUS_LABELS = {
-  functional: "status.functional",
-  operating: "status.operating",
-  needs_repair: "status.needs_repair",
-  needsRepair: "status.needsRepair",
-  repairing: "status.repairing",
-  broken: "status.broken",
-  borrowed: "status.borrowed",
-  unavailable: "status.unavailable",
+  functional: "statusOptions.functional",
+  needs_repair: "statusOptions.needs_repair",
+  borrowed: "statusOptions.borrowed",
+  unavailable: "statusOptions.unavailable",
 };
+
+export const ASSET_STATUS_OPTIONS = [
+  ASSET_STATUS.FUNCTIONAL,
+  ASSET_STATUS.NEEDS_REPAIR,
+  ASSET_STATUS.BORROWED,
+  ASSET_STATUS.UNAVAILABLE,
+];
+
+export function getAssetStatusStyle(status) {
+  return ASSET_STATUS_STYLES[status] || "assetra-status-muted";
+}
+
+export function getAssetStatusLabelKey(status) {
+  return ASSET_STATUS_LABELS[status] || null;
+}

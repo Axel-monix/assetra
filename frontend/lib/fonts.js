@@ -1,9 +1,8 @@
-
-// - fontMain  (Manrope)        -> font utama 
-// - fontCode  (JetBrains Mono) -> khusus kode barang / serial number
-// - fontDesc  (Inter)          -> khusus deskripsi/spesifikasi barang
-
-import { Manrope, JetBrains_Mono, Inter } from "next/font/google";
+import {
+  Manrope,
+  JetBrains_Mono,
+  Inter,
+} from "next/font/google";
 
 export const fontMain = Manrope({
   subsets: ["latin"],
