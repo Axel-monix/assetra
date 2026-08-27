@@ -11,7 +11,7 @@ async function listAssets(req, res) {
   try {
     const { rows } = await pool.query(
       `SELECT asset.id, asset.id_category, category.category_name,
-              asset.asset_name, asset.asset_code, asset.status,
+              asset.name, asset.code, asset.status,
               asset.image_url, asset.qr_code_url, asset.created_at, asset.updated_at
              FROM asset
              LEFT JOIN category ON category.id = asset.id_category
@@ -19,12 +19,12 @@ async function listAssets(req, res) {
     );
 
     const assets = rows.map((asset) => ({
-      id: asset.asset_code,
+      id: asset.code,
       databaseId: asset.id,
-      name: asset.asset_name,
+      name: asset.name,
       category: asset.category_name || String(asset.id_category),
       status: asset.status || "Unknown",
-      imageUrl: asset.image_url, // ← Ini udah bener
+      imageUrl: asset.image_url, 
       qrCodeUrl: asset.qr_code_url,
       createdAt: asset.created_at,
       updatedAt: asset.updated_at,
@@ -44,32 +44,32 @@ async function createAsset(req, res) {
   console.log("📦 Body:", req.body);
   console.log("👤 User:", req.user);
 
-  const { asset_name, id_category, status, image_url } = req.body;
+  const { name, id_category, status, image_url } = req.body;
 
-  console.log("🔍 Parsed:", { asset_name, id_category, status, image_url });
+  console.log("🔍 Parsed:", { name, id_category, status, image_url });
 
-  if (!asset_name || !asset_name.trim()) {
-    console.log("❌ Missing asset_name");
+  if (!name || !name.trim()) {
+    console.log("❌ Missing name");
     return error(res, { message: "Nama item wajib diisi.", statusCode: 400 });
   }
   if (!id_category) {
     console.log("❌ Missing id_category");
     return error(res, { message: "Kategori wajib dipilih.", statusCode: 400 });
   }
-  const client = await pool.connect();
   try {
+    const client = await pool.connect();
     const actorId = req.user?.id_user || req.user?.id || null;
 
     await client.query("BEGIN");
     const tempCode = `TMP-${Date.now()}`;
 
     const insertResult = await client.query(
-      `INSERT INTO asset (id_category, asset_name, asset_code, status, image_url, created_by, updated_by)
+      `INSERT INTO asset (id_category, name, code, status, image_url, created_by, updated_by)
        VALUES ($1, $2, $3, $4, $5, $6, $6)
        RETURNING id`,
       [
         id_category,
-        asset_name.trim(),
+        name.trim(),
         tempCode,
         status || "functional",
         image_url || null,
@@ -78,17 +78,17 @@ async function createAsset(req, res) {
     );
 
     const newId = insertResult.rows[0].id;
-
-    const prefix = generateCodePrefix(asset_name);
+    
+    const prefix = generateCodePrefix(name);
     const finalCode = `${prefix}-${String(newId).padStart(4, "0")}`;
 
     const qrCodeUrl = await generateQrCode(finalCode);
 
     const { rows } = await client.query(
       `UPDATE asset
-       SET asset_code = $1, qr_code_url = $2, updated_at = CURRENT_TIMESTAMP
+       SET code = $1, qr_code_url = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
-       RETURNING id, id_category, asset_name, asset_code, status, image_url, qr_code_url, created_at, updated_at`,
+       RETURNING id, id_category, name, code, status, image_url, qr_code_url, created_at, updated_at`,
       [finalCode, qrCodeUrl, newId],
     );
 
@@ -111,4 +111,104 @@ async function createAsset(req, res) {
   }
 }
 
-module.exports = { listAssets, createAsset };
+function assetIdentifierClause(parameterIndex = 1) {
+  return `(code = $${parameterIndex} OR id::text = $${parameterIndex})`;
+}
+
+async function updateAsset(req, res) {
+  const { id } = req.params;
+  const {
+    name,
+    id_category,
+    status,
+    location,
+    description,
+    image_url,
+    specs,
+  } = req.body;
+
+  if (!name || !name.trim()) {
+    return error(res, { message: "Nama item wajib diisi.", statusCode: 400 });
+  }
+  if (!id_category) {
+    return error(res, { message: "Kategori wajib dipilih.", statusCode: 400 });
+  }
+
+  try {
+    const actorId = req.user?.id_user || req.user?.id || null;
+    const { rows } = await pool.query(
+      `UPDATE asset
+       SET id_category = $1, name = $2, status = $3, image_url = $4,
+           updated_by = $5, updated_at = CURRENT_TIMESTAMP
+       WHERE ${assetIdentifierClause(6)}
+       RETURNING id, id_category, name, code, status, image_url,
+                 qr_code_url, created_at, updated_at`,
+      [
+        id_category,
+        name.trim(),
+        status || "functional",
+        image_url || null,
+        actorId,
+        id,
+      ],
+    );
+
+    if (rows.length === 0) {
+      return error(res, { message: "Item tidak ditemukan.", statusCode: 404 });
+    }
+
+    // location, description, and specs are accepted by the UI but are not
+    // columns in the current asset schema. Keep them intentionally unused
+    // until their persistence schema is added.
+    void location;
+    void description;
+    void specs;
+
+    return success(res, { message: "Item berhasil diperbarui.", data: rows[0] });
+  } catch (err) {
+    console.error("Error in updateAsset:", err);
+    if (err.code === "23503") {
+      return error(res, { message: "Kategori tidak valid.", statusCode: 400 });
+    }
+    return error(res, { message: "Gagal memperbarui item." });
+  }
+}
+
+async function deactivateAssets(req, res) {
+  const { ids, reason } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return error(res, { message: "Pilih minimal satu item.", statusCode: 400 });
+  }
+  if (!reason || reason.trim().length < 5) {
+    return error(res, { message: "Alasan minimal 5 karakter.", statusCode: 400 });
+  }
+
+  try {
+    const actorId = req.user?.id_user || req.user?.id || null;
+    const { rows } = await pool.query(
+      `UPDATE asset
+       SET status = 'unavailable', updated_by = $1, updated_at = CURRENT_TIMESTAMP
+       WHERE code = ANY($2::text[]) OR id::text = ANY($2::text[])
+       RETURNING id, code`,
+      [actorId, ids.map(String)],
+    );
+
+    if (rows.length !== ids.length) {
+      return error(res, {
+        message: "Satu atau beberapa item tidak ditemukan.",
+        statusCode: 404,
+      });
+    }
+
+    return success(res, {
+      message: "Item berhasil ditandai tidak tersedia.",
+      data: rows,
+    });
+  } catch (err) {
+    console.error("Error in deactivateAssets:", err);
+    return error(res, { message: "Gagal mengubah status item." });
+  }
+}
+
+module.exports = { listAssets, createAsset, updateAsset, deactivateAssets };
