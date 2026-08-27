@@ -75,7 +75,7 @@ export default function DashboardLayout({ role, userName, children }) {
             {roleLabel}
           </div>
           <div className="text-xs text-[var(--color-text-muted)]">
-            {t("inventoryManager")}
+            {t("Trackyourstuff")}
           </div>
         </div>
 

@@ -7,8 +7,8 @@ import { FONTS } from "../../lib/constants";
 import StatCard from "./statCard";
 import {
   ASSET_STATUS,
-  ASSET_STATUS_STYLES,
   ASSET_STATUS_LABELS,
+  getAssetStatusStyle,
 } from "../../lib/assetStatus";
 
 export default function SuperAdminOverview({
@@ -20,7 +20,7 @@ export default function SuperAdminOverview({
 
   const stats = {
     totalItems: assets.length,
-    available: assets.filter((asset) => asset.status === ASSET_STATUS.OPERATING)
+    available: assets.filter((asset) => asset.status === ASSET_STATUS.FUNCTIONAL)
       .length,
     needMaintenance: assets.filter(
       (asset) => asset.status === ASSET_STATUS.NEEDS_REPAIR,
@@ -30,7 +30,10 @@ export default function SuperAdminOverview({
   const recentActivity = assets.slice(0, 5).map((asset) => ({
     itemId: asset.id,
     name: asset.name,
-    user: asset.user || "-",
+    category:
+      typeof asset.category === "object" && asset.category !== null
+        ? asset.category.category_name || asset.category.name || "-"
+        : asset.category || asset.categoryName || asset.category_name || "-",
     status: asset.status,
     date: asset.createdAt
       ? new Date(asset.createdAt).toLocaleDateString("id-ID")
@@ -53,21 +56,20 @@ export default function SuperAdminOverview({
       <h1 className="text-2xl font-semibold mb-6">
         {t("superadmin.greeting")} {userName || t("roles.superAdmin")}
       </h1>
-
-      {/* Grid Stat Cards (1 Layer Grid) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
           label={t("admin.totalItems")}
           value={stats.totalItems.toLocaleString("id-ID")}
-          /* Badge dihapus sesuai permintaan */
         />
 
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
           label={t("admin.available")}
           value={stats.available}
-          badgeText={t("admin.availableBadge")}
+          badgeText={
+            stats.available > 0 ? t("admin.availableBadge") : undefined
+          }
           badgeColor="info"
         />
 
@@ -75,7 +77,7 @@ export default function SuperAdminOverview({
           icon={<Wrench size={20} strokeWidth={1.75} />}
           label={t("admin.needMaintenance")}
           value={stats.needMaintenance}
-          badgeText={t("admin.urgent")}
+          badgeText={stats.needMaintenance > 0 ? t("admin.urgent") : undefined}
           badgeColor="urgent"
         />
       </div>
@@ -118,13 +120,11 @@ export default function SuperAdminOverview({
                   </td>
                   <td className="py-3 font-medium">{row.name}</td>
                   <td className="py-3 text-[var(--color-text-secondary)]">
-                    {row.user}
+                    {row.category}
                   </td>
                   <td className="py-3">
                     <span
-                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-                        ASSET_STATUS_STYLES[row.status] || ""
-                      }`}
+                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
                     >
                       {ASSET_STATUS_LABELS[row.status]
                         ? t(ASSET_STATUS_LABELS[row.status])
@@ -140,7 +140,6 @@ export default function SuperAdminOverview({
           </table>
         </div>
 
-        {/* Alert Perawatan */}
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <h2 className="text-sm font-semibold mb-4">
             {t("superadmin.maintenanceAlerts")}

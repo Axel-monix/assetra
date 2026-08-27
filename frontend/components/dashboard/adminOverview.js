@@ -15,7 +15,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
   const t = useTranslations("dashboard");
   const stats = {
     totalItems: assets.length,
-    available: assets.filter((asset) => asset.status === ASSET_STATUS.OPERATING)
+    available: assets.filter((asset) => asset.status === ASSET_STATUS.FUNCTIONAL)
       .length,
     needMaintenance: assets.filter(
       (asset) => asset.status === ASSET_STATUS.NEEDS_REPAIR,
@@ -77,7 +77,9 @@ export default function AdminOverview({ assets = [], error = "" }) {
           icon={<Archive size={20} strokeWidth={1.75} />}
           label={t("admin.available")}
           value={stats.available}
-          badgeText={t("admin.availableBadge")}
+          badgeText={
+            stats.available > 0 ? t("admin.availableBadge") : undefined
+          }
           badgeColor="info"
         />
 
@@ -85,7 +87,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
           icon={<Wrench size={20} strokeWidth={1.75} />}
           label={t("admin.needMaintenance")}
           value={stats.needMaintenance}
-          badgeText={t("admin.urgent")}
+          badgeText={stats.needMaintenance > 0 ? t("admin.urgent") : undefined}
           badgeColor="urgent"
         />
       </div>
@@ -133,7 +135,10 @@ export default function AdminOverview({ assets = [], error = "" }) {
           </h2>
           <div className="flex flex-col gap-4">
             {assets.slice(0, 3).map((activity) => (
-              <div key={activity.id || activity.databaseId} className="flex items-start gap-3">
+              <div
+                key={activity.id || activity.databaseId}
+                className="flex items-start gap-3"
+              >
                 <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] shrink-0" />
                 <div>
                   <p className="text-sm text-[var(--color-text)] font-medium">
