@@ -32,6 +32,14 @@ function findCategoryId(categories, categoryName) {
   return match ? String(match.id) : "";
 }
 
+function normalizeSpecs(specs = {}) {
+  return Object.fromEntries(
+    Object.entries(specs)
+      .map(([key, value]) => [key, String(value ?? "").trim()])
+      .filter(([, value]) => value),
+  );
+}
+
 export default function EditItemForm({ item, onClose, onSubmit }) {
   const t = useTranslations("manageItem");
 
@@ -78,8 +86,12 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         setForm((prev) => ({
           ...prev,
           id_category:
-            findCategoryId(result.data || [], item?.category) ||
-            String(result.data?.[0]?.id || ""),
+            String(
+              item?.id_category ||
+                item?.category_id ||
+                item?.categoryId ||
+                findCategoryId(result.data || [], item?.category),
+            ) || String(result.data?.[0]?.id || ""),
         }));
       } catch (err) {
         setError(err.message);
@@ -105,6 +117,40 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     () => getSpecTemplate(selectedCategoryName),
     [selectedCategoryName],
   );
+
+  const initialCategoryId = useMemo(
+    () =>
+      String(
+        item?.id_category ||
+          item?.category_id ||
+          item?.categoryId ||
+          findCategoryId(categories, item?.category),
+      ),
+    [categories, item],
+  );
+
+  const hasChanges = useMemo(() => {
+    if (loadingCategories) return false;
+
+    return (
+      form.name.trim() !== String(item?.name || "").trim() ||
+      String(form.id_category) !== String(initialCategoryId) ||
+      form.status !== normalizeStatus(item?.status) ||
+      form.location.trim() !== String(item?.location || "").trim() ||
+      form.description.trim() !== String(item?.description || "").trim() ||
+      form.image_url !== String(item?.imageUrl || "") ||
+      JSON.stringify(
+        normalizeSpecs(buildSpecsPayload(specTemplate, specValues)),
+      ) !== JSON.stringify(normalizeSpecs(item?.specs))
+    );
+  }, [
+    form,
+    initialCategoryId,
+    item,
+    loadingCategories,
+    specTemplate,
+    specValues,
+  ]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -302,7 +348,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               />
             </div>
 
-            {/* Nama Item */}
             <div>
               <label className="assetra-form-label">
                 {t("itemName")}{" "}
@@ -438,7 +483,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
               <button
                 type="submit"
-                disabled={loading || isUploading}
+                disabled={loading || isUploading || !hasChanges}
                 className="assetra-btn assetra-btn-primary flex-1"
               >
                 {loading ? t("saving") : t("editItem")}

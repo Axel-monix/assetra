@@ -109,7 +109,7 @@ export default function FilterForm({
       >
         <Filter size={15} strokeWidth={1.8} />
 
-        <span>{t("filters")}</span>
+        <span>{t("filter")}</span>
 
         <ChevronDown
           size={14}

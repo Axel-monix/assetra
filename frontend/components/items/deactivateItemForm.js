@@ -2,14 +2,11 @@
 import { useState } from "react";
 import { PackageX, AlertCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import colors from "@/lib/colors";
 
 const REASON_MIN_LENGTH = 5;
 
-export default function DeactivateItemForm({
-  count = 1,
-  onClose,
-  onConfirm,
-}) {
+export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
   const t = useTranslations("manageItem");
 
   const [reason, setReason] = useState("");
@@ -38,10 +35,7 @@ export default function DeactivateItemForm({
       await onConfirm(trimmedReason);
       onClose();
     } catch (err) {
-      setError(
-        err.message ||
-          t("statusChangeFailed"),
-      );
+      setError(err.message || t("statusChangeFailed"));
     } finally {
       setLoading(false);
     }
@@ -59,14 +53,11 @@ export default function DeactivateItemForm({
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2.5">
               <span className="assetra-icon-badge assetra-icon-badge--warning">
-                <PackageX
-                  size={18}
-                  strokeWidth={1.9}
-                />
+                <PackageX size={18} strokeWidth={1.9} />
               </span>
 
               <h2 className="text-base font-semibold text-[var(--color-white)]">
-                {t("markUnavailableTitle")}
+                {t("deactivate")}
               </h2>
             </div>
 
@@ -87,16 +78,11 @@ export default function DeactivateItemForm({
             })}
           </p>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="assetra-form-label">
                 {t("reasonForStatusChange")}{" "}
-                <span className="text-[var(--color-danger)]">
-                  *
-                </span>
+                <span className="text-[var(--color-danger)]">*</span>
               </label>
 
               <textarea
@@ -133,11 +119,13 @@ export default function DeactivateItemForm({
               <button
                 type="submit"
                 disabled={loading}
-                className="assetra-btn assetra-btn-warning flex-1"
+                className="assetra-btn assetra-btn-danger flex-1"
+                style={{
+                  backgroundColor: colors.danger,
+                  color: colors.white,
+                }}
               >
-                {loading
-                  ? t("saving")
-                  : t("markUnavailable")}
+                {loading ? t("saving") : t("deactivate")}
               </button>
             </div>
           </form>
