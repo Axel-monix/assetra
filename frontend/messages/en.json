@@ -29,6 +29,15 @@
       "unavailable": "Unavailable",
       "borrowed": "Borrowed"
     },
+    "statusOptions": {
+      "functional": "Available",
+      "operating": "Operating",
+      "needs_repair": "Need Repair",
+      "repairing": "Repairing",
+      "broken": "Broken",
+      "unavailable": "Unavailable",
+      "borrowed": "Borrowed"
+    },
     "navigation": {
       "dashboard": "Dashboard",
       "manageItems": "Manage Item",
@@ -52,7 +61,7 @@
       "category": "Category",
       "status": "Status",
       "action": "Action",
-      "user": "User",
+      "user": "Category",
       "date": "Date",
       "thisMonth": "+12 This Month",
       "urgent": "Urgent",
@@ -70,7 +79,8 @@
       "admin": "Admin",
       "superAdmin": "Super Admin"
     },
-    "inventoryManager": "Inventory Manager",
+    "loading": "Loading...",
+    "Trackyourstuff": "Track your stuff",
     "user": "User",
     "logout": "Logout"
   },
@@ -111,12 +121,14 @@
   },
   "manageItem": {
     "title": "Manage Items",
-    "subtitle": "Add or manage inventory items.",
+    "subtitle": "Add or manage items.",
     "addItem": "Add Item",
     "addNewItem": "Add New Item",
     "loading": "Loading...",
     "filters": "Filters:",
     "clearAll": "Clear All",
+    "gridView": "Grid View",
+    "listView": "List View",
     "itemName": "Item Name",
     "itemNamePlaceholder": "e.g. MacBook Pro M3",
     "codeItem": "Code Item",
@@ -128,7 +140,9 @@
       "functional": "Available",
       "needs_repair": "Need Repair",
       "borrowed": "Borrowed",
-      "unavailable": "Unavailable"
+      "unavailable": "Unavailable",
+      "gridView": "Grid View",
+      "listView": "List View"
     },
     "loadingItems": "Loading items...",
     "loadError": "Failed to load items.",
@@ -154,9 +168,28 @@
     "categoryRequired": "Category is required",
     "addFailed": "Failed to add item",
     "printQrError": "Failed to print QR code.",
-    "deactivateError": "Failed to deactivate item."
+    "deactivateError": "Failed to deactivate item.",
+    "editItem": "Edit Item",
+    "changeImage": "Change Image",
+    "location": "Location",
+    "locationPlaceholder": "e.g. Bizdev Desk",
+    "specifications": "Specifications",
+    "imagePreview": "Image Preview",
+    "close": "Close",
+    "removeImage": "Remove image",
+    "editFailed": "Failed to edit item.",
+    "saving": "Saving...",
+    "markUnavailable": "Mark Unavailable",
+    "markUnavailableTitle": "Mark Item Unavailable",
+    "markUnavailableDescription": "This item will be marked as unavailable.",
+    "reasonForStatusChange": "Reason for status change",
+    "reasonPlaceholder": "Enter a reason",
+    "reasonTooShort": "Reason must be at least {length} characters.",
+    "statusChangeFailed": "Failed to change item status.",
+     "serverResponseError": "Server response error. Please try again."
   },
   "profile": {
+    "loading": "Loading...",
     "title": "My Profile",
     "subtitle": "View your account information.",
     "name": "Name",
@@ -215,12 +248,15 @@
   },
   "itemDetail": {
     "title": "Item Details",
+    "close": "Close",
     "category": "Category",
     "location": "Location",
+    "description": "Description",
     "specifications": "Full Specifications",
     "treatmentHistory": "Treatment History",
     "edit": "Edit",
     "deactivate": "Deactivate",
+    "markUnavailable": "Mark Unavailable",
     "statusOptions": {
       "functional": "Available",
       "needs_repair": "Need Repair",

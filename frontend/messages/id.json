@@ -35,6 +35,15 @@
       "unavailable": "Tidak Tersedia",
       "borrowed": "Dipinjam"
     },
+    "statusOptions": {
+      "functional": "Tersedia",
+      "operating": "Berfungsi",
+      "needs_repair": "Perlu Perbaikan",
+      "repairing": "Sedang Diperbaiki",
+      "broken": "Rusak",
+      "unavailable": "Tidak Tersedia",
+      "borrowed": "Dipinjam"
+    },
     "admin": {
       "title": "Overview",
       "addItem": "Tambah Item",
@@ -52,7 +61,7 @@
       "category": "Kategori",
       "status": "Status",
       "action": "Aksi",
-      "user": "Pengguna",
+      "user": "Kategori",
       "date": "Tanggal",
       "thisMonth": "+12 Bulan Ini",
       "urgent": "Mendesak",
@@ -70,7 +79,8 @@
       "admin": "Admin",
       "superAdmin": "Super Admin"
     },
-    "inventoryManager": "Pengelola Inventaris",
+    "loading": "Memuat...",
+    "Trackyourstuff": "Lacak barang Anda",
     "user": "Pengguna",
     "logout": "Logout"
   },
@@ -154,9 +164,30 @@
     "fileTooLarge": "Ukuran gambar maksimal 5MB.",
     "categoryLoadError": "Gagal memuat kategori.",
     "printQrError": "Gagal mencetak kode QR.",
-    "deactivateError": "Gagal menonaktifkan item."
+    "deactivateError": "Gagal menonaktifkan item.",
+    "editItem": "Edit Item",
+    "changeImage": "Ganti Gambar",
+    "location": "Lokasi",
+    "locationPlaceholder": "cth. Meja Bizdev",
+    "specifications": "Spesifikasi",
+    "imagePreview": "Pratinjau Gambar",
+    "close": "Tutup",
+    "removeImage": "Hapus gambar",
+    "editFailed": "Gagal mengedit item.",
+    "saving": "Menyimpan...",
+    "markUnavailable": "Tandai Tidak Tersedia",
+    "markUnavailableTitle": "Tandai Item Tidak Tersedia",
+    "markUnavailableDescription": "Item ini akan ditandai sebagai tidak tersedia.",
+    "reasonForStatusChange": "Alasan perubahan status",
+    "reasonPlaceholder": "Masukkan alasan",
+    "reasonTooShort": "Alasan minimal {length} karakter.",
+    "statusChangeFailed": "Gagal mengubah status item.",
+    "gridView": "Tampilan Grid",
+    "listView": "Tampilan Daftar",
+     "serverResponseError": "Terjadi kesalahan pada respons server. Silakan coba lagi."
   },
   "profile": {
+    "loading": "Memuat...",
     "title": "Profil Saya",
     "subtitle": "Lihat informasi akun Anda.",
     "name": "Nama",
@@ -215,12 +246,15 @@
   },
   "itemDetail": {
     "title": "Detail Item",
+    "close": "Tutup",
     "category": "Kategori",
     "location": "Lokasi",
+    "description": "Deskripsi",
     "specifications": "Spesifikasi Lengkap",
     "treatmentHistory": "Riwayat Perawatan",
     "edit": "Edit",
     "deactivate": "Nonaktifkan",
+    "markUnavailable": "Tandai Tidak Tersedia",
     "statusOptions": {
       "functional": "Tersedia",
       "needs_repair": "Perlu Perbaikan",
