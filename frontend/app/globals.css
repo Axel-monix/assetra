@@ -971,3 +971,194 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+.assetra-history-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  background: var(--assetra-card);
+}
+
+.assetra-history-tab {
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--assetra-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.assetra-history-tab:hover {
+  color: var(--assetra-text);
+}
+
+.assetra-history-tab.is-active {
+  background: var(--assetra-primary);
+  color: var(--assetra-primary-contrast);
+}
+
+.assetra-history-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.assetra-history-search svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--assetra-text-muted);
+  pointer-events: none;
+}
+
+.assetra-history-search input {
+  width: 100%;
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.5rem;
+  background: var(--assetra-input);
+  color: var(--assetra-text);
+  padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.assetra-history-search input::placeholder {
+  color: var(--assetra-text-placeholder);
+}
+
+.assetra-history-search input:focus {
+  border-color: var(--assetra-primary);
+}
+
+.assetra-history-group-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--assetra-primary-soft);
+}
+
+.assetra-history-group-date {
+  font-size: 0.7rem;
+  color: var(--assetra-text-muted);
+}
+
+.assetra-history-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.assetra-history-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.assetra-history-line {
+  width: 1px;
+  flex: 1;
+  background: var(--assetra-divider);
+  margin-top: 0.25rem;
+}
+
+.assetra-history-card {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.75rem;
+  background: var(--assetra-card);
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 180ms ease;
+}
+
+.assetra-history-card:hover {
+  border-color: var(--assetra-border-hover);
+}
+
+.assetra-history-time {
+  font-size: 0.7rem;
+  color: var(--assetra-text-muted);
+  flex-shrink: 0;
+}
+
+.assetra-history-subject {
+  font-weight: 600;
+  color: var(--assetra-text);
+}
+
+.assetra-history-code {
+  font-size: 0.72rem;
+  color: var(--assetra-text-muted);
+}
+
+.assetra-history-desc {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--assetra-text-secondary);
+}
+
+.assetra-history-empty {
+  padding: 2rem 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--assetra-text-muted);
+}
+
+/* Icon badges per history type */
+.assetra-icon-badge--cyan {
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--assetra-cyan);
+}
+
+.assetra-icon-badge--primary {
+  background: rgba(128, 131, 255, 0.1);
+  color: var(--assetra-primary);
+}
+
+.assetra-icon-badge--muted {
+  background: rgba(161, 161, 170, 0.1);
+  color: var(--assetra-text-secondary);
+}
+
+.assetra-icon-badge--danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--assetra-danger);
+}
+
+/* Type badge pill (text label inside the card) */
+.assetra-history-badge {
+  display: inline-block;
+  border-radius: 0.3rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.assetra-history-badge--cyan {
+  background: rgba(34, 211, 238, 0.15);
+  color: var(--assetra-cyan);
+}
+
+.assetra-history-badge--primary {
+  background: rgba(128, 131, 255, 0.15);
+  color: var(--assetra-primary-soft);
+}
+
+.assetra-history-badge--muted {
+  background: rgba(161, 161, 170, 0.15);
+  color: var(--assetra-text-secondary);
+}
+
+.assetra-history-badge--danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--assetra-danger);
+}
