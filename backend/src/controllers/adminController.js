@@ -1,6 +1,7 @@
 // src/controllers/adminController.js
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
+const { logHistory } = require("../utils/historyLogger");
 
 const PASSWORD_MIN_LENGTH = 8;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,6 +45,17 @@ async function createAdmin(req, res) {
       [name.trim(), email.trim().toLowerCase(), hashedPassword]
     );
 
+    const actorId = req.user?.id_user || req.user?.id || null;
+
+    // HOOK: catat history penambahan admin
+    await logHistory(pool, {
+      type: "add_admin",
+      idUser: rows[0].id,
+      performedBy: actorId,
+      subjectName: rows[0].name,
+      description: "Penambahan admin baru",
+    });
+
     return res.status(201).json({
       success: true,
       message: "Admin berhasil ditambahkan.",
@@ -66,7 +78,7 @@ async function toggleAdminStatus(req, res) {
     const actorId = req.user?.id_user || null;
 
     const { rows: targetRows } = await client.query(
-      "SELECT id, role, status FROM users WHERE id = $1",
+      "SELECT id, name, role, status FROM users WHERE id = $1",
       [id]
     );
     if (targetRows.length === 0) {
@@ -92,6 +104,15 @@ async function toggleAdminStatus(req, res) {
          VALUES ($1, $2, $3, $4)`,
         [id, deactivationType, reason.trim(), actorId]
       );
+
+      // HOOK: catat history nonaktif admin, masih di dalam transaksi yang sama
+      await logHistory(client, {
+        type: "deactivate_admin",
+        idUser: targetRows[0].id,
+        performedBy: actorId,
+        subjectName: targetRows[0].name,
+        description: `Dinonaktifkan: ${reason.trim()}`,
+      });
     } else if (action === "reactivate") {
       await client.query("UPDATE users SET status = 'active', updated_at = CURRENT_TIMESTAMP WHERE id = $1", [id]);
       await client.query(

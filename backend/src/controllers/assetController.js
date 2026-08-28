@@ -1,6 +1,7 @@
 const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
 const { generateQrCode } = require("../utils/qrGenerator");
+const { logHistory } = require("../utils/historyLogger");
 
 function generateCodePrefix(name) {
   const cleaned = (name || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
@@ -24,7 +25,7 @@ async function listAssets(req, res) {
       name: asset.name,
       category: asset.category_name || String(asset.id_category),
       status: asset.status || "Unknown",
-      imageUrl: asset.image_url, 
+      imageUrl: asset.image_url,
       qrCodeUrl: asset.qr_code_url,
       createdAt: asset.created_at,
       updatedAt: asset.updated_at,
@@ -56,8 +57,9 @@ async function createAsset(req, res) {
     console.log("❌ Missing id_category");
     return error(res, { message: "Kategori wajib dipilih.", statusCode: 400 });
   }
+  let client;
   try {
-    const client = await pool.connect();
+    client = await pool.connect();
     const actorId = req.user?.id_user || req.user?.id || null;
 
     await client.query("BEGIN");
@@ -78,7 +80,7 @@ async function createAsset(req, res) {
     );
 
     const newId = insertResult.rows[0].id;
-    
+
     const prefix = generateCodePrefix(name);
     const finalCode = `${prefix}-${String(newId).padStart(4, "0")}`;
 
@@ -92,6 +94,16 @@ async function createAsset(req, res) {
       [finalCode, qrCodeUrl, newId],
     );
 
+    // HOOK: catat history penambahan item, masih di dalam transaksi yang sama
+    await logHistory(client, {
+      type: "add_item",
+      idAsset: newId,
+      performedBy: actorId,
+      subjectName: rows[0].name,
+      subjectCode: rows[0].code,
+      description: "Penambahan item baru",
+    });
+
     await client.query("COMMIT");
 
     return success(res, {
@@ -100,14 +112,14 @@ async function createAsset(req, res) {
       statusCode: 201,
     });
   } catch (err) {
-    await client.query("ROLLBACK");
+    if (client) await client.query("ROLLBACK");
     console.error("Error in createAsset:", err);
     if (err.code === "23503") {
       return error(res, { message: "Kategori tidak valid.", statusCode: 400 });
     }
     return error(res, { message: "Gagal menambahkan item." });
   } finally {
-    client.release();
+    if (client) client.release();
   }
 }
 
@@ -157,6 +169,16 @@ async function updateAsset(req, res) {
       return error(res, { message: "Item tidak ditemukan.", statusCode: 404 });
     }
 
+    // HOOK: catat history edit item
+    await logHistory(pool, {
+      type: "edit_item",
+      idAsset: rows[0].id,
+      performedBy: actorId,
+      subjectName: rows[0].name,
+      subjectCode: rows[0].code,
+      description: "Perubahan data item",
+    });
+
     // location, description, and specs are accepted by the UI but are not
     // columns in the current asset schema. Keep them intentionally unused
     // until their persistence schema is added.
@@ -190,7 +212,7 @@ async function deactivateAssets(req, res) {
       `UPDATE asset
        SET status = 'unavailable', updated_by = $1, updated_at = CURRENT_TIMESTAMP
        WHERE code = ANY($2::text[]) OR id::text = ANY($2::text[])
-       RETURNING id, code`,
+       RETURNING id, code, name`,
       [actorId, ids.map(String)],
     );
 
@@ -198,6 +220,18 @@ async function deactivateAssets(req, res) {
       return error(res, {
         message: "Satu atau beberapa item tidak ditemukan.",
         statusCode: 404,
+      });
+    }
+
+    // HOOK: catat history nonaktif item, 1 baris history per item yang dinonaktifkan
+    for (const row of rows) {
+      await logHistory(pool, {
+        type: "deactivate_item",
+        idAsset: row.id,
+        performedBy: actorId,
+        subjectName: row.name,
+        subjectCode: row.code,
+        description: `Dinonaktifkan: ${reason.trim()}`,
       });
     }
 
