@@ -14,6 +14,7 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
+  HISTORY: `${API_URL}/history`,
 
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
