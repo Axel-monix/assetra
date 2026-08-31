@@ -14,6 +14,7 @@ import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ToggleSwitch from "@/components/admin/toggleSwitch";
 import AddAdminModal from "@/components/admin/addAdmin";
 import AdminProfile from "@/components/admin/adminProfile";
+import DeactivateAdminModal from "@/components/admin/deactivateAdminModal";
 import {
   AUTH_USER_KEY,
   AUTH_TOKEN_KEY,
@@ -30,6 +31,20 @@ function getToken() {
     window.localStorage.getItem(AUTH_TOKEN_KEY) ||
     window.sessionStorage.getItem(AUTH_TOKEN_KEY)
   );
+}
+function translateApiMessage(t, result, fallbackKey) {
+  const key = result?.message;
+
+  if (!key) {
+    return t(fallbackKey);
+  }
+
+  try {
+    return t(key, result?.params || {});
+  } catch (err) {
+    console.error("Translation key not found:", key, err);
+    return t(fallbackKey);
+  }
 }
 
 export default function ManageAdminPage() {
@@ -55,7 +70,7 @@ export default function ManageAdminPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        setError(result.message || t("loadError"));
+        setError(translateApiMessage(t, result, "loadError"));
         return;
       }
       setAdmins(result.data || []);
@@ -86,49 +101,54 @@ export default function ManageAdminPage() {
     fetchAdmins();
   }, [router, fetchAdmins]);
 
+  const [deactivateAdmin, setDeactivateAdmin] = useState(null); // taruh ini di atas, deket state lain (setelah selectedAdmin)
+
+  async function updateAdminStatus(id, body, nextActive) {
+    const res = await fetch(ENDPOINTS.ADMIN_STATUS(id), {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      throw new Error(translateApiMessage(t, result, "statusUpdateFailed"));
+    }
+
+    setAdmins((prev) =>
+      prev.map((a) =>
+        a.id === id ? { ...a, status: nextActive ? "active" : "inactive" } : a,
+      ),
+    );
+    setSelectedAdmin((prev) =>
+      prev && prev.id === id
+        ? { ...prev, status: nextActive ? "active" : "inactive" }
+        : prev,
+    );
+  }
+
   async function handleToggleActive(id, nextActive) {
-    let body;
-
     if (nextActive) {
-      body = { action: "reactivate" };
-    } else {
-      const reason = window.prompt(t("deactivateReason"));
-      if (!reason || !reason.trim()) return;
-      body = { action: "deactivate", reason: reason.trim(), type: "temporary" };
-    }
-
-    try {
-      const res = await fetch(ENDPOINTS.ADMIN_STATUS(id), {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify(body),
-      });
-      const result = await res.json();
-
-      if (!res.ok || !result.success) {
-        alert(result.message || t("statusUpdateFailed"));
-        return;
+      try {
+        await updateAdminStatus(id, { action: "reactivate" }, true);
+      } catch (err) {
+        console.error("Toggle status error:", err);
+        alert(err.message || t("connectionError"));
       }
-
-      setAdmins((prev) =>
-        prev.map((a) =>
-          a.id === id
-            ? { ...a, status: nextActive ? "active" : "inactive" }
-            : a,
-        ),
-      );
-      setSelectedAdmin((prev) =>
-        prev && prev.id === id
-          ? { ...prev, status: nextActive ? "active" : "inactive" }
-          : prev,
-      );
-    } catch (err) {
-      console.error("Toggle status error:", err);
-      alert(t("connectionError"));
+      return;
     }
+    setDeactivateAdmin(admins.find((a) => a.id === id) || selectedAdmin);
+  }
+
+  async function handleConfirmDeactivate(reason) {
+    await updateAdminStatus(
+      deactivateAdmin.id,
+      { action: "deactivate", reason, type: "temporary" },
+      false,
+    );
   }
 
   async function handleAddAdmin(form) {
@@ -143,7 +163,7 @@ export default function ManageAdminPage() {
     const result = await res.json();
 
     if (!res.ok || !result.success) {
-      throw new Error(result.message || t("addFailed"));
+      throw new Error(translateApiMessage(t, result, "addFailed"));
     }
 
     setAdmins((prev) => [result.data, ...prev]);
@@ -343,8 +363,6 @@ export default function ManageAdminPage() {
               </tbody>
             </table>
           </div>
-
-          {/* Table Footer / Pagination */}
           <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-[var(--color-border)] gap-4 text-xs text-[var(--color-text-muted)] w-full">
             <span>
               {t("showing", {
@@ -404,6 +422,13 @@ export default function ManageAdminPage() {
           }}
           onClose={() => setSelectedAdmin(null)}
           onToggleActive={handleToggleActive}
+        />
+      )}
+      {deactivateAdmin && (
+        <DeactivateAdminModal
+          admin={deactivateAdmin}
+          onClose={() => setDeactivateAdmin(null)}
+          onConfirm={handleConfirmDeactivate}
         />
       )}
     </DashboardLayout>
