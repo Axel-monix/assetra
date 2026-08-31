@@ -93,8 +93,6 @@ async function createAsset(req, res) {
        RETURNING id, id_category, name, code, status, image_url, qr_code_url, created_at, updated_at`,
       [finalCode, qrCodeUrl, newId],
     );
-
-    // HOOK: catat history penambahan item, masih di dalam transaksi yang sama
     await logHistory(client, {
       type: "add_item",
       idAsset: newId,
@@ -169,7 +167,6 @@ async function updateAsset(req, res) {
       return error(res, { message: "Item tidak ditemukan.", statusCode: 404 });
     }
 
-    // HOOK: catat history edit item
     await logHistory(pool, {
       type: "edit_item",
       idAsset: rows[0].id,
@@ -178,10 +175,6 @@ async function updateAsset(req, res) {
       subjectCode: rows[0].code,
       description: "Perubahan data item",
     });
-
-    // location, description, and specs are accepted by the UI but are not
-    // columns in the current asset schema. Keep them intentionally unused
-    // until their persistence schema is added.
     void location;
     void description;
     void specs;
