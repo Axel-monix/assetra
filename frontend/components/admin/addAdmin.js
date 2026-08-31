@@ -24,7 +24,7 @@ export default function AddAdminModal({ onClose, onSubmit }) {
       return;
     }
     if (form.password.length < 8) {
-      setError(t("passwordMinLength"));
+      setError(t("passwordMinLength", { min: 8 }));
       return;
     }
 

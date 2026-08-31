@@ -17,12 +17,8 @@ const STATUS_OPTIONS = [
     labelKey: "functional",
   },
   {
-    value: "need_repair",
+    value: "needs_repair",
     labelKey: "needRepair",
-  },
-  {
-    value: "borrowed",
-    labelKey: "borrowed",
   },
   {
     value: "unavailable",
@@ -33,7 +29,7 @@ const STATUS_OPTIONS = [
 function createDefaultFilters() {
   return {
     categories: [],
-    statuses: ["functional", "need_repair", "borrowed"],
+    statuses: ["functional", "needs_repair"],
     dateFrom: "",
     dateTo: "",
   };
@@ -90,8 +86,8 @@ export default function FilterForm({
   const hasCategoryFilter = draftFilters.categories.length > 0;
 
   const statusIsDefault =
-    draftFilters.statuses.length === 3 &&
-    ["functional", "need_repair", "borrowed"].every((status) =>
+    draftFilters.statuses.length === 2 &&
+    ["functional", "needs_repair"].every((status) =>
       draftFilters.statuses.includes(status),
     );
 
@@ -210,8 +206,7 @@ export default function FilterForm({
                       ...prev,
                       statuses: [
                         "functional",
-                        "need_repair",
-                        "borrowed",
+                        "needs_repair",
                       ],
                     }))
                   }

@@ -1,10 +1,6 @@
 "use client";
 
 import React from "react";
-
-/**
- * Komponen ToggleSwitch yang sepenuhnya terintegrasi dengan Global CSS.
- */
 export default function ToggleSwitch({
   checked = false,
   onChange,
@@ -19,8 +15,6 @@ export default function ToggleSwitch({
       onChange(!checked);
     }
   };
-
-  // Konfigurasi ukuran Switch
   const sizes = {
     sm: {
       track: "w-8 h-4.5 p-0.5",
@@ -61,22 +55,27 @@ export default function ToggleSwitch({
           }
         }}
         className={`
-          toggle-track relative inline-flex shrink-0 items-center rounded-full
+          toggle-track relative inline-flex shrink-0 items-center rounded-full transition-colors duration-200
           ${currentSize.track}
+          ${checked ? "bg-[var(--color-info)]" : "bg-[var(--color-surface)]"}
         `}
       >
         <span className="sr-only">{label || "Toggle status"}</span>
         <span
           className={`
-            toggle-thumb pointer-events-none inline-block rounded-full
+            toggle-thumb pointer-events-none inline-block rounded-full bg-[var(--color-white)] shadow-sm
             ${currentSize.knob}
             ${checked ? currentSize.translate : "translate-x-0"}
           `}
         />
       </button>
-      {showLabel && label && (
-        <span className="text-xs font-semibold text-[var(--color-text)]">
-          {label}
+      {showLabel && (
+        <span
+          className={`text-xs font-semibold ${
+            checked ? "text-[var(--color-info)]" : "text-[var(--color-text-muted)]"
+          }`}
+        >
+          {label ? label : checked ? "Active" : "Inactive"}
         </span>
       )}
     </div>

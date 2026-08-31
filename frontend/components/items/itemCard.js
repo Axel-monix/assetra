@@ -82,13 +82,11 @@ export default function ItemCard({ item, selected, onClick }) {
           {item.id}
         </p>
 
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between gap-2 text-xs">
           <span
-            className={`flex items-center gap-1.5 font-medium ${statusStyle}`}
+            className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 font-medium leading-none whitespace-nowrap ${statusStyle}`}
           >
-            <span
-              className={`assetra-status-dot ${statusStyle}`}
-            />
+            <span className={`assetra-status-dot ${statusStyle}`} />
 
             {displayStatus}
           </span>

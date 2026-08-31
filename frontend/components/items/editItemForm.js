@@ -13,7 +13,6 @@ import { useTranslations } from "next-intl";
 const STATUS_OPTIONS = [
   { value: "functional" },
   { value: "needs_repair" },
-  { value: "borrowed" },
   { value: "unavailable" },
 ];
 

@@ -32,7 +32,6 @@ import { useTranslations } from "next-intl";
 const STATUS_OPTIONS = [
   ASSET_STATUS.FUNCTIONAL,
   ASSET_STATUS.NEEDS_REPAIR,
-  ASSET_STATUS.BORROWED,
   ASSET_STATUS.UNAVAILABLE,
 ];
 
@@ -580,8 +579,7 @@ export default function AddItemForm({
                       key={status}
                       value={status}
                     >
-                      {t(
-                        `statusOptions.${status}`,
+                      {t(`statusOptions.${status}`,
                       )}
                     </option>
                   ),
