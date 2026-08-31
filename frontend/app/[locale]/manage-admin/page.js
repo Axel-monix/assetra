@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { UserPlus, Users, Zap, ChevronLeft, ChevronRight, User } from "lucide-react";
+import {
+  UserPlus,
+  Users,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  User,
+} from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ToggleSwitch from "@/components/admin/toggleSwitch";
 import AddAdminModal from "@/components/admin/addAdmin";
@@ -205,32 +212,32 @@ export default function ManageAdminPage() {
         )}
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:max-w-2xl">
+        <div className="grid w-full max-w-[660px] grid-cols-1 gap-5 sm:grid-cols-2">
           {/* Card 1: Total Admins */}
-          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          <div className="flex min-h-[122px] flex-col justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {t("totalAdmins")}
             </span>
-            <div className="mt-3 flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-[var(--color-text)]">
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className="text-3xl font-extrabold leading-none text-[var(--color-primaryTeks)]">
                 {totalAdmins}
               </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-primaryTeks)]">
                 <Users size={18} strokeWidth={2} />
               </div>
             </div>
           </div>
 
           {/* Card 2: Active Now */}
-          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          <div className="flex min-h-[122px] flex-col justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {t("activeNow")}
             </span>
-            <div className="mt-3 flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-[var(--color-success,#22d3ee)]">
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className="text-3xl font-extrabold leading-none text-[var(--color-info)]">
                 {activeNow}
               </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-success,#22d3ee)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-info)]">
                 <Zap size={18} strokeWidth={2} />
               </div>
             </div>
@@ -288,7 +295,10 @@ export default function ManageAdminPage() {
                             ) : admin.name ? (
                               admin.name[0].toUpperCase()
                             ) : (
-                              <User size={18} className="text-[var(--color-text-muted)]" />
+                              <User
+                                size={18}
+                                className="text-[var(--color-text-muted)]"
+                              />
                             )}
                           </div>
                           <div className="flex flex-col">
@@ -323,19 +333,8 @@ export default function ManageAdminPage() {
                             onChange={(next) =>
                               handleToggleActive(admin.id, next)
                             }
-                            showLabel={false}
+                            showLabel={true}
                           />
-                          <span
-                            className={`text-xs font-semibold ${
-                              admin.status === "active"
-                                ? "text-[var(--color-success,#22d3ee)]"
-                                : "text-[var(--color-text-muted)]"
-                            }`}
-                          >
-                            {admin.status === "active"
-                              ? t("active")
-                              : t("inactive")}
-                          </span>
                         </div>
                       </td>
                     </tr>

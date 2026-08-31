@@ -9,6 +9,7 @@
   --assetra-primary-hover: #9295ff;
   --assetra-primary-soft: #a5a7ff;
   --assetra-primary-contrast: #111323;
+  --assetra-primary-teks: #c0c1ff;
 
   --assetra-card: #131824;
   --assetra-input: #0d0d15;
@@ -34,7 +35,7 @@
 
   --assetra-warning: #fbbf24;
   --assetra-info: #60a5fa;
-  --assetra-success: #4caf50;
+  --assetra-success: var(--assetra-info);
   --assetra-cyan: #22d3ee;
   --assetra-orange: #fb923c;
 
@@ -46,6 +47,7 @@
   --color-primary-hover: var(--assetra-primary-hover);
   --color-primary-soft: var(--assetra-primary-soft);
   --color-primary-contrast: var(--assetra-primary-contrast);
+  --color-primaryTeks: var(--assetra-primary-teks);
 
   --color-card: var(--assetra-card);
   --color-input: var(--assetra-input);
@@ -71,7 +73,7 @@
 
   --color-warning: var(--assetra-warning);
   --color-info: var(--assetra-info);
-  --color-success: var(--assetra-success);
+  --color-success: var(--assetra-info);
   --color-cyan: var(--assetra-cyan);
   --color-orange: var(--assetra-orange);
 
@@ -198,14 +200,17 @@ textarea:focus-visible {
 
 .assetra-status-success {
   color: var(--assetra-success);
+  padding: 0.125rem 0.25rem;
 }
 
 .assetra-status-warning {
   color: var(--assetra-warning);
+  padding: 0.125rem 0.25rem;
 }
 
 .assetra-status-danger {
   color: var(--assetra-danger);
+  padding: 0.125rem 0.25rem;
 }
 
 .assetra-status-info {
@@ -1133,32 +1138,147 @@ textarea:focus-visible {
   color: var(--assetra-danger);
 }
 
-/* Type badge pill (text label inside the card) */
 .assetra-history-badge {
   display: inline-block;
   border-radius: 0.3rem;
   padding: 0.15rem 0.4rem;
   font-size: 0.6rem;
+}
+
+.assetra-history-badge {
+  display: inline-block;
+  border-radius: 0.3rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.6rem;
+}
+/* =========================================================
+   PRINT QR LABELS
+   ========================================================= */
+
+.assetra-print-page-preview {
+  width: 100%;
+  max-width: 700px;
+  background: var(--assetra-white);
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.5rem;
+  padding: 16px;
+}
+
+.assetra-print-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.assetra-print-label {
+  aspect-ratio: var(--label-ratio, 1.6);
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.assetra-print-label-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  gap: 2px;
+  padding: 6%;
+  box-sizing: border-box;
+}
+
+.assetra-print-qr {
+  width: auto;
+  height: 55%;
+  max-width: 75%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.assetra-print-name {
+  font-family: var(--font-main);
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  color: #111;
+  flex-shrink: 0;
 }
 
-.assetra-history-badge--cyan {
-  background: rgba(34, 211, 238, 0.15);
-  color: var(--assetra-cyan);
+.assetra-print-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-family: var(--font-desc);
+  font-size: 8px;
+  color: #555;
+  flex-shrink: 0;
 }
 
-.assetra-history-badge--primary {
-  background: rgba(128, 131, 255, 0.15);
-  color: var(--assetra-primary-soft);
+.assetra-print-meta-separator {
+  color: #bbb;
+  margin-right: 4px;
 }
 
-.assetra-history-badge--muted {
-  background: rgba(161, 161, 170, 0.15);
-  color: var(--assetra-text-secondary);
+.print-only {
+  display: none;
 }
 
-.assetra-history-badge--danger {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--assetra-danger);
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
+  .print-only {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  .assetra-print-page {
+    display: grid;
+    gap: 4mm;
+    page-break-after: always;
+  }
+
+  .assetra-print-page:last-child {
+    page-break-after: auto;
+  }
+
+  .assetra-print-label {
+    width: var(--label-w, 64mm);
+    height: var(--label-h, 34mm);
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+}
+
+@media print and (orientation: landscape) {
+  @page {
+    size: A4 landscape;
+  }
 }

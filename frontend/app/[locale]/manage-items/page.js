@@ -13,7 +13,7 @@ import AddItemForm from "@/components/items/addItemForm";
 import EditItemForm from "@/components/items/editItemForm";
 import DeactivateItemForm from "@/components/items/deactivateItemForm";
 
-import { LayoutGrid, List, Plus, X } from "lucide-react";
+import { LayoutGrid, List, Plus } from "lucide-react";
 import FilterForm, {
   createDefaultFilters,
 } from "@/components/items/itemFilterForm";
@@ -22,90 +22,111 @@ import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 
 const DOUBLE_CLICK_DELAY_MS = 220;
 
+/**
+ * Ambil token login dari localStorage / sessionStorage.
+ * Dipakai di banyak tempat, jadi ditaruh sebagai fungsi kecil biar tidak diulang-ulang.
+ */
+function getToken() {
+  return (
+    window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+    window.sessionStorage.getItem(AUTH_TOKEN_KEY)
+  );
+}
+
+/**
+ * Helper untuk semua request ke backend.
+ * Isinya: kirim request + Authorization header, baca hasilnya sebagai JSON,
+ * lalu lempar Error kalau gagal. Jadi setiap fungsi (add/edit/deactivate/dll)
+ * tidak perlu menulis ulang logic try-parse-JSON-cek-error masing-masing.
+ */
+async function apiRequest(url, options = {}, fallbackErrorMessage) {
+  const token = getToken();
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    },
+  });
+
+  const text = await response.text();
+
+  let result;
+  try {
+    result = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(fallbackErrorMessage || "Server response tidak valid");
+  }
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || fallbackErrorMessage);
+  }
+
+  return result;
+}
+
 export default function ManageItemsPage() {
   const router = useRouter();
   const t = useTranslations("manageItem");
 
+  // ================= STATE =================
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Item yang sedang dipilih user di grid/list
   const [selectedIds, setSelectedIds] = useState([]);
+  const [mode, setMode] = useState("none"); // "none" | "single" | "multi"
 
-  const [mode, setMode] = useState("none");
-
-  const [viewMode, setViewMode] = useState("grid");
-
+  const [viewMode, setViewMode] = useState("grid"); // "grid" | "list"
   const [filters, setFilters] = useState(createDefaultFilters());
 
+  // Modal/panel yang sedang terbuka
   const [showAddForm, setShowAddForm] = useState(false);
-
   const [editingItem, setEditingItem] = useState(null);
-
   const [deactivateTarget, setDeactivateTarget] = useState(null);
-
-  const [isInitialized, setIsInitialized] = useState(false);
 
   const clickTimerRef = useRef(null);
 
-  const fetchItems = useCallback(async () => {
-    const token =
-      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-      window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+  // ================= FETCH DATA =================
 
+  const fetchItems = useCallback(async () => {
+    const token = getToken();
     if (!token) {
       router.replace("/login");
       return;
     }
 
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const [response, categoriesResponse] = await Promise.all([
-        fetch(ENDPOINTS.ASSETS, { headers }),
-
-        fetch(ENDPOINTS.CATEGORIES, { headers }),
+      const [assetsResult, categoriesResult] = await Promise.all([
+        apiRequest(ENDPOINTS.ASSETS, {}, t("loadError")),
+        apiRequest(ENDPOINTS.CATEGORIES, {}, t("loadError")),
       ]);
 
-      const result = await response.json();
+      const categoryList = categoriesResult.data || [];
+      setCategories(categoryList);
 
-      const categoryResult = await categoriesResponse.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || t("loadError"));
-      }
-
-      const categoryData = categoryResult.success
-        ? categoryResult.data || []
-        : [];
-
-      setCategories(categoryData);
-
-      const categoryNames = new Map(
-        categoryData.map((category) => [
+      // Map id kategori -> nama kategori, dipakai buat "isi" nama kategori di setiap item
+      const categoryNameById = new Map(
+        categoryList.map((category) => [
           String(category.id),
           category.category_name,
-        ]),
+        ])
       );
 
-      setItems(
-        (result.data || []).map((item) => ({
-          ...item,
+      const itemsWithCategoryNames = (assetsResult.data || []).map((item) => ({
+        ...item,
+        category: categoryNameById.get(String(item.category)) || item.category,
+      }));
 
-          category:
-            typeof item.category === "number" ||
-            (typeof item.category === "string" && /^\d+$/.test(item.category))
-              ? categoryNames.get(String(item.category)) || item.category
-              : item.category,
-        })),
-      );
+      setItems(itemsWithCategoryNames);
     } catch (err) {
       console.error("Fetch items error:", err);
-
       setError(err.message);
     } finally {
       setLoading(false);
@@ -124,7 +145,6 @@ export default function ManageItemsPage() {
       }
 
       let parsedUser;
-
       try {
         parsedUser = JSON.parse(raw);
       } catch {
@@ -134,18 +154,17 @@ export default function ManageItemsPage() {
 
       setUser({
         ...parsedUser,
-
         role: parsedUser.role || parsedUser.role_name || parsedUser.userRole,
       });
 
       setIsInitialized(true);
-
       await fetchItems();
     }
 
     init();
   }, [router, fetchItems]);
 
+  // Bersihkan timer double-click kalau komponen unmount
   useEffect(() => {
     return () => {
       if (clickTimerRef.current) {
@@ -154,12 +173,15 @@ export default function ManageItemsPage() {
     };
   }, []);
 
+  // ================= SELEKSI ITEM =================
+  // Klik 1x -> pilih 1 item (buka detail panel), atau toggle kalau lagi mode multi.
+  // Klik 2x (double click) -> tambah item kedua ke seleksi, jadi mode multi.
+
   function handleSingleSelect(id) {
     if (mode === "multi") {
       setSelectedIds((prev) =>
-        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
       );
-
       return;
     }
 
@@ -170,7 +192,6 @@ export default function ManageItemsPage() {
   function handleDoubleSelect(id) {
     if (mode === "single" && selectedIds[0] && selectedIds[0] !== id) {
       setSelectedIds([selectedIds[0], id]);
-
       setMode("multi");
     } else if (mode === "multi" && !selectedIds.includes(id)) {
       setSelectedIds((prev) => [...prev, id]);
@@ -180,14 +201,14 @@ export default function ManageItemsPage() {
     }
   }
 
+  // Bedakan single click vs double click pakai delay kecil,
+  // karena browser mengirim 2 event click berturut-turut saat user double click.
   function handleCardClick(id, event) {
     if (event.detail >= 2) {
       if (clickTimerRef.current) {
         clearTimeout(clickTimerRef.current);
-
         clickTimerRef.current = null;
       }
-
       handleDoubleSelect(id);
       return;
     }
@@ -202,6 +223,7 @@ export default function ManageItemsPage() {
     setSelectedIds([]);
     setMode("none");
   }
+
   function handleApplyFilters(nextFilters) {
     setFilters(nextFilters);
     clearSelection();
@@ -211,86 +233,21 @@ export default function ManageItemsPage() {
     setFilters(nextFilters);
     clearSelection();
   }
-  function getToken() {
-    return (
-      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-      window.sessionStorage.getItem(AUTH_TOKEN_KEY)
-    );
-  }
 
-  async function handlePrintQr() {
-    try {
-      const token = getToken();
+  // ================= AKSI ITEM (add / edit / deactivate / print) =================
 
-      const response = await fetch(ENDPOINTS.PRINT_QR, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify({
-          ids: selectedIds,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || t("printQrError"));
-      }
-
-      if (result.data?.qrCode) {
-        window.open(result.data.qrCode, "_blank");
-      }
-    } catch (err) {
-      console.error("Print QR error:", err);
-
-      alert(err.message);
-    }
+  function handlePrintQr() {
+    if (selectedIds.length === 0) return;
+    router.push(`/printQr?ids=${selectedIds.join(",")}`);
   }
 
   async function handleDeactivate(ids, reason) {
-    const token = getToken();
-
     try {
-      const response = await fetch(ENDPOINTS.DEACTIVATE_ASSETS, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ ids, reason }),
-      });
-
-      console.log("Deactivate response status:", response.status);
-      const text = await response.text();
-      console.log("Deactivate response body:", text);
-
-      if (!response.ok) {
-        let errorMessage = t("statusChangeFailed");
-        try {
-          const errorData = JSON.parse(text);
-          if (errorData.message) errorMessage = errorData.message;
-        } catch {
-          errorMessage = response.statusText || t("statusChangeFailed");
-        }
-        throw new Error(errorMessage);
-      }
-
-      let result;
-      try {
-        result = JSON.parse(text);
-      } catch {
-        throw new Error(t("serverResponseError"));
-      }
-
-      if (!result.success) {
-        throw new Error(result.message || t("statusChangeFailed"));
-      }
-
+      await apiRequest(
+        ENDPOINTS.DEACTIVATE_ASSETS,
+        { method: "PATCH", body: JSON.stringify({ ids, reason }) },
+        t("statusChangeFailed")
+      );
       await fetchItems();
       clearSelection();
     } catch (err) {
@@ -298,99 +255,38 @@ export default function ManageItemsPage() {
       throw err;
     }
   }
+
   async function handleAddItem(payload) {
-    const token = getToken();
-
     try {
-      const response = await fetch(ENDPOINTS.ASSETS, {
-        method: "POST",
+      const body = {
+        name: payload.name,
+        id_category: payload.id_category,
+        status: payload.status,
+        location: payload.location,
+        description: payload.description,
+        image_url: payload.image_url,
+        specs: payload.specs,
+      };
 
-        headers: {
-          "Content-Type": "application/json",
-
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify({
-          name: payload.name,
-
-          id_category: payload.id_category,
-
-          status: payload.status,
-
-          location: payload.location,
-
-          description: payload.description,
-
-          image_url: payload.image_url,
-
-          specs: payload.specs,
-        }),
-      });
-
-      const text = await response.text();
-
-      let result;
-
-      try {
-        result = JSON.parse(text);
-      } catch {
-        throw new Error(t("serverResponseError"));
-      }
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || t("addFailed"));
-      }
-
+      await apiRequest(
+        ENDPOINTS.ASSETS,
+        { method: "POST", body: JSON.stringify(body) },
+        t("addFailed")
+      );
       await fetchItems();
     } catch (err) {
       console.error("Add item error:", err);
-
       throw err;
     }
   }
 
   async function handleEditItem(id, payload) {
-    const token = getToken();
-
     try {
-      const response = await fetch(`${ENDPOINTS.ASSETS}/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
-
-      const text = await response.text();
-      console.log("Response body:", text);
-
-      if (!response.ok) {
-        let errorMessage = t("editFailed");
-        try {
-          const errorData = JSON.parse(text);
-          if (errorData.message) errorMessage = errorData.message;
-        } catch {
-          errorMessage = response.statusText || t("editFailed");
-        }
-        throw new Error(errorMessage);
-      }
-
-      let result;
-      try {
-        result = JSON.parse(text);
-      } catch {
-        throw new Error(t("serverResponseError"));
-      }
-
-      if (!result.success) {
-        throw new Error(result.message || t("editFailed"));
-      }
-
+      await apiRequest(
+        `${ENDPOINTS.ASSETS}/${id}`,
+        { method: "PATCH", body: JSON.stringify(payload) },
+        t("editFailed")
+      );
       await fetchItems();
       clearSelection();
     } catch (err) {
@@ -399,17 +295,19 @@ export default function ManageItemsPage() {
     }
   }
 
+  // ================= FILTER & DATA TURUNAN =================
+
   const selectedItem =
-    mode === "single" ? items.find((item) => item.id === selectedIds[0]) : null;
+    mode === "single"
+      ? items.find((item) => item.id === selectedIds[0])
+      : null;
 
-  const filteredItems = items.filter((item) => {
+  function matchesFilters(item) {
     const itemCategoryId = String(
-      item.id_category ?? item.category_id ?? item.categoryId ?? "",
+      item.id_category ?? item.category_id ?? item.categoryId ?? ""
     );
-
     const itemStatus = String(item.status || "").toLowerCase();
 
-    // CATEGORY
     if (
       filters.categories.length > 0 &&
       !filters.categories.includes(itemCategoryId)
@@ -417,38 +315,43 @@ export default function ManageItemsPage() {
       return false;
     }
 
-    // STATUS
     if (filters.statuses.length > 0 && !filters.statuses.includes(itemStatus)) {
       return false;
     }
 
-    // DATE
     const createdAt = item.created_at;
+    if (!createdAt) {
+      // item tanpa tanggal, tapi user sedang filter berdasarkan tanggal -> tidak cocok
+      return !(filters.dateFrom || filters.dateTo);
+    }
 
-    if (createdAt) {
-      const itemDate = new Date(createdAt);
+    const itemDate = new Date(createdAt);
 
-      if (filters.dateFrom) {
-        const fromDate = new Date(`${filters.dateFrom}T00:00:00`);
+    if (filters.dateFrom && itemDate < new Date(`${filters.dateFrom}T00:00:00`)) {
+      return false;
+    }
 
-        if (itemDate < fromDate) {
-          return false;
-        }
-      }
-
-      if (filters.dateTo) {
-        const toDate = new Date(`${filters.dateTo}T23:59:59.999`);
-
-        if (itemDate > toDate) {
-          return false;
-        }
-      }
-    } else if (filters.dateFrom || filters.dateTo) {
+    if (filters.dateTo && itemDate > new Date(`${filters.dateTo}T23:59:59.999`)) {
       return false;
     }
 
     return true;
-  });
+  }
+
+  const filteredItems = items.filter(matchesFilters);
+
+  const hasActiveFilters =
+    filters.categories.length > 0 ||
+    filters.dateFrom ||
+    filters.dateTo ||
+    !(
+      filters.statuses.length === 2 &&
+      filters.statuses.includes("functional") &&
+      filters.statuses.includes("needs_repair")
+    );
+
+  // ================= RENDER =================
+
   if (!isInitialized || loading) {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
@@ -482,15 +385,7 @@ export default function ManageItemsPage() {
                 onClear={handleClearFilters}
               />
 
-              {(filters.categories.length > 0 ||
-                filters.dateFrom ||
-                filters.dateTo ||
-                !(
-                  filters.statuses.length === 3 &&
-                  filters.statuses.includes("functional") &&
-                  filters.statuses.includes("need_repair") &&
-                  filters.statuses.includes("borrowed")
-                )) && (
+              {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={() => handleClearFilters(createDefaultFilters())}
@@ -528,7 +423,6 @@ export default function ManageItemsPage() {
                 <List size={16} strokeWidth={1.75} />
               </button>
             </div>
-
           </div>
 
           <div
@@ -553,7 +447,6 @@ export default function ManageItemsPage() {
               className="assetra-add-item-card"
             >
               <Plus size={22} strokeWidth={1.9} />
-
               <span className="text-xs">{t("addItem")}</span>
             </button>
           </div>

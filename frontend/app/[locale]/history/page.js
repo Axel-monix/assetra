@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import HistoryFilterBar from "@/components/history/historyFilterBar";
 import HistoryItem from "@/components/history/historyItem";
-
+import ExportModal from "@/components/history/exportModal";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 import { groupHistoryByDate } from "@/lib/historyHelper";
 
@@ -15,20 +15,17 @@ export default function HistoryPage() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("history");
-
   const [user, setUser] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
-
   const [entries, setEntries] = useState([]);
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
-
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
-
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
+  const [showExportModal, setShowExportModal] = useState(false);
 
   function getToken() {
     return (
@@ -63,7 +60,9 @@ export default function HistoryPage() {
           throw new Error(result.message || t("loadError"));
         }
 
-        setEntries((prev) => (append ? [...prev, ...result.data] : result.data));
+        setEntries((prev) =>
+          append ? [...prev, ...result.data] : result.data,
+        );
         setCursor(result.meta?.nextCursor ?? null);
         setHasMore(Boolean(result.meta?.hasMore));
       } catch (err) {
@@ -103,6 +102,9 @@ export default function HistoryPage() {
   }, [isInitialized, activeTab, search]);
 
   const groups = groupHistoryByDate(entries, locale);
+  const handleExportSuccess = useCallback(() => {
+    console.log("Export berhasil");
+  }, []);
 
   if (!isInitialized || (loading && entries.length === 0 && !error)) {
     return (
@@ -128,6 +130,7 @@ export default function HistoryPage() {
         onTabChange={setActiveTab}
         search={search}
         onSearchChange={setSearch}
+        onExport={() => setShowExportModal(true)} 
       />
 
       {error && (
@@ -143,7 +146,9 @@ export default function HistoryPage() {
           <div key={group.key} className="mb-2">
             <div className="mb-3 flex items-baseline gap-2">
               <span className="assetra-history-group-label">{group.label}</span>
-              <span className="assetra-history-group-date">{group.dateDisplay}</span>
+              <span className="assetra-history-group-date">
+                {group.dateDisplay}
+              </span>
             </div>
             {group.items.map((entry, i) => (
               <HistoryItem
@@ -161,13 +166,23 @@ export default function HistoryPage() {
           <button
             type="button"
             disabled={loadingMore}
-            onClick={() => fetchHistory({ append: true, cursorOverride: cursor })}
+            onClick={() =>
+              fetchHistory({ append: true, cursorOverride: cursor })
+            }
             className="assetra-btn assetra-btn-secondary"
           >
             {loadingMore ? t("loading") : t("loadPrevious")}
           </button>
         </div>
       )}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        activeTab={activeTab}
+        search={search}
+        entries={entries}
+        onExportSuccess={handleExportSuccess}
+      />
     </DashboardLayout>
   );
 }
