@@ -1,14 +1,13 @@
-// components/history/HistoryFilterBar.jsx
 "use client";
 
-import { useTranslations } from "next-intl";
 import { Search, Download } from "lucide-react";
-
-const TABS = ["all", "added", "updated", "deactivated"];
+import { useTranslations } from "next-intl";
+import HistoryFilterForm from "./historyFilterForm";
 
 export default function HistoryFilterBar({
-  activeTab,
-  onTabChange,
+  filters,
+  onApplyFilters,
+  onClearFilters,
   search,
   onSearchChange,
   onExport,
@@ -17,25 +16,21 @@ export default function HistoryFilterBar({
 
   return (
     <div className="flex flex-wrap items-center gap-3 mb-5">
-      <div className="assetra-history-tabs">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => onTabChange(tab)}
-            className={`assetra-history-tab ${activeTab === tab ? "is-active" : ""}`}
-          >
-            {t(`tabs.${tab}`)} {/* <-- perbaikan di sini */}
-          </button>
-        ))}
-      </div>
+      <HistoryFilterForm
+        filters={filters}
+        onApply={onApplyFilters}
+        onClear={onClearFilters}
+      />
 
       <div className="assetra-history-search flex-1 min-w-[200px]">
         <Search size={15} />
+
         <input
           type="text"
           value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(event) =>
+            onSearchChange(event.target.value)
+          }
           placeholder={t("searchPlaceholder")}
         />
       </div>
@@ -43,7 +38,7 @@ export default function HistoryFilterBar({
       <button
         type="button"
         onClick={onExport}
-        className="assetra-btn assetra-btn-primary flex items-center gap-2 ml-auto"
+        className="assetra-btn assetra-btn-primary flex items-center gap-2"
       >
         <Download size={16} />
         {t("exportButton")}

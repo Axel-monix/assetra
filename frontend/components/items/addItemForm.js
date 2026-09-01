@@ -35,6 +35,8 @@ const STATUS_OPTIONS = [
   ASSET_STATUS.UNAVAILABLE,
 ];
 
+const EXIT_DURATION = 180;
+
 function generateCodeFromName(name) {
   if (!name) return "";
 
@@ -75,8 +77,15 @@ export default function AddItemForm({
     useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   const fileInputRef = useRef(null);
+
+  function handleClose() {
+    if (loading || closing) return;
+    setClosing(true);
+    window.setTimeout(() => onClose(), 180);
+  }
 
   useEffect(() => {
     async function loadCategories() {
@@ -326,7 +335,7 @@ export default function AddItemForm({
         ),
       });
 
-      onClose();
+      handleClose();
     } catch (err) {
       setError(
         err.message ||
@@ -340,14 +349,12 @@ export default function AddItemForm({
   return (
     <>
       <div
-        className="assetra-modal-overlay"
-        onClick={
-          loading ? undefined : onClose
-        }
+        className={`assetra-modal-overlay ${closing ? "is-closing" : ""}`}
+        onClick={loading || closing ? undefined : handleClose}
       />
 
       <div className="assetra-modal-wrapper">
-        <div className="assetra-modal-card">
+        <div className={`assetra-modal-card ${closing ? "is-closing" : ""}`}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-semibold text-[var(--color-white)]">
               {t("addNewItem")}
@@ -355,8 +362,8 @@ export default function AddItemForm({
 
             <button
               type="button"
-              onClick={onClose}
-              disabled={loading}
+              onClick={handleClose}
+              disabled={loading || closing}
               aria-label={t("close")}
               className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition disabled:opacity-50"
             >

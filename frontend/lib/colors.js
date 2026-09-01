@@ -5,6 +5,7 @@ const colors = {
   primaryHover: "#9295FF",
   primarySoft: "#A5A7FF",
   primaryContrast: "#111323",
+  primaryTeks: "#C0C1FF",
 
   card: "#131824",
   input: "#0D0D15",
@@ -30,7 +31,7 @@ const colors = {
 
   warning: "#FBBF24",
   info: "#60A5FA",
-  success: "#4CAF50",
+  succes: "#60A5FA",
 
   accentCyan: "#22D3EE",
   accentOrange: "#FB923C",

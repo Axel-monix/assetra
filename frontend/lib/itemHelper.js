@@ -45,15 +45,8 @@ export function buildSpecsPayload(template, values) {
 
 const STATUS_ALIASES = {
   functional: "functional",
-  tersedia: "functional",
   needs_repair: "needs_repair",
   maintenance: "needs_repair",
-  perbaikan: "needs_repair",
-  borrowed: "borrowed",
-  dipinjam: "borrowed",
-  unavailable: "unavailable",
-  "tidak tersedia": "unavailable",
-  rusak: "unavailable",
 };
 
 export function normalizeStatus(raw) {

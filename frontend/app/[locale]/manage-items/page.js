@@ -116,7 +116,7 @@ export default function ManageItemsPage() {
         categoryList.map((category) => [
           String(category.id),
           category.category_name,
-        ])
+        ]),
       );
 
       const itemsWithCategoryNames = (assetsResult.data || []).map((item) => ({
@@ -180,7 +180,7 @@ export default function ManageItemsPage() {
   function handleSingleSelect(id) {
     if (mode === "multi") {
       setSelectedIds((prev) =>
-        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
       );
       return;
     }
@@ -246,7 +246,7 @@ export default function ManageItemsPage() {
       await apiRequest(
         ENDPOINTS.DEACTIVATE_ASSETS,
         { method: "PATCH", body: JSON.stringify({ ids, reason }) },
-        t("statusChangeFailed")
+        t("statusChangeFailed"),
       );
       await fetchItems();
       clearSelection();
@@ -271,7 +271,7 @@ export default function ManageItemsPage() {
       await apiRequest(
         ENDPOINTS.ASSETS,
         { method: "POST", body: JSON.stringify(body) },
-        t("addFailed")
+        t("addFailed"),
       );
       await fetchItems();
     } catch (err) {
@@ -285,7 +285,7 @@ export default function ManageItemsPage() {
       await apiRequest(
         `${ENDPOINTS.ASSETS}/${id}`,
         { method: "PATCH", body: JSON.stringify(payload) },
-        t("editFailed")
+        t("editFailed"),
       );
       await fetchItems();
       clearSelection();
@@ -298,13 +298,11 @@ export default function ManageItemsPage() {
   // ================= FILTER & DATA TURUNAN =================
 
   const selectedItem =
-    mode === "single"
-      ? items.find((item) => item.id === selectedIds[0])
-      : null;
+    mode === "single" ? items.find((item) => item.id === selectedIds[0]) : null;
 
   function matchesFilters(item) {
     const itemCategoryId = String(
-      item.id_category ?? item.category_id ?? item.categoryId ?? ""
+      item.id_category ?? item.category_id ?? item.categoryId ?? "",
     );
     const itemStatus = String(item.status || "").toLowerCase();
 
@@ -327,11 +325,17 @@ export default function ManageItemsPage() {
 
     const itemDate = new Date(createdAt);
 
-    if (filters.dateFrom && itemDate < new Date(`${filters.dateFrom}T00:00:00`)) {
+    if (
+      filters.dateFrom &&
+      itemDate < new Date(`${filters.dateFrom}T00:00:00`)
+    ) {
       return false;
     }
 
-    if (filters.dateTo && itemDate > new Date(`${filters.dateTo}T23:59:59.999`)) {
+    if (
+      filters.dateTo &&
+      itemDate > new Date(`${filters.dateTo}T23:59:59.999`)
+    ) {
       return false;
     }
 
@@ -376,62 +380,26 @@ export default function ManageItemsPage() {
             <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
           )}
 
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <FilterForm
-                categories={categories}
-                filters={filters}
-                onApply={handleApplyFilters}
-                onClear={handleClearFilters}
-              />
+          <div className="mb-5 flex items-center gap-2 flex-wrap">
+            <FilterForm
+              categories={categories}
+              filters={filters}
+              onApply={handleApplyFilters}
+              onClear={handleClearFilters}
+            />
 
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={() => handleClearFilters(createDefaultFilters())}
-                  className="assetra-filter-clear-inline"
-                >
-                  {t("clearAll")}
-                </button>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] p-1">
+            {hasActiveFilters && (
               <button
                 type="button"
-                onClick={() => setViewMode("grid")}
-                aria-label={t("gridView")}
-                className={`p-1.5 rounded-md transition ${
-                  viewMode === "grid"
-                    ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)]"
-                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-                }`}
+                onClick={() => handleClearFilters(createDefaultFilters())}
+                className="assetra-filter-clear-inline"
               >
-                <LayoutGrid size={16} strokeWidth={1.75} />
+                {t("clearAll")}
               </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                aria-label={t("listView")}
-                className={`p-1.5 rounded-md transition ${
-                  viewMode === "list"
-                    ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)]"
-                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-                }`}
-              >
-                <List size={16} strokeWidth={1.75} />
-              </button>
-            </div>
+            )}
           </div>
 
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-24"
-                : "flex flex-col gap-3 pb-24"
-            }
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xl:gap-4 pb-24">
             {filteredItems.map((item) => (
               <ItemCard
                 key={item.id}

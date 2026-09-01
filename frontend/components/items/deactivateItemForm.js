@@ -6,12 +6,21 @@ import colors from "@/lib/colors";
 
 const REASON_MIN_LENGTH = 5;
 
+const EXIT_DURATION = 180;
+
 export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
   const t = useTranslations("manageItem");
 
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  function handleClose() {
+    if (loading || closing) return;
+    setClosing(true);
+    window.setTimeout(() => onClose(), EXIT_DURATION);
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -33,7 +42,7 @@ export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
 
     try {
       await onConfirm(trimmedReason);
-      onClose();
+      handleClose();
     } catch (err) {
       setError(err.message || t("statusChangeFailed"));
     } finally {
@@ -44,12 +53,12 @@ export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
   return (
     <>
       <div
-        className="assetra-modal-overlay"
-        onClick={loading ? undefined : onClose}
+        className={`assetra-modal-overlay ${closing ? "is-closing" : ""}`}
+        onClick={loading || closing ? undefined : handleClose}
       />
 
       <div className="assetra-modal-wrapper">
-        <div className="assetra-modal-card assetra-modal-card--sm">
+        <div className={`assetra-modal-card assetra-modal-card--sm ${closing ? "is-closing" : ""}`}>
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2.5">
               <span className="assetra-icon-badge assetra-icon-badge--warning">
@@ -63,8 +72,8 @@ export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
 
             <button
               type="button"
-              onClick={onClose}
-              disabled={loading}
+              onClick={handleClose}
+              disabled={loading || closing}
               aria-label={t("close")}
               className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition disabled:opacity-50"
             >
@@ -109,8 +118,8 @@ export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
             <div className="flex items-center gap-3 pt-1">
               <button
                 type="button"
-                onClick={onClose}
-                disabled={loading}
+                onClick={handleClose}
+                disabled={loading || closing}
                 className="assetra-btn assetra-btn-secondary flex-1"
               >
                 {t("cancel")}

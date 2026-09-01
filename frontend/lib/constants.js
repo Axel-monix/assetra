@@ -19,6 +19,8 @@ export const ENDPOINTS = {
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
   FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`,
+  HISTORY: `${API_URL}/history`,
+  EXPORT_HISTORY: `${API_URL}/history/export`,
 
   CATEGORIES: `${API_URL}/categories`,
   ASSETS: `${API_URL}/assets`,

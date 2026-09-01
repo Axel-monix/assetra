@@ -1,18 +1,14 @@
 export const ASSET_STATUS = {
   FUNCTIONAL: "functional",
   NEEDS_REPAIR: "needs_repair",
-  BORROWED: "borrowed",
   UNAVAILABLE: "unavailable",
 };
 
 export const ASSET_STATUS_STYLES = {
   functional:
-    "assetra-status-success bg-[var(--assetra-success)]/10 border border-[var(--assetra-success)]/20",
+    "assetra-status-success bg-[var(--assetra-info)]/10 border border-[var(--assetra-info)]/20",
   needs_repair:
     "assetra-status-warning bg-[var(--assetra-warning)]/10 border border-[var(--assetra-warning)]/20",
-
-  borrowed:
-    "assetra-status-info bg-[var(--assetra-info)]/10 border border-[var(--assetra-info)]/20",
 
   unavailable:
     "assetra-status-muted bg-[var(--assetra-text-muted)]/10 border border-[var(--assetra-text-muted)]/20",
@@ -21,14 +17,12 @@ export const ASSET_STATUS_STYLES = {
 export const ASSET_STATUS_LABELS = {
   functional: "statusOptions.functional",
   needs_repair: "statusOptions.needs_repair",
-  borrowed: "statusOptions.borrowed",
   unavailable: "statusOptions.unavailable",
 };
 
 export const ASSET_STATUS_OPTIONS = [
   ASSET_STATUS.FUNCTIONAL,
   ASSET_STATUS.NEEDS_REPAIR,
-  ASSET_STATUS.BORROWED,
   ASSET_STATUS.UNAVAILABLE,
 ];
 

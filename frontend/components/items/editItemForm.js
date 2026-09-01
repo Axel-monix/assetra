@@ -58,8 +58,15 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   const fileInputRef = useRef(null);
+
+  function handleClose() {
+    if (loading || closing) return;
+    setClosing(true);
+    window.setTimeout(() => onClose(), 180);
+  }
 
   useEffect(() => {
     async function loadCategories() {
@@ -265,7 +272,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         specs: buildSpecsPayload(specTemplate, specValues),
       });
 
-      onClose();
+      handleClose();
     } catch (err) {
       setError(err.message || t("editFailed"));
     } finally {
@@ -277,10 +284,13 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
   return (
     <>
-      <div className="assetra-modal-overlay" onClick={onClose} />
+      <div
+        className={`assetra-modal-overlay ${closing ? "is-closing" : ""}`}
+        onClick={closing ? undefined : handleClose}
+      />
 
       <div className="assetra-modal-wrapper">
-        <div className="assetra-modal-card">
+        <div className={`assetra-modal-card ${closing ? "is-closing" : ""}`}>
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-lg font-semibold text-[var(--color-white)]">
               {t("editItem")}
@@ -288,8 +298,9 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
             <button
               type="button"
-              onClick={onClose}
-              className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition"
+              onClick={handleClose}
+              disabled={closing}
+              className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition disabled:opacity-50"
             >
               <X size={20} strokeWidth={1.75} />
             </button>
