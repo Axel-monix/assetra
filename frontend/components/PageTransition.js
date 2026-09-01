@@ -18,7 +18,10 @@ export default function PageTransition({ children }) {
   }, [pathname]);
 
   return (
-    <div key={pathname} className={`assetra-page-shell ${isReady ? "is-ready" : ""}`}>
+    <div
+      key={pathname}
+      className={`assetra-page-shell ${isReady ? "is-ready" : ""}`}
+    >
       {children}
     </div>
   );

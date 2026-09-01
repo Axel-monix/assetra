@@ -58,7 +58,9 @@ export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
       />
 
       <div className="assetra-modal-wrapper">
-        <div className={`assetra-modal-card assetra-modal-card--sm ${closing ? "is-closing" : ""}`}>
+        <div
+          className={`assetra-modal-card assetra-modal-card--sm ${closing ? "is-closing" : ""}`}
+        >
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2.5">
               <span className="assetra-icon-badge assetra-icon-badge--warning">
