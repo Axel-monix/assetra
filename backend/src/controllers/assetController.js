@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
-const { generateQrCode } = require("../utils/qrGenerator");
+const { generateQrPng } = require("../utils/qrGenerator"); // 🔄 CHANGED: generateQrCode -> generateQrPng
 const { logHistory } = require("../utils/historyLogger");
 
 function generateCodePrefix(name) {
@@ -8,12 +8,19 @@ function generateCodePrefix(name) {
   return (cleaned.slice(0, 3) || "AST").padEnd(3, "X");
 }
 
+function assetIdentifierClause(parameterIndex = 1) {
+  return `(code = $${parameterIndex} OR id::text = $${parameterIndex})`;
+}
+function buildQrCodeUrl(code) {
+  return `/api/assets/${code}/qr`;
+}
+
 async function listAssets(req, res) {
   try {
     const { rows } = await pool.query(
       `SELECT asset.id, asset.id_category, category.category_name,
               asset.name, asset.code, asset.status,
-              asset.image_url, asset.qr_code_url, asset.created_at, asset.updated_at
+              asset.image_url, asset.created_at, asset.updated_at
              FROM asset
              LEFT JOIN category ON category.id = asset.id_category
       ORDER BY asset.created_at DESC NULLS LAST, asset.id DESC`,
@@ -26,7 +33,7 @@ async function listAssets(req, res) {
       category: asset.category_name || String(asset.id_category),
       status: asset.status || "Unknown",
       imageUrl: asset.image_url,
-      qrCodeUrl: asset.qr_code_url,
+      qrCodeUrl: buildQrCodeUrl(asset.code),
       createdAt: asset.created_at,
       updatedAt: asset.updated_at,
       specs: {},
@@ -83,16 +90,15 @@ async function createAsset(req, res) {
 
     const prefix = generateCodePrefix(name);
     const finalCode = `${prefix}-${String(newId).padStart(4, "0")}`;
-
-    const qrCodeUrl = await generateQrCode(finalCode);
-
     const { rows } = await client.query(
+  
       `UPDATE asset
-       SET code = $1, qr_code_url = $2, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $3
-       RETURNING id, id_category, name, code, status, image_url, qr_code_url, created_at, updated_at`,
-      [finalCode, qrCodeUrl, newId],
+       SET code = $1, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2
+       RETURNING id, id_category, name, code, status, image_url, created_at, updated_at`,
+      [finalCode, newId],
     );
+
     await logHistory(client, {
       type: "add_item",
       idAsset: newId,
@@ -106,7 +112,10 @@ async function createAsset(req, res) {
 
     return success(res, {
       message: "Item berhasil ditambahkan.",
-      data: rows[0],
+      data: {
+        ...rows[0],
+        qrCodeUrl: buildQrCodeUrl(rows[0].code), 
+      },
       statusCode: 201,
     });
   } catch (err) {
@@ -119,10 +128,6 @@ async function createAsset(req, res) {
   } finally {
     if (client) client.release();
   }
-}
-
-function assetIdentifierClause(parameterIndex = 1) {
-  return `(code = $${parameterIndex} OR id::text = $${parameterIndex})`;
 }
 
 async function updateAsset(req, res) {
@@ -152,7 +157,7 @@ async function updateAsset(req, res) {
            updated_by = $5, updated_at = CURRENT_TIMESTAMP
        WHERE ${assetIdentifierClause(6)}
        RETURNING id, id_category, name, code, status, image_url,
-                 qr_code_url, created_at, updated_at`,
+                 created_at, updated_at`,
       [
         id_category,
         name.trim(),
@@ -179,7 +184,13 @@ async function updateAsset(req, res) {
     void description;
     void specs;
 
-    return success(res, { message: "Item berhasil diperbarui.", data: rows[0] });
+    return success(res, {
+      message: "Item berhasil diperbarui.",
+      data: {
+        ...rows[0],
+        qrCodeUrl: buildQrCodeUrl(rows[0].code),
+      },
+    });
   } catch (err) {
     console.error("Error in updateAsset:", err);
     if (err.code === "23503") {
@@ -216,7 +227,6 @@ async function deactivateAssets(req, res) {
       });
     }
 
-    // HOOK: catat history nonaktif item, 1 baris history per item yang dinonaktifkan
     for (const row of rows) {
       await logHistory(pool, {
         type: "deactivate_item",
@@ -237,5 +247,38 @@ async function deactivateAssets(req, res) {
     return error(res, { message: "Gagal mengubah status item." });
   }
 }
+async function getAssetQrCode(req, res) {
+  const { id } = req.params;
 
-module.exports = { listAssets, createAsset, updateAsset, deactivateAssets };
+  try {
+    const { rows } = await pool.query(
+      `SELECT code FROM asset WHERE ${assetIdentifierClause(1)}`,
+      [id],
+    );
+
+    if (rows.length === 0) {
+      return error(res, { message: "Item tidak ditemukan.", statusCode: 404 });
+    }
+
+    const pngBuffer = await generateQrPng(rows[0].code);
+
+    res.set({
+      "Content-Type": "image/png",
+      
+      "Cache-Control": "public, max-age=31536000, immutable",
+    });
+
+    return res.send(pngBuffer);
+  } catch (err) {
+    console.error("Error in getAssetQrCode:", err);
+    return error(res, { message: "Gagal membuat QR code." });
+  }
+}
+
+module.exports = {
+  listAssets,
+  createAsset,
+  updateAsset,
+  deactivateAssets,
+  getAssetQrCode,
+};

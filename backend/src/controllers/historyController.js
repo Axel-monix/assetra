@@ -87,10 +87,6 @@ function buildHistoryFilters(reqQuery) {
     idx++;
   }
 
-  /* =======================================================
-     DATE TO
-  ======================================================= */
-
   if (dateTo) {
     conditions.push(`history.created_at <= $${idx}`);
 
@@ -107,13 +103,15 @@ function buildHistoryFilters(reqQuery) {
 
 /* =========================================================
    LIST HISTORY
+   (fetch SEMUA baris yang match filter, tanpa LIMIT.
+   Pagination-nya di-handle di frontend, sama kayak manage-admin)
 ========================================================= */
 
 async function listHistory(req, res) {
   try {
-    const { type, types, search, dateFrom, dateTo, cursor } = req.query;
+    const { type, types, search, dateFrom, dateTo } = req.query;
 
-    const { conditions, params, idx } = buildHistoryFilters({
+    const { conditions, params } = buildHistoryFilters({
       type,
       types,
       search,
@@ -121,28 +119,8 @@ async function listHistory(req, res) {
       dateTo,
     });
 
-    /* =====================================================
-       CURSOR PAGINATION
-    ===================================================== */
-
-    if (cursor) {
-      conditions.push(`history.id < $${idx}`);
-
-      params.push(Number(cursor));
-    }
-
-    /* =====================================================
-       WHERE CLAUSE
-    ===================================================== */
-
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-
-    /* =====================================================
-       QUERY
-
-       +1 row is fetched to determine hasMore
-    ===================================================== */
 
     const { rows } = await pool.query(
       `SELECT
@@ -163,29 +141,11 @@ async function listHistory(req, res) {
 
        ORDER BY
          history.created_at DESC,
-         history.id DESC
-
-       LIMIT $${idx}`,
-      [...params, PAGE_SIZE + 1],
+         history.id DESC`,
+      params,
     );
 
-    /* =====================================================
-       PAGINATION RESULT
-    ===================================================== */
-
-    const hasMore = rows.length > PAGE_SIZE;
-
-    const data = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
-
-    const nextCursor = hasMore ? data[data.length - 1].id : null;
-
-    return success(res, {
-      data,
-      meta: {
-        nextCursor,
-        hasMore,
-      },
-    });
+    return success(res, { data: rows });
   } catch (err) {
     console.error("Error in listHistory:", err);
 
@@ -237,30 +197,16 @@ async function getExportSummary() {
           COUNT(*)::int AS count
        FROM history
        WHERE type = 'add_item'
-         AND date_trunc(
-           'month',
-           created_at
-         ) = date_trunc(
-           'month',
-           CURRENT_DATE
-         )`,
+         AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE)`,
       ),
 
-      pool.query(
-        `SELECT
-          COUNT(*)::int AS count
-       FROM asset
-       WHERE status = $1`,
-        [NEEDS_REPAIR_STATUS],
-      ),
+      pool.query(`SELECT COUNT(*)::int AS count FROM asset WHERE status = $1`, [
+        NEEDS_REPAIR_STATUS,
+      ]),
 
-      pool.query(
-        `SELECT
-          COUNT(*)::int AS count
-       FROM asset
-       WHERE status = $1`,
-        [UNAVAILABLE_STATUS],
-      ),
+      pool.query(`SELECT COUNT(*)::int AS count FROM asset WHERE status = $1`, [
+        UNAVAILABLE_STATUS,
+      ]),
 
       pool.query(
         `SELECT
@@ -268,24 +214,15 @@ async function getExportSummary() {
        FROM status_asset
        WHERE old_status = $1
          AND new_status = $2
-         AND date_trunc(
-           'month',
-           changed_at
-         ) = date_trunc(
-           'month',
-           CURRENT_DATE
-         )`,
+         AND date_trunc('month', changed_at) = date_trunc('month', CURRENT_DATE)`,
         [NEEDS_REPAIR_STATUS, REPAIRED_STATUS],
       ),
     ]);
 
   return {
     addedThisMonth: addedResult.rows[0].count,
-
     needsRepairCount: needsRepairResult.rows[0].count,
-
     unavailableCount: unavailableResult.rows[0].count,
-
     repairedThisMonth: repairedResult.rows[0].count,
   };
 }
@@ -306,113 +243,62 @@ function buildPdfBuffer(rows, summary, locale = "id") {
     const chunks = [];
 
     doc.on("data", (chunk) => chunks.push(chunk));
-
     doc.on("end", () => resolve(Buffer.concat(chunks)));
-
     doc.on("error", reject);
 
-    doc.fontSize(16).text("Laporan Riwayat Aset - Assetra", {
-      align: "center",
-    });
+    doc
+      .fontSize(16)
+      .text("Laporan Riwayat Aset - Assetra", { align: "center" });
 
     doc.moveDown(1);
 
     const columns = [
-      {
-        key: "id",
-        label: "ID",
-        width: 35,
-      },
-      {
-        key: "activity",
-        label: labels.activity,
-        width: 110,
-      },
-      {
-        key: "subject_name",
-        label: labels.name,
-        width: 120,
-      },
-      {
-        key: "subject_code",
-        label: labels.code,
-        width: 90,
-      },
-      {
-        key: "category_name",
-        label: labels.category,
-        width: 90,
-      },
-      {
-        key: "status_label",
-        label: labels.status,
-        width: 90,
-      },
-      {
-        key: "performed_by_name",
-        label: labels.admin,
-        width: 90,
-      },
-      {
-        key: "created_at_label",
-        label: labels.date,
-        width: 110,
-      },
+      { key: "id", label: "ID", width: 35 },
+      { key: "activity", label: labels.activity, width: 110 },
+      { key: "subject_name", label: labels.name, width: 120 },
+      { key: "subject_code", label: labels.code, width: 90 },
+      { key: "category_name", label: labels.category, width: 90 },
+      { key: "status_label", label: labels.status, width: 90 },
+      { key: "performed_by_name", label: labels.admin, width: 90 },
+      { key: "created_at_label", label: labels.date, width: 110 },
     ];
 
     const startX = doc.page.margins.left;
-
     let y = doc.y;
-
     const rowHeight = 22;
 
     function drawHeader() {
       let x = startX;
-
       doc.font("Helvetica-Bold").fontSize(9);
-
       columns.forEach((col) => {
         doc.rect(x, y, col.width, rowHeight).stroke();
-
-        doc.text(col.label, x + 4, y + 6, {
-          width: col.width - 8,
-        });
-
+        doc.text(col.label, x + 4, y + 6, { width: col.width - 8 });
         x += col.width;
       });
-
       y += rowHeight;
     }
 
     drawHeader();
-
     doc.font("Helvetica").fontSize(8);
 
     rows.forEach((row) => {
       if (y + rowHeight > doc.page.height - doc.page.margins.bottom - 100) {
         doc.addPage();
-
         y = doc.page.margins.top;
-
         drawHeader();
-
         doc.font("Helvetica").fontSize(8);
       }
 
       let x = startX;
-
       columns.forEach((col) => {
         doc.rect(x, y, col.width, rowHeight).stroke();
-
         doc.text(String(row[col.key] ?? "-"), x + 4, y + 6, {
           width: col.width - 8,
           height: rowHeight - 8,
           ellipsis: true,
         });
-
         x += col.width;
       });
-
       y += rowHeight;
     });
 
@@ -420,13 +306,11 @@ function buildPdfBuffer(rows, summary, locale = "id") {
 
     if (y > doc.page.height - doc.page.margins.bottom - 100) {
       doc.addPage();
-
       y = doc.page.margins.top;
     }
 
     doc.font("Helvetica-Bold").fontSize(11).text(labels.summary, startX, y);
     y += 20;
-
     doc.font("Helvetica").fontSize(9);
 
     [
@@ -436,7 +320,6 @@ function buildPdfBuffer(rows, summary, locale = "id") {
       `${labels.repairedThisMonth}: ${summary.repairedThisMonth}`,
     ].forEach((line) => {
       doc.text(line, startX, y);
-
       y += 16;
     });
 
@@ -450,54 +333,20 @@ function buildPdfBuffer(rows, summary, locale = "id") {
 
 async function buildExcelBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
-
   const labels = EXPORT_LABELS[lang];
 
   const workbook = new ExcelJS.Workbook();
-
   const sheet = workbook.addWorksheet(lang === "en" ? "History" : "Riwayat");
 
   sheet.columns = [
-    {
-      header: "ID",
-      key: "id",
-      width: 8,
-    },
-    {
-      header: labels.activity,
-      key: "activity",
-      width: 26,
-    },
-    {
-      header: labels.name,
-      key: "subject_name",
-      width: 24,
-    },
-    {
-      header: labels.code,
-      key: "subject_code",
-      width: 16,
-    },
-    {
-      header: labels.category,
-      key: "category_name",
-      width: 18,
-    },
-    {
-      header: labels.status,
-      key: "status_label",
-      width: 18,
-    },
-    {
-      header: labels.admin,
-      key: "performed_by_name",
-      width: 18,
-    },
-    {
-      header: labels.date,
-      key: "created_at_label",
-      width: 22,
-    },
+    { header: "ID", key: "id", width: 8 },
+    { header: labels.activity, key: "activity", width: 26 },
+    { header: labels.name, key: "subject_name", width: 24 },
+    { header: labels.code, key: "subject_code", width: 16 },
+    { header: labels.category, key: "category_name", width: 18 },
+    { header: labels.status, key: "status_label", width: 18 },
+    { header: labels.admin, key: "performed_by_name", width: 18 },
+    { header: labels.date, key: "created_at_label", width: 22 },
     {
       header: lang === "en" ? "Description" : "Deskripsi",
       key: "description",
@@ -505,24 +354,15 @@ async function buildExcelBuffer(rows, summary, locale = "id") {
     },
   ];
 
-  sheet.getRow(1).font = {
-    bold: true,
-  };
+  sheet.getRow(1).font = { bold: true };
 
   sheet.addRows(rows);
 
   sheet.addRow([]);
-
-  sheet.addRow([labels.summary]).font = {
-    bold: true,
-  };
-
+  sheet.addRow([labels.summary]).font = { bold: true };
   sheet.addRow([labels.addedThisMonth, summary.addedThisMonth]);
-
   sheet.addRow([labels.needsRepair, summary.needsRepairCount]);
-
   sheet.addRow([labels.unavailable, summary.unavailableCount]);
-
   sheet.addRow([labels.repairedThisMonth, summary.repairedThisMonth]);
 
   return workbook.xlsx.writeBuffer();
@@ -565,16 +405,13 @@ async function exportHistory(req, res) {
          FROM history
 
          LEFT JOIN users performer
-           ON performer.id =
-              history.performed_by
+           ON performer.id = history.performed_by
 
          LEFT JOIN asset
-           ON asset.id =
-              history.id_asset
+           ON asset.id = history.id_asset
 
          LEFT JOIN category
-           ON category.id =
-              asset.id_category
+           ON category.id = asset.id_category
 
          ${whereClause}
 
@@ -585,36 +422,27 @@ async function exportHistory(req, res) {
     );
 
     const exportRows = mapRowsForExport(rows, exportLocale);
-
     const summary = await getExportSummary();
-
-    /* PDF */
 
     if (format === "pdf") {
       const buffer = await buildPdfBuffer(exportRows, summary, exportLocale);
       res.setHeader("Content-Type", "application/pdf");
-
       res.setHeader(
         "Content-Disposition",
         'attachment; filename="history.pdf"',
       );
-
       return res.status(200).send(buffer);
     }
 
-/* Excel */
     const buffer = await buildExcelBuffer(exportRows, summary, exportLocale);
-
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     );
-
     res.setHeader(
       "Content-Disposition",
       'attachment; filename="history-export.xlsx"',
     );
-
     return res.status(200).send(buffer);
   } catch (err) {
     console.error("Error in exportHistory:", err);
@@ -625,10 +453,6 @@ async function exportHistory(req, res) {
     });
   }
 }
-
-/* =========================================================
-   EXPORT
-========================================================= */
 
 module.exports = {
   listHistory,

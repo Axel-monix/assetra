@@ -6,11 +6,19 @@ const {
   createAsset,
   updateAsset,
   deactivateAssets,
+  getAssetQrCode,
+} = require("../controllers/assetController");
+router.get("/:id/qr", getAssetQrCode);
+const {
+  listAssets,
+  createAsset,
+  updateAsset,
+  deactivateAssets,
 } = require("../controllers/assetController");
 
 const router = express.Router();
 router.use((req, res, next) => {
-  console.log( req.method, req.originalUrl);
+  console.log(req.method, req.originalUrl);
   next();
 });
 
