@@ -227,26 +227,24 @@ export default function ExportModal({
         );
 
       if (!response.ok) {
-        const text =
-          await response.text();
+        let errorKey = "exportError";
+        let responseBody = null;
+
+        try {
+          responseBody = await response.json();
+          errorKey =
+            responseBody?.data?.translationKey || errorKey;
+        } catch {
+        }
 
         if (
           response.status === 408 ||
           response.status === 504
         ) {
-          throw new Error(
-            t(
-              "export.timeoutError",
-            ),
-          );
+          errorKey = "timeoutError";
         }
 
-        throw new Error(
-          text ||
-            t(
-              "export.exportError",
-            ),
-        );
+        throw new Error(t(`export.${errorKey}`));
       }
 
       const blob =
@@ -300,10 +298,7 @@ export default function ExportModal({
 
       setStatus("error");
       setErrorMsg(
-        err.message ||
-          t(
-            "export.exportError",
-          ),
+        err.message || t("export.exportError"),
       );
     }
   };

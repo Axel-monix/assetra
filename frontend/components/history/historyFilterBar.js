@@ -3,6 +3,7 @@
 import { Search, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import HistoryFilterForm from "./historyFilterForm";
+import SearchBar from "@/components/common/searchBar";
 
 export default function HistoryFilterBar({
   filters,
@@ -22,18 +23,11 @@ export default function HistoryFilterBar({
         onClear={onClearFilters}
       />
 
-      <div className="assetra-history-search flex-1 min-w-[200px]">
-        <Search size={15} />
-
-        <input
-          type="text"
-          value={search}
-          onChange={(event) =>
-            onSearchChange(event.target.value)
-          }
-          placeholder={t("searchPlaceholder")}
-        />
-      </div>
+      <SearchBar
+        value={search}
+        onChange={onSearchChange}
+        placeholder={t("searchPlaceholder")}
+      />
 
       <button
         type="button"
