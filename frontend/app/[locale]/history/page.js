@@ -9,12 +9,15 @@ import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import HistoryFilterBar from "@/components/history/historyFilterBar";
 import HistoryItem from "@/components/history/historyItem";
 import ExportModal from "@/components/history/exportModal";
+import Pagination from "@/components/common/pagination";
 
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 
 import { groupHistoryByDate } from "@/lib/historyHelper";
 
 import { createDefaultHistoryFilters } from "@/components/history/historyFilterForm";
+
+const PAGE_SIZE = 10;
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -25,18 +28,13 @@ export default function HistoryPage() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const [entries, setEntries] = useState([]);
-
-  const [cursor, setCursor] = useState(null);
-
-  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [filters, setFilters] = useState(createDefaultHistoryFilters());
 
   const [search, setSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
-
-  const [loadingMore, setLoadingMore] = useState(false);
 
   const [error, setError] = useState("");
 
@@ -49,75 +47,63 @@ export default function HistoryPage() {
     );
   }
 
-  const fetchHistory = useCallback(
-    async ({ append = false, cursorOverride = null } = {}) => {
-      const token = getToken();
+  const fetchHistory = useCallback(async () => {
+    const token = getToken();
 
-      if (!token) {
-        router.replace("/login");
-        return;
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    setLoading(true);
+
+    setError("");
+
+    try {
+      const params = new URLSearchParams();
+
+      if (filters.types && filters.types.length > 0) {
+        params.set("types", filters.types.join(","));
       }
 
-      append ? setLoadingMore(true) : setLoading(true);
-
-      setError("");
-
-      try {
-        const params = new URLSearchParams();
-
-        if (filters.types && filters.types.length > 0) {
-          params.set("types", filters.types.join(","));
-        }
-
-        if (search.trim()) {
-          params.set("search", search.trim());
-        }
-
-        if (filters.dateFrom) {
-          params.set("dateFrom", filters.dateFrom);
-        }
-
-        if (filters.dateTo) {
-          params.set("dateTo", filters.dateTo);
-        }
-
-        if (cursorOverride) {
-          params.set("cursor", cursorOverride);
-        }
-
-        const query = params.toString();
-
-        const url = query ? `${ENDPOINTS.HISTORY}?${query}` : ENDPOINTS.HISTORY;
-
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.message || t("loadError"));
-        }
-
-        setEntries((prev) =>
-          append ? [...prev, ...result.data] : result.data,
-        );
-
-        setCursor(result.meta?.nextCursor ?? null);
-
-        setHasMore(Boolean(result.meta?.hasMore));
-      } catch (err) {
-        console.error("Fetch history error:", err);
-
-        setError(err.message || t("loadError"));
-      } finally {
-        append ? setLoadingMore(false) : setLoading(false);
+      if (search.trim()) {
+        params.set("search", search.trim());
       }
-    },
-    [filters, search, router, t],
-  );
+
+      if (filters.dateFrom) {
+        params.set("dateFrom", filters.dateFrom);
+      }
+
+      if (filters.dateTo) {
+        params.set("dateTo", filters.dateTo);
+      }
+
+      const query = params.toString();
+
+      const url = query ? `${ENDPOINTS.HISTORY}?${query}` : ENDPOINTS.HISTORY;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || t("loadError"));
+      }
+
+      setEntries(result.data || []);
+      setPage(1); // filter/search baru -> balik ke halaman 1
+    } catch (err) {
+      console.error("Fetch history error:", err);
+
+      setError(err.message || t("loadError"));
+    } finally {
+      setLoading(false);
+    }
+  }, [filters, search, router, t]);
 
   useEffect(() => {
     const raw =
@@ -149,20 +135,22 @@ export default function HistoryPage() {
 
   const handleApplyFilters = useCallback((nextFilters) => {
     setFilters(nextFilters);
-    setCursor(null);
   }, []);
 
   const handleClearFilters = useCallback((nextFilters) => {
     setFilters(nextFilters ?? createDefaultHistoryFilters());
-
-    setCursor(null);
   }, []);
-
-  const groups = groupHistoryByDate(entries, locale);
 
   const handleExportSuccess = useCallback(() => {
     console.log("Export berhasil");
   }, []);
+
+  // ===== PAGINATION (client-side) =====
+  const totalEntries = entries.length;
+  const totalPages = Math.max(1, Math.ceil(totalEntries / PAGE_SIZE));
+  const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const groups = groupHistoryByDate(pageEntries, locale);
 
   if (!isInitialized || (loading && entries.length === 0 && !error)) {
     return (
@@ -201,7 +189,7 @@ export default function HistoryPage() {
         <p className="assetra-history-empty">{t("empty")}</p>
       )}
 
-      <div>
+      <div className={loading ? "opacity-60 pointer-events-none" : ""}>
         {groups.map((group) => (
           <div key={group.key} className="mb-2">
             <div className="mb-3 flex items-baseline gap-2">
@@ -223,22 +211,17 @@ export default function HistoryPage() {
         ))}
       </div>
 
-      {hasMore && (
-        <div className="flex justify-center pb-8">
-          <button
-            type="button"
-            disabled={loadingMore}
-            onClick={() =>
-              fetchHistory({
-                append: true,
-                cursorOverride: cursor,
-              })
-            }
-            className="assetra-btn assetra-btn-secondary"
-          >
-            {loadingMore ? t("loading") : t("loadPrevious")}
-          </button>
-        </div>
+      {totalEntries > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          showingLabel={t("showing", {
+            from: (page - 1) * PAGE_SIZE + 1,
+            to: Math.min(page * PAGE_SIZE, totalEntries),
+            total: totalEntries,
+          })}
+        />
       )}
 
       <ExportModal
