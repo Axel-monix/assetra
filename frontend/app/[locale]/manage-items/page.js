@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-
+import SearchBar from "@/components/common/searchBar";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import ItemCard from "@/components/items/itemCard";
 import ItemDetailPanel from "@/components/items/itemDetailPanel";
@@ -21,24 +21,12 @@ import FilterForm, {
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 
 const DOUBLE_CLICK_DELAY_MS = 220;
-
-/**
- * Ambil token login dari localStorage / sessionStorage.
- * Dipakai di banyak tempat, jadi ditaruh sebagai fungsi kecil biar tidak diulang-ulang.
- */
 function getToken() {
   return (
     window.localStorage.getItem(AUTH_TOKEN_KEY) ||
     window.sessionStorage.getItem(AUTH_TOKEN_KEY)
   );
 }
-
-/**
- * Helper untuk semua request ke backend.
- * Isinya: kirim request + Authorization header, baca hasilnya sebagai JSON,
- * lalu lempar Error kalau gagal. Jadi setiap fungsi (add/edit/deactivate/dll)
- * tidak perlu menulis ulang logic try-parse-JSON-cek-error masing-masing.
- */
 async function apiRequest(url, options = {}, fallbackErrorMessage) {
   const token = getToken();
 
@@ -78,14 +66,12 @@ export default function ManageItemsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
-
-  // Item yang sedang dipilih user di grid/list
   const [selectedIds, setSelectedIds] = useState([]);
-  const [mode, setMode] = useState("none"); // "none" | "single" | "multi"
+  const [mode, setMode] = useState("none");
 
-  const [viewMode, setViewMode] = useState("grid"); // "grid" | "list"
+  const [viewMode, setViewMode] = useState("grid");
   const [filters, setFilters] = useState(createDefaultFilters());
-
+  const [search, setSearch] = useState("");
   // Modal/panel yang sedang terbuka
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -260,6 +246,7 @@ export default function ManageItemsPage() {
     try {
       const body = {
         name: payload.name,
+        code_item: payload.code_item,
         id_category: payload.id_category,
         status: payload.status,
         location: payload.location,
@@ -301,6 +288,25 @@ export default function ManageItemsPage() {
     mode === "single" ? items.find((item) => item.id === selectedIds[0]) : null;
 
   function matchesFilters(item) {
+    const searchTerm = search.trim().toLowerCase();
+
+    if (searchTerm) {
+      const searchableText = [
+        item.name,
+        item.code_item,
+        item.category,
+        item.location,
+        item.description,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      if (!searchableText.includes(searchTerm)) {
+        return false;
+      }
+    }
+
     const itemCategoryId = String(
       item.id_category ?? item.category_id ?? item.categoryId ?? "",
     );
@@ -386,6 +392,11 @@ export default function ManageItemsPage() {
               filters={filters}
               onApply={handleApplyFilters}
               onClear={handleClearFilters}
+            />
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+              placeholder={t("searchPlaceholder")}
             />
 
             {hasActiveFilters && (
