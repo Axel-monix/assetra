@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { X, Upload, AlertCircle } from "lucide-react";
+import { X, Upload, AlertCircle, Wrench } from "lucide-react";
 import { ENDPOINTS, AUTH_TOKEN_KEY } from "@/lib/constants";
 import {
   getSpecTemplate,
   buildSpecsPayload,
+  validateSpecValues,
   normalizeStatus,
 } from "@/lib/itemHelper";
 import { useTranslations } from "next-intl";
+import NeedRepairModal from "./needRepairModal";
 
 const STATUS_OPTIONS = [
   { value: "functional" },
@@ -16,9 +18,6 @@ const STATUS_OPTIONS = [
   { value: "unavailable" },
 ];
 
-// item.category currently arrives as a plain name string (see
-// fetchItems in the manage-items page), so we match it back to an id
-// once the category list has loaded.
 function findCategoryId(categories, categoryName) {
   if (!categoryName) return "";
 
@@ -31,11 +30,66 @@ function findCategoryId(categories, categoryName) {
   return match ? String(match.id) : "";
 }
 
-function normalizeSpecs(specs = {}) {
+// item.specs sekarang array [{ id_specification, name, value }] dari
+// backend (lihat attachSpecsToAssets di assetController.js). Diubah
+// jadi map { [id_specification]: value } supaya cocok dengan bentuk
+// specValues yang dipakai form (sama seperti addItemForm.js).
+function specsArrayToValues(specs) {
+  if (!Array.isArray(specs)) {
+    return specs && typeof specs === "object"
+      ? Object.fromEntries(
+          Object.entries(specs).map(([key, value]) => [String(key), value]),
+        )
+      : {};
+  }
+
   return Object.fromEntries(
-    Object.entries(specs)
+    specs
+      .map((spec) => {
+        const id = spec.id_specification ?? spec.idSpecification ?? spec.id;
+        const value = spec.value ?? spec.spec_value ?? spec.specValue ?? "";
+
+        return id == null ? null : [String(id), value];
+      })
+      .filter(Boolean),
+  );
+}
+
+function normalizeSpecsForCompare(specValues) {
+  return Object.fromEntries(
+    Object.entries(specValues)
       .map(([key, value]) => [key, String(value ?? "").trim()])
       .filter(([, value]) => value),
+  );
+}
+
+function SpecField({ field, value, onChange, disabled }) {
+  if (field.type === "boolean") {
+    return (
+      <label className="flex items-center gap-2 assetra-form-input cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={Boolean(value)}
+          onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
+          className="h-4 w-4 accent-[var(--assetra-primary)]"
+        />
+        {field.name}
+      </label>
+    );
+  }
+
+  return (
+    <input
+      type={
+        field.type === "number" || field.type === "date" ? field.type : "text"
+      }
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={`${field.name}${field.required ? " *" : ""}`}
+      disabled={disabled}
+      className="assetra-form-input"
+    />
   );
 }
 
@@ -51,7 +105,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     image_url: item?.imageUrl || "",
   });
 
-  const [specValues, setSpecValues] = useState(item?.specs || {});
+  const [specValues, setSpecValues] = useState(specsArrayToValues(item?.specs));
   const [imagePreview, setImagePreview] = useState(item?.imageUrl || null);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -59,6 +113,12 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
+
+  // Menampung hasil NeedRepairModal (dikirim ikut payload saat submit).
+  // showNeedRepairModal true berarti status baru saja diarahkan ke
+  // "needs_repair" dan menunggu modal ini dikonfirmasi dulu.
+  const [repairPayload, setRepairPayload] = useState(null);
+  const [showNeedRepairModal, setShowNeedRepairModal] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -107,22 +167,37 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     }
 
     loadCategories();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
-  const selectedCategoryName = useMemo(() => {
-    const match = categories.find(
-      (cat) => String(cat.id) === String(form.id_category),
-    );
+  useEffect(() => {
+    setSpecValues(specsArrayToValues(item?.specs));
+    setRepairPayload(item?.repair || null);
+  }, [item]);
 
-    return match?.category_name || "";
-  }, [categories, form.id_category]);
+  const selectedCategory = useMemo(
+    () => categories.find((cat) => String(cat.id) === String(form.id_category)),
+    [categories, form.id_category],
+  );
 
   const specTemplate = useMemo(
-    () => getSpecTemplate(selectedCategoryName),
-    [selectedCategoryName],
+    () => getSpecTemplate(selectedCategory),
+    [selectedCategory],
   );
+
+  const repairableSpecs = useMemo(
+    () => specTemplate.filter((field) => field.repairable),
+    [specTemplate],
+  );
+
+  const selectedRepairNames = useMemo(() => {
+    if (repairPayload?.specifications) {
+      return repairPayload.specifications.map((spec) => spec.name);
+    }
+
+    return repairableSpecs
+      .filter((spec) => repairPayload?.specIds?.includes(spec.id))
+      .map((spec) => spec.name);
+  }, [repairPayload, repairableSpecs]);
 
   const initialCategoryId = useMemo(
     () =>
@@ -135,6 +210,11 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     [categories, item],
   );
 
+  const initialSpecValues = useMemo(
+    () => specsArrayToValues(item?.specs),
+    [item],
+  );
+
   const hasChanges = useMemo(() => {
     if (loadingCategories) return false;
 
@@ -145,21 +225,36 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       form.location.trim() !== String(item?.location || "").trim() ||
       form.description.trim() !== String(item?.description || "").trim() ||
       form.image_url !== String(item?.imageUrl || "") ||
-      JSON.stringify(
-        normalizeSpecs(buildSpecsPayload(specTemplate, specValues)),
-      ) !== JSON.stringify(normalizeSpecs(item?.specs))
+      JSON.stringify(normalizeSpecsForCompare(specValues)) !==
+        JSON.stringify(normalizeSpecsForCompare(initialSpecValues)) ||
+      JSON.stringify(repairPayload || null) !==
+        JSON.stringify(item?.repair || null)
     );
   }, [
     form,
     initialCategoryId,
+    initialSpecValues,
     item,
     loadingCategories,
-    specTemplate,
+    repairPayload,
     specValues,
   ]);
 
   function handleChange(event) {
     const { name, value } = event.target;
+
+    if (name === "status") {
+      // FR-REP-02: transisi ke Need Repair harus lewat modal dulu.
+      // Kalau sebelumnya sudah needs_repair, tidak perlu tanya ulang.
+      if (value === "needs_repair" && form.status !== "needs_repair") {
+        setShowNeedRepairModal(true);
+        return; // status belum di-set, menunggu konfirmasi modal
+      }
+
+      if (value !== "needs_repair") {
+        setRepairPayload(null);
+      }
+    }
 
     setForm((prev) => ({
       ...prev,
@@ -169,11 +264,12 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     setError("");
   }
 
-  function handleSpecChange(key, value) {
+  function handleSpecChange(idSpecification, value) {
     setSpecValues((prev) => ({
       ...prev,
-      [key]: value,
+      [idSpecification]: value,
     }));
+    setError("");
   }
 
   async function uploadImageToServer(file) {
@@ -259,6 +355,13 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       return;
     }
 
+    const missingRequiredSpec = validateSpecValues(specTemplate, specValues);
+
+    if (missingRequiredSpec) {
+      setError(t("specificationRequired", { name: missingRequiredSpec }));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -270,6 +373,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         description: form.description.trim(),
         image_url: form.image_url,
         specs: buildSpecsPayload(specTemplate, specValues),
+        ...(repairPayload ? { repair: repairPayload } : {}),
       });
 
       handleClose();
@@ -311,7 +415,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            {/* Gambar */}
             <div>
               <label className="assetra-form-label">{t("uploadImage")}</label>
 
@@ -373,7 +476,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               />
             </div>
 
-            {/* Kategori + Lokasi */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="assetra-form-label">
@@ -413,7 +515,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Status */}
             <div>
               <label className="assetra-form-label">
                 {t("status")}{" "}
@@ -432,9 +533,21 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                   </option>
                 ))}
               </select>
+
+              {repairPayload && (
+                <div className="mt-2 rounded-lg border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-3 py-2 text-xs text-[var(--color-warning)]">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <Wrench size={14} strokeWidth={1.9} />
+                    {t("repairMarked")}
+                  </div>
+                  <p className="mt-1 text-[var(--color-text-secondary)]">
+                    {selectedRepairNames.join(", ")}
+                    {repairPayload.details && `: ${repairPayload.details}`}
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Spesifikasi */}
             {specTemplate.length > 0 && (
               <div>
                 <label className="assetra-form-label">
@@ -443,21 +556,18 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
                 <div className="grid grid-cols-2 gap-3">
                   {specTemplate.map((field) => (
-                    <input
-                      key={field.key}
-                      value={specValues[field.key] || ""}
-                      onChange={(e) =>
-                        handleSpecChange(field.key, e.target.value)
-                      }
-                      placeholder={field.label}
-                      className="assetra-form-input"
+                    <SpecField
+                      key={field.id}
+                      field={field}
+                      value={specValues[field.id]}
+                      onChange={(value) => handleSpecChange(field.id, value)}
+                      disabled={loading}
                     />
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Deskripsi */}
             <div>
               <label className="assetra-form-label">
                 {t("descriptionOptional")}
@@ -473,7 +583,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div className="assetra-error-box">
                 <AlertCircle size={14} />
@@ -481,7 +590,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               </div>
             )}
 
-            {/* Actions */}
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
@@ -502,6 +610,19 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
           </form>
         </div>
       </div>
+
+      {showNeedRepairModal && (
+        <NeedRepairModal
+          item={item}
+          repairableSpecs={repairableSpecs}
+          onClose={() => setShowNeedRepairModal(false)}
+          onConfirm={async (payload) => {
+            setRepairPayload(payload);
+            setForm((prev) => ({ ...prev, status: "needs_repair" }));
+            setShowNeedRepairModal(false);
+          }}
+        />
+      )}
     </>
   );
 }

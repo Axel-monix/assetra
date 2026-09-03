@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import Header from "./header";
-import { LayoutGrid, Boxes, History, Users, LogOut } from "lucide-react";
+import { LayoutGrid, Boxes, History, Users, Layers, LogOut } from "lucide-react";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
@@ -16,6 +16,11 @@ const NAV_ITEMS = [
     href: "/manage-items",
     label: "navigation.manageItems",
     icon: Boxes,
+  },
+  {
+    href: "/manage-category",
+    label: "navigation.manageCategory",
+    icon: Layers,
   },
   {
     href: "/history",

@@ -1,6 +1,7 @@
 "use client";
 
-import { Archive, Wrench, AlertTriangle } from "lucide-react";
+import { Archive, Wrench, AlertTriangle, ChevronDown } from "lucide-react";
+import { Fragment, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { FONTS } from "../../lib/constants";
@@ -13,10 +14,12 @@ import {
 
 export default function AdminOverview({ assets = [], error = "" }) {
   const t = useTranslations("dashboard");
+  const [expandedRepairId, setExpandedRepairId] = useState(null);
   const stats = {
     totalItems: assets.length,
-    available: assets.filter((asset) => asset.status === ASSET_STATUS.FUNCTIONAL)
-      .length,
+    available: assets.filter(
+      (asset) => asset.status === ASSET_STATUS.FUNCTIONAL,
+    ).length,
     needMaintenance: assets.filter(
       (asset) => asset.status === ASSET_STATUS.NEEDS_REPAIR,
     ).length,
@@ -181,39 +184,91 @@ export default function AdminOverview({ assets = [], error = "" }) {
           </thead>
           <tbody>
             {attentionItems.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-[var(--color-surface)] last:border-0"
-              >
-                <td
-                  className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
-                >
-                  {item.id}
-                </td>
-                <td className="py-3 font-medium">{item.name}</td>
-                <td className="py-3 text-[var(--color-text-secondary)]">
-                  {item.category}
-                </td>
-                <td className="py-3">
-                  <span
-                    className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-                      ASSET_STATUS_STYLES[item.status] || ""
-                    }`}
+              <Fragment key={item.id}>
+                <tr className="border-b border-[var(--color-surface)] last:border-0">
+                  <td
+                    className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
                   >
-                    {ASSET_STATUS_LABELS[item.status]
-                      ? t(ASSET_STATUS_LABELS[item.status])
-                      : item.status}
-                  </span>
-                </td>
-                <td className="py-3">
-                  <Link
-                    href={`/manage-items?item=${item.id}`}
-                    className="text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
+                    {item.id}
+                  </td>
+                  <td className="py-3 font-medium">
+                    <span className="flex items-center gap-2">
+                      {item.status === ASSET_STATUS.NEEDS_REPAIR && (
+                        <Wrench
+                          size={14}
+                          className="text-[var(--color-warning)]"
+                        />
+                      )}
+                      {item.name}
+                    </span>
+                  </td>
+                  <td className="py-3 text-[var(--color-text-secondary)]">
+                    {item.category}
+                  </td>
+                  <td className="py-3">
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
+                        ASSET_STATUS_STYLES[item.status] || ""
+                      }`}
+                    >
+                      {ASSET_STATUS_LABELS[item.status]
+                        ? t(ASSET_STATUS_LABELS[item.status])
+                        : item.status}
+                    </span>
+                  </td>
+                  <td className="py-3">
+                    {item.repair && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedRepairId((current) =>
+                            current === item.id ? null : item.id,
+                          )
+                        }
+                        className="assetra-repair-details-toggle mr-3"
+                        aria-label={t("admin.viewRepairDetails")}
+                      >
+                        <ChevronDown
+                          size={16}
+                          className={
+                            expandedRepairId === item.id ? "rotate-180" : ""
+                          }
+                        />
+                      </button>
+                    )}
+                    <Link
+                      href={`/manage-items?item=${item.id}`}
+                      className="text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
+                    >
+                      ↗
+                    </Link>
+                  </td>
+                </tr>
+                {expandedRepairId === item.id && item.repair && (
+                  <tr
+                    key={`${item.id}-repair`}
+                    className="border-b border-[var(--color-surface)]"
                   >
-                    ↗
-                  </Link>
-                </td>
-              </tr>
+                    <td
+                      colSpan={5}
+                      className="px-3 py-3 text-xs text-[var(--color-text-secondary)]"
+                    >
+                      <p className="mb-1 font-semibold text-[var(--color-warning)]">
+                        {t("admin.repairDetails")}
+                      </p>
+                      {item.repair.specifications?.length > 0 && (
+                        <p>
+                          {t("admin.affectedParts")}:{" "}
+                          {item.repair.specifications
+                            .map((spec) => spec.name)
+                            .join(", ")}
+                        </p>
+                      )}
+                      {item.repair.details && <p>{item.repair.details}</p>}
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
             ))}
           </tbody>
         </table>

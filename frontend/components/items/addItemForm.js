@@ -8,7 +8,11 @@ import { ENDPOINTS, AUTH_TOKEN_KEY } from "@/lib/constants";
 
 import { ASSET_STATUS } from "@/lib/assetStatus";
 
-import { getSpecTemplate, buildSpecsPayload } from "@/lib/itemHelper";
+import {
+  getSpecTemplate,
+  buildSpecsPayload,
+  validateSpecValues,
+} from "@/lib/itemHelper";
 
 import { useTranslations } from "next-intl";
 
@@ -17,8 +21,6 @@ const STATUS_OPTIONS = [
   ASSET_STATUS.NEEDS_REPAIR,
   ASSET_STATUS.UNAVAILABLE,
 ];
-
-const EXIT_DURATION = 180;
 
 function generateCodeFromName(name) {
   if (!name) return "";
@@ -32,6 +34,34 @@ function generateCodeFromName(name) {
   const random = String(Math.floor(1000 + Math.random() * 9000));
 
   return `${prefix}-${random}`;
+}
+
+function SpecField({ field, value, onChange, disabled }) {
+  if (field.type === "boolean") {
+    return (
+      <label className="flex items-center gap-2 assetra-form-input cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={Boolean(value)}
+          onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
+          className="h-4 w-4 accent-[var(--assetra-primary)]"
+        />
+        {field.name}
+      </label>
+    );
+  }
+
+  return (
+    <input
+      type={field.type === "number" || field.type === "date" ? field.type : "text"}
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={`${field.name}${field.required ? " *" : ""}`}
+      disabled={disabled}
+      className="assetra-form-input"
+    />
+  );
 }
 
 export default function AddItemForm({ onClose, onSubmit }) {
@@ -101,32 +131,22 @@ export default function AddItemForm({ onClose, onSubmit }) {
     loadCategories();
   }, [t]);
 
-  const selectedCategoryName = useMemo(() => {
-    const match = categories.find(
-      (cat) => String(cat.id) === String(form.id_category),
-    );
-
-    return match?.category_name || "";
-  }, [categories, form.id_category]);
+  const selectedCategory = useMemo(
+    () =>
+      categories.find((cat) => String(cat.id) === String(form.id_category)),
+    [categories, form.id_category],
+  );
 
   const specTemplate = useMemo(
-    () => getSpecTemplate(selectedCategoryName),
-    [selectedCategoryName],
+    () => getSpecTemplate(selectedCategory),
+    [selectedCategory],
   );
 
   useEffect(() => {
-    setSpecValues((prev) => {
-      const next = {};
-
-      specTemplate.forEach(({ key }) => {
-        if (prev[key] !== undefined) {
-          next[key] = prev[key];
-        }
-      });
-
-      return next;
-    });
-  }, [specTemplate]);
+    // Reset spec values setiap kali category berubah — field lama
+    // (field.id) sudah tidak relevan untuk category baru.
+    setSpecValues({});
+  }, [selectedCategory?.id]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -147,11 +167,12 @@ export default function AddItemForm({ onClose, onSubmit }) {
     setError("");
   }
 
-  function handleSpecChange(key, value) {
+  function handleSpecChange(idSpecification, value) {
     setSpecValues((prev) => ({
       ...prev,
-      [key]: value,
+      [idSpecification]: value,
     }));
+    setError("");
   }
 
   async function uploadImageToServer(file) {
@@ -255,11 +276,20 @@ export default function AddItemForm({ onClose, onSubmit }) {
       return;
     }
 
+    const missingRequiredSpec = validateSpecValues(specTemplate, specValues);
+
+    if (missingRequiredSpec) {
+      setError(t("specificationRequired", { name: missingRequiredSpec }));
+      return;
+    }
+
     setLoading(true);
 
     try {
       await onSubmit({
         name: form.name.trim(),
+
+        code_item: form.code_item,
 
         id_category: Number(form.id_category),
 
@@ -490,14 +520,12 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
                 <div className="grid grid-cols-2 gap-3">
                   {specTemplate.map((field) => (
-                    <input
-                      key={field.key}
-                      value={specValues[field.key] || ""}
-                      onChange={(event) =>
-                        handleSpecChange(field.key, event.target.value)
-                      }
-                      placeholder={field.label}
-                      className="assetra-form-input"
+                    <SpecField
+                      key={field.id}
+                      field={field}
+                      value={specValues[field.id]}
+                      onChange={(value) => handleSpecChange(field.id, value)}
+                      disabled={loading}
                     />
                   ))}
                 </div>

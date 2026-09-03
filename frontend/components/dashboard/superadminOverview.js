@@ -1,6 +1,7 @@
 "use client";
 
-import { Archive, Wrench, AlertTriangle } from "lucide-react";
+import { Archive, Wrench, AlertTriangle, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { FONTS } from "../../lib/constants";
@@ -17,11 +18,13 @@ export default function SuperAdminOverview({
   error = "",
 }) {
   const t = useTranslations("dashboard");
+  const [expandedRepairId, setExpandedRepairId] = useState(null);
 
   const stats = {
     totalItems: assets.length,
-    available: assets.filter((asset) => asset.status === ASSET_STATUS.FUNCTIONAL)
-      .length,
+    available: assets.filter(
+      (asset) => asset.status === ASSET_STATUS.FUNCTIONAL,
+    ).length,
     needMaintenance: assets.filter(
       (asset) => asset.status === ASSET_STATUS.NEEDS_REPAIR,
     ).length,
@@ -171,6 +174,46 @@ export default function SuperAdminOverview({
                   <p className="text-xs text-[var(--color-text-secondary)]">
                     {asset.name} ({asset.id})
                   </p>
+                  {asset.repair && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedRepairId((current) =>
+                            current === asset.id ? null : asset.id,
+                          )
+                        }
+                        className="assetra-repair-details-toggle mt-2"
+                      >
+                        {t(
+                          expandedRepairId === asset.id
+                            ? "admin.hideRepairDetails"
+                            : "admin.viewRepairDetails",
+                        )}
+                        <ChevronDown
+                          size={14}
+                          className={
+                            expandedRepairId === asset.id ? "rotate-180" : ""
+                          }
+                        />
+                      </button>
+                      {expandedRepairId === asset.id && (
+                        <div className="mt-2 border-t border-[var(--color-border)] pt-2 text-xs text-[var(--color-text-secondary)]">
+                          {asset.repair.specifications?.length > 0 && (
+                            <p>
+                              {t("admin.affectedParts")}:{" "}
+                              {asset.repair.specifications
+                                .map((spec) => spec.name)
+                                .join(", ")}
+                            </p>
+                          )}
+                          {asset.repair.details && (
+                            <p>{asset.repair.details}</p>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               );
             })}

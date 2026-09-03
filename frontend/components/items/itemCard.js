@@ -54,19 +54,21 @@ export default function ItemCard({ item, selected, onClick }) {
 
       <div className="assetra-item-content">
         <div className="assetra-item-header">
-          <h3 className="assetra-item-name">{item.name}</h3>
+          <h3 className={`${FONTS.MAIN} assetra-item-name`}>{item.name}</h3>
           <span className="assetra-item-tag">{categoryName}</span>
         </div>
 
         <p className={`${FONTS.CODE} assetra-item-id`}>{item.id}</p>
 
         <div className="assetra-item-footer">
-          <span className={`assetra-item-status ${statusStyle}`}>
+          <span className={`${FONTS.MAIN} assetra-item-status ${statusStyle}`}>
             <span className={`assetra-status-dot ${statusStyle}`} />
             {displayStatus}
           </span>
 
-          <span className="assetra-item-location">{item.location || ""}</span>
+          <span className={`${FONTS.MAIN} assetra-item-location`}>
+            {item.location || ""}
+          </span>
         </div>
       </div>
     </button>

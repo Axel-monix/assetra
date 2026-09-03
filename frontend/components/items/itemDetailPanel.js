@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Pencil, PackageX } from "lucide-react";
+import { X, Pencil, PackageX, Wrench } from "lucide-react";
 import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
@@ -68,6 +68,25 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
         {item.id}
       </p>
 
+      {item.status === "needs_repair" && item.repair && (
+        <div className="mb-5 rounded-lg border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 p-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-warning)]">
+            <Wrench size={15} strokeWidth={1.9} />
+            {t("repairMarked")}
+          </div>
+          {item.repair.specifications?.length > 0 && (
+            <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+              {item.repair.specifications.map((spec) => spec.name).join(", ")}
+            </p>
+          )}
+          {item.repair.details && (
+            <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
+              {item.repair.details}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-3 mb-5">
         <div className="rounded-lg border border-[var(--color-border)] p-3">
           <div className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] mb-1">
@@ -100,22 +119,30 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
         </div>
       )}
 
-      {item.specs && Object.keys(item.specs).length > 0 && (
+      {item.specs && item.specs.length > 0 && (
         <div className="mb-5">
           <h4 className="text-xs font-semibold text-[var(--color-text-secondary)] mb-2">
             {t("specifications")}
           </h4>
 
           <div className="flex flex-col gap-1.5">
-            {Object.entries(item.specs).map(([key, value]) => (
+            {item.specs.map((spec) => (
               <div
-                key={key}
+                key={spec.id_specification}
                 className="flex items-center justify-between gap-3 text-sm"
               >
-                <span className="text-[var(--color-text-muted)]">{key}</span>
+                <span
+                  title={spec.name}
+                  className="text-[var(--color-text-muted)] shrink-0 max-w-[45%] truncate"
+                >
+                  {spec.name}
+                </span>
 
-                <span className={`${FONTS.DESCRIPTION} text-right`}>
-                  {value}
+                <span
+                  title={spec.value}
+                  className={`${FONTS.DESCRIPTION} min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-right`}
+                >
+                  {spec.value}
                 </span>
               </div>
             ))}
