@@ -29,6 +29,41 @@ const ASSET_STATUS_LABELS = {
   unavailable: "Tidak Tersedia",
 };
 
+const EXPORT_LABELS = {
+  id: {
+    activity: "Aktivitas",
+    name: "Nama",
+    code: "Kode",
+    category: "Kategori",
+    status: "Status",
+    admin: "Admin",
+    date: "Tanggal",
+    summary: "Ringkasan",
+    addedThisMonth: "Ditambahkan Bulan Ini",
+    needsRepair: "Perlu Perbaikan",
+    unavailable: "Tidak Tersedia",
+    repairedThisMonth: "Diperbaiki Bulan Ini",
+  },
+  en: {
+    activity: "Activity",
+    name: "Name",
+    code: "Code",
+    category: "Category",
+    status: "Status",
+    admin: "Admin",
+    date: "Date",
+    summary: "Summary",
+    addedThisMonth: "Added This Month",
+    needsRepair: "Needs Repair",
+    unavailable: "Unavailable",
+    repairedThisMonth: "Repaired This Month",
+  },
+};
+
+function getExportLocale(locale) {
+  return String(locale).toLowerCase().startsWith("en") ? "en" : "id";
+}
+
 /* =========================================================
    BUILD HISTORY FILTERS
 ========================================================= */
@@ -159,11 +194,23 @@ async function listHistory(req, res) {
    MAP EXPORT ROWS
 ========================================================= */
 
-function mapRowsForExport(rows) {
+function mapRowsForExport(rows, locale = "id") {
+  const lang = getExportLocale(locale);
+  const dateLocale = lang === "en" ? "en-US" : "id-ID";
+
   return rows.map((row) => ({
     id: row.id,
 
-    activity: TYPE_LABELS[row.type] || row.type,
+    activity:
+      lang === "en"
+        ? {
+            add_admin: "Admin Added",
+            add_item: "Item Added",
+            edit_item: "Item Updated",
+            deactivate_admin: "Admin Deactivated",
+            deactivate_item: "Item Deactivated",
+          }[row.type] || row.type
+        : TYPE_LABELS[row.type] || row.type,
 
     subject_name: row.subject_name || "-",
 
@@ -172,13 +219,19 @@ function mapRowsForExport(rows) {
     category_name: row.category_name || "-",
 
     status_label: row.asset_status
-      ? ASSET_STATUS_LABELS[row.asset_status] || row.asset_status
+      ? lang === "en"
+        ? {
+            functional: "Functional",
+            needs_repair: "Needs Repair",
+            unavailable: "Unavailable",
+          }[row.asset_status] || row.asset_status
+        : ASSET_STATUS_LABELS[row.asset_status] || row.asset_status
       : "-",
 
     performed_by_name: row.performed_by_name || "-",
 
     created_at_label: row.created_at
-      ? new Date(row.created_at).toLocaleString("id-ID")
+      ? new Date(row.created_at).toLocaleString(dateLocale)
       : "-",
 
     description: row.description || "",
@@ -336,7 +389,9 @@ async function buildExcelBuffer(rows, summary, locale = "id") {
   const labels = EXPORT_LABELS[lang];
 
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet(lang === "en" ? "History" : "Riwayat");
+  const sheet = workbook.addWorksheet(
+    lang === "en" ? "Asset History" : "Riwayat Aset",
+  );
 
   sheet.columns = [
     { header: "ID", key: "id", width: 8 },
@@ -448,7 +503,8 @@ async function exportHistory(req, res) {
     console.error("Error in exportHistory:", err);
 
     return error(res, {
-      message: "Gagal mengekspor data riwayat.",
+      message: "HISTORY_EXPORT_FAILED",
+      data: { translationKey: "exportError" },
       statusCode: 500,
     });
   }
