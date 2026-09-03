@@ -59,7 +59,11 @@
       "urgent": "Mendesak",
       "highRisk": "Risiko Tinggi",
       "totalIssues": "{count} Total Masalah",
-      "loadError": "Gagal memuat data aset."
+      "loadError": "Gagal memuat data aset.",
+      "viewRepairDetails": "Lihat detail kerusakan",
+      "hideRepairDetails": "Sembunyikan detail kerusakan",
+      "repairDetails": "Detail kerusakan",
+      "affectedParts": "Bagian yang rusak"
     },
     "superadmin": {
       "greeting": "Halo,",
@@ -169,14 +173,15 @@
     "codeItemPlaceholder": "Otomatis dibuat",
     "category": "Kategori",
     "selectCategory": "Pilih Kategori",
-    "searchPlaceholder":"Cari barang...",
+    "searchPlaceholder": "Cari barang...",
     "status": "Status",
     "specificationRequired": "{name} wajib diisi.",
-    "needRepairTittle": "Laporkan masalah",
-    "whatsWrong":"Bagian mana yang bermasalah?",
+    "needRepairTitle": "Laporkan masalah",
+    "whatsWrong": "Bagian mana yang bermasalah?",
     "repairDetails": "Rincian masalah",
     "repairDetailsPlaceholder": "Jelaskan masalahnya...",
     "confirmNeedRepair": "Laporkan Masalah",
+    "repairMarked": "Kerusakan ditandai",
     "repairDetailRequired": "Silakan jelaskan masalahnya (minimal {length} karakter).",
     "statusOptions": {
       "functional": "Tersedia",
@@ -269,7 +274,7 @@
     "deactivated": "Deactivated",
     "resetAll": "Atur Ulang Semua",
     "clear": "Bersihkan",
-    "showing":"Menampilkan {from} sampai {to} dari {total} entri",
+    "showing": "Menampilkan {from} sampai {to} dari {total} entri",
     "export": {
       "title": "Ekspor Riwayat",
       "subtitle": "Ekspor riwayat aktivitas yang sedang difilter.",
@@ -297,10 +302,27 @@
       "authError": "Error autentikasi. Silakan login ulang.",
       "timeoutError": "Waktu permintaan habis. Silakan coba lagi."
     },
+    "changedFields": {
+      "name": "nama",
+      "category": "kategori",
+      "location": "lokasi",
+      "image": "gambar",
+      "specifications": "spesifikasi",
+      "status": "status"
+    },
+    "statusValues": {
+      "functional": "Berfungsi",
+      "needs_repair": "Perlu Perbaikan",
+      "unavailable": "Tidak Tersedia"
+    },
+    "fieldsChanged": "Diubah: {fields}.",
+    "statusChange": "Status diubah dari {from} menjadi {to}.",
+    "damageChange": "Bagian yang rusak: {parts}.",
+    "repairChange": "Detail kerusakan: {details}.",
     "activities": {
       "addAdmin": "Admin {name} ditambahkan oleh {performedBy}.",
       "addItem": "Item {name} ditambahkan oleh {performedBy}.",
-      "editItem": "Item {name} diperbarui oleh {performedBy}.",
+      "editItem": "Item {name} diperbarui oleh {performedBy}. {changes}",
       "deactivateAdmin": "Admin {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "deactivateItem": "Item {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "unknown": "Aktivitas dilakukan oleh {performedBy}."
@@ -385,6 +407,7 @@
     "location": "Lokasi",
     "description": "Deskripsi",
     "specifications": "Spesifikasi Lengkap",
+    "repairMarked": "Kerusakan ditandai",
     "treatmentHistory": "Riwayat Perawatan",
     "edit": "Edit",
     "deactivate": "Nonaktifkan",
@@ -439,7 +462,7 @@
     "cancel": "Batal",
     "createFailed": "Gagal membuat kategori.",
     "editFailed": "Gagal memperbarui kategori.",
- 
+
     "editCategory": "Edit Kategori",
     "categoryName": "Nama Kategori",
     "categoryNamePlaceholder": "cth. Laptop",
@@ -450,7 +473,7 @@
     "saveChanges": "Simpan Perubahan",
     "addCategory": "Tambah Kategori",
     "atLeastOneSpecification": "Minimal satu specification wajib diisi.",
- 
+
     "specifications": "Spesifikasi",
     "addDetail": "+ Tambah Detail",
     "detailBarang": "Detail Barang",
@@ -466,13 +489,13 @@
       "date": "Tanggal",
       "boolean": "Ya/Tidak"
     },
- 
+
     "deleteCategoryTitle": "Hapus Kategori",
     "deleteCategoryConfirm": "Apakah kamu yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
     "deleteCategory": "Hapus",
     "deleting": "Menghapus...",
     "deleteFailed": "Gagal menghapus kategori.",
- 
+
     "retainedSpecificationsWarning": "Beberapa specification tidak dapat dihapus karena masih digunakan oleh item yang ada: {names}"
   }
 }

@@ -59,7 +59,11 @@
       "urgent": "Urgent",
       "highRisk": "High Risk",
       "totalIssues": "{count} Total Issues",
-      "loadError": "Failed to load asset data."
+      "loadError": "Failed to load asset data.",
+      "viewRepairDetails": "View repair details",
+      "hideRepairDetails": "Hide repair details",
+      "repairDetails": "Damage details",
+      "affectedParts": "Affected parts"
     },
     "superadmin": {
       "greeting": "Hello,",
@@ -164,11 +168,12 @@
     "filterDescriptionPlaceholder": "Additional information about this item...",
     "searchPlaceholder": "Search items...",
     "specificationRequired": "{name} is required.",
-    "needRepairTittle": "Report a problem",
+    "needRepairTitle": "Report a problem",
     "whatsWrong":"What's wrong?",
     "repairDetails": "Details",
     "repairDetailsPlaceholder": "Describe the problem...",
     "confirmNeedRepair": "Report Problem",
+    "repairMarked": "Damage reported",
     "repairDetailRequired": "Please describe the problem (minimum {length} characters).",
     "statusOptions": {
       "functional": "Available",
@@ -316,6 +321,7 @@
     "location": "Location",
     "description": "Description",
     "specifications": "Full Specifications",
+    "repairMarked": "Damage reported",
     "treatmentHistory": "Treatment History",
     "edit": "Edit",
     "deactivate": "Deactivate",
@@ -387,10 +393,27 @@
       "timeoutError": "Request timed out. Please try again."
       
     },
+    "changedFields": {
+      "name": "name",
+      "category": "category",
+      "location": "location",
+      "image": "image",
+      "specifications": "specifications",
+      "status": "status"
+    },
+    "statusValues": {
+      "functional": "Functional",
+      "needs_repair": "Need Repair",
+      "unavailable": "Unavailable"
+    },
+    "fieldsChanged": "Changed: {fields}.",
+    "statusChange": "Status changed from {from} to {to}.",
+    "damageChange": "Damaged parts: {parts}.",
+    "repairChange": "Damage details: {details}.",
     "activities": {
       "addAdmin": "Admin {name} was added by {performedBy}.",
       "addItem": "Item {name} was added by {performedBy}.",
-      "editItem": "Item {name} was updated by {performedBy}.",
+      "editItem": "Item {name} was updated by {performedBy}. {changes}",
       "deactivateAdmin": "Admin {name} was deactivated by {performedBy}. Reason: {reason}.",
       "deactivateItem": "Item {name} was deactivated by {performedBy}. Reason: {reason}.",
       "unknown": "Activity was performed by {performedBy}."
