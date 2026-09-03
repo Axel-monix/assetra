@@ -200,7 +200,7 @@ export default function ManageAdminPage() {
         {t("loading")}
       </div>
     );
-  }
+  } 
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
@@ -222,6 +222,7 @@ export default function ManageAdminPage() {
           >
             <UserPlus size={16} strokeWidth={2.2} />
             <span>+ {t("addNewAdmin")}</span>
+            <span> </span>
           </button>
         </div>
 

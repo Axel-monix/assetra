@@ -86,6 +86,23 @@ body {
   font-family: var(--font-main);
 }
 
+.assetra-repair-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--assetra-text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.16rem;
+  transition: color 180ms ease;
+}
+
+.assetra-repair-details-toggle:hover {
+  color: var(--assetra-text);
+}
+
 button,
 input,
 select,
@@ -224,7 +241,8 @@ textarea:focus-visible {
 
 .assetra-item-id {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   line-height: 1.2;
   color: var(--color-text-muted);
 }
@@ -243,7 +261,7 @@ textarea:focus-visible {
   gap: 0.4rem;
   border-radius: 0.5rem;
   border: 1px solid transparent;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
@@ -254,7 +272,8 @@ textarea:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
+  font-weight: 500;
   color: var(--color-text-muted);
 }
 
@@ -303,8 +322,11 @@ textarea:focus-visible {
 
 .assetra-status-dot {
   display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.56rem;
+  height: 0.56rem;
+  min-width: 0.56rem;
+  padding: 0;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -466,23 +488,6 @@ textarea:focus-visible {
 
 .language-switcher-option.is-active {
   color: var(--assetra-primary);
-}
-
-/* =========================================================
-   PAGE TRANSITION
-   ========================================================= */
-
-.assetra-page-shell {
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-
-.assetra-page-shell.is-ready {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* =========================================================
@@ -1209,13 +1214,13 @@ textarea:focus-visible {
   color: var(--assetra-primary-contrast);
 }
 
-.assetra-history-search {
+.assetra-search {
   position: relative;
   flex: 1;
   min-width: 200px;
 }
 
-.assetra-history-search svg {
+.assetra-search svg {
   position: absolute;
   left: 0.75rem;
   top: 50%;
@@ -1224,7 +1229,7 @@ textarea:focus-visible {
   pointer-events: none;
 }
 
-.assetra-history-search input {
+.assetra-search input {
   width: 100%;
   border: 1px solid var(--assetra-border);
   border-radius: 0.5rem;
@@ -1236,11 +1241,11 @@ textarea:focus-visible {
   transition: border-color 150ms ease;
 }
 
-.assetra-history-search input::placeholder {
+.assetra-search input::placeholder {
   color: var(--assetra-text-placeholder);
 }
 
-.assetra-history-search input:focus {
+.assetra-search input:focus {
   border-color: var(--assetra-primary);
 }
 
@@ -1751,7 +1756,8 @@ textarea:focus-visible {
 
 .assetra-item-id {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   line-height: 1.2;
   color: var(--color-text-muted);
 }
@@ -1770,7 +1776,7 @@ textarea:focus-visible {
   gap: 0.4rem;
   border-radius: 0.5rem;
   border: 1px solid transparent;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
@@ -1781,7 +1787,8 @@ textarea:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
+  font-weight: 500;
   color: var(--color-text-muted);
 }
 
@@ -1830,8 +1837,11 @@ textarea:focus-visible {
 
 .assetra-status-dot {
   display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.56rem;
+  height: 0.56rem;
+  min-width: 0.56rem;
+  padding: 0;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -1993,23 +2003,6 @@ textarea:focus-visible {
 
 .language-switcher-option.is-active {
   color: var(--assetra-primary);
-}
-
-/* =========================================================
-   PAGE TRANSITION
-   ========================================================= */
-
-.assetra-page-shell {
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-
-.assetra-page-shell.is-ready {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* =========================================================
@@ -3145,4 +3138,3 @@ textarea:focus-visible {
   font-size: 0.8rem;
   color: var(--assetra-text-muted);
 }
-

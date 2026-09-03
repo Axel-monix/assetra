@@ -171,20 +171,18 @@ export default function ManageItemsPage() {
       return;
     }
 
+    if (mode === "single" && selectedIds[0] === id) {
+      clearSelection();
+      return;
+    }
+
     setSelectedIds([id]);
     setMode("single");
   }
 
   function handleDoubleSelect(id) {
-    if (mode === "single" && selectedIds[0] && selectedIds[0] !== id) {
-      setSelectedIds([selectedIds[0], id]);
-      setMode("multi");
-    } else if (mode === "multi" && !selectedIds.includes(id)) {
-      setSelectedIds((prev) => [...prev, id]);
-    } else if (mode === "none") {
-      setSelectedIds([id]);
-      setMode("single");
-    }
+    setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setMode("multi");
   }
 
   // Bedakan single click vs double click pakai delay kecil,
