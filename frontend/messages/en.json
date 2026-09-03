@@ -34,7 +34,8 @@
       "dashboard": "Dashboard",
       "manageItems": "Manage Item",
       "history": "History",
-      "manageAdmin": "Manage Admin"
+      "manageAdmin": "Manage Admin",
+      "manageCategory": "Manage Category"
     },
     "admin": {
       "title": "Overview",
@@ -161,6 +162,14 @@
     "filterDescription": "Use filters to quickly find items.",
     "filterDescriptionOptional": "Description (Optional)",
     "filterDescriptionPlaceholder": "Additional information about this item...",
+    "searchPlaceholder": "Search items...",
+    "specificationRequired": "{name} is required.",
+    "needRepairTittle": "Report a problem",
+    "whatsWrong":"What's wrong?",
+    "repairDetails": "Details",
+    "repairDetailsPlaceholder": "Describe the problem...",
+    "confirmNeedRepair": "Report Problem",
+    "repairDetailRequired": "Please describe the problem (minimum {length} characters).",
     "statusOptions": {
       "functional": "Available",
       "needs_repair": "Need Repair",
@@ -348,6 +357,8 @@
     "updated": "Updated",
     "deactivated": "Deactivated",
     "noActivities": "No activities match the selected filters.",
+    "showing": "Showing {from} to {to} of {total} entries.",
+    
     "export": {
       "title": "Export History",
       "subtitle": "Export the currently filtered activity history.",
@@ -374,6 +385,7 @@
       "exportError": "Failed to export data. Please try again.",
       "authError": "Authentication error. Please login again.",
       "timeoutError": "Request timed out. Please try again."
+      
     },
     "activities": {
       "addAdmin": "Admin {name} was added by {performedBy}.",
@@ -430,5 +442,53 @@
     "loading": "Loading...",
     "loadError": "Failed to load items",
     "noItemsSelected": "No items selected"
+  },
+  "manageCategory": {
+    "title": "Manage Category",
+    "subtitle": "Add or manage item categories.",
+    "loading": "Loading...",
+    "loadError": "Failed to load categories.",
+    "empty": "No categories yet.",
+    "addNewCategory": "Add Category",
+    "edit": "Edit",
+    "close": "Close",
+    "cancel": "Cancel",
+    "createFailed": "Failed to create category.",
+    "editFailed": "Failed to update category.",
+ 
+    "editCategory": "Edit Category",
+    "categoryName": "Category Name",
+    "categoryNamePlaceholder": "e.g. Laptop",
+    "categoryNameRequired": "Category name is required.",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Additional info about this category...",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "addCategory": "Add Category",
+    "atLeastOneSpecification": "At least one specification is required.",
+ 
+    "specifications": "Specifications",
+    "addDetail": "+ Add Detail",
+    "detailBarang": "Detail Barang",
+    "detailBarangPlaceholder": "e.g. Brand, RAM, Processor",
+    "type": "Type",
+    "required": "Required",
+    "repairable": "Repairable",
+    "removeRow": "Remove row",
+    "noSpecifications": "No specifications yet. Click \"+ Add Detail\".",
+    "specType": {
+      "text": "Text",
+      "number": "Number",
+      "date": "Date",
+      "boolean": "Yes/No"
+    },
+ 
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryConfirm": "Are you sure you want to delete {name}? This can't be undone.",
+    "deleteCategory": "Delete",
+    "deleting": "Deleting...",
+    "deleteFailed": "Failed to delete category.",
+ 
+    "retainedSpecificationsWarning": "Some specifications couldn't be removed because they're still used by existing items: {names}"
   }
 }

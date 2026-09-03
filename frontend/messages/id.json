@@ -23,7 +23,8 @@
       "dashboard": "Dashboard",
       "manageItems": "Kelola Item",
       "history": "Riwayat",
-      "manageAdmin": "Kelola Admin"
+      "manageAdmin": "Kelola Admin",
+      "manageCategory": "Kelola Kategori"
     },
     "status": {
       "functional": "Tersedia",
@@ -168,7 +169,15 @@
     "codeItemPlaceholder": "Otomatis dibuat",
     "category": "Kategori",
     "selectCategory": "Pilih Kategori",
+    "searchPlaceholder":"Cari barang...",
     "status": "Status",
+    "specificationRequired": "{name} wajib diisi.",
+    "needRepairTittle": "Laporkan masalah",
+    "whatsWrong":"Bagian mana yang bermasalah?",
+    "repairDetails": "Rincian masalah",
+    "repairDetailsPlaceholder": "Jelaskan masalahnya...",
+    "confirmNeedRepair": "Laporkan Masalah",
+    "repairDetailRequired": "Silakan jelaskan masalahnya (minimal {length} karakter).",
     "statusOptions": {
       "functional": "Tersedia",
       "needs_repair": "Perlu Perbaikan",
@@ -260,6 +269,7 @@
     "deactivated": "Deactivated",
     "resetAll": "Atur Ulang Semua",
     "clear": "Bersihkan",
+    "showing":"Menampilkan {from} sampai {to} dari {total} entri",
     "export": {
       "title": "Ekspor Riwayat",
       "subtitle": "Ekspor riwayat aktivitas yang sedang difilter.",
@@ -416,5 +426,53 @@
     "loading": "Memuat...",
     "loadError": "Gagal memuat barang",
     "noItemsSelected": "Tidak ada barang yang dipilih"
+  },
+  "manageCategory": {
+    "title": "Kelola Kategori",
+    "subtitle": "Tambah atau kelola kategori item.",
+    "loading": "Memuat...",
+    "loadError": "Gagal memuat kategori.",
+    "empty": "Belum ada kategori.",
+    "addNewCategory": "Tambah Kategori",
+    "edit": "Edit",
+    "close": "Tutup",
+    "cancel": "Batal",
+    "createFailed": "Gagal membuat kategori.",
+    "editFailed": "Gagal memperbarui kategori.",
+ 
+    "editCategory": "Edit Kategori",
+    "categoryName": "Nama Kategori",
+    "categoryNamePlaceholder": "cth. Laptop",
+    "categoryNameRequired": "Nama kategori wajib diisi.",
+    "descriptionOptional": "Deskripsi (Opsional)",
+    "descriptionPlaceholder": "Info tambahan tentang kategori ini...",
+    "saving": "Menyimpan...",
+    "saveChanges": "Simpan Perubahan",
+    "addCategory": "Tambah Kategori",
+    "atLeastOneSpecification": "Minimal satu specification wajib diisi.",
+ 
+    "specifications": "Spesifikasi",
+    "addDetail": "+ Tambah Detail",
+    "detailBarang": "Detail Barang",
+    "detailBarangPlaceholder": "cth. Brand, RAM, Processor",
+    "type": "Tipe",
+    "required": "Wajib",
+    "repairable": "Repairable",
+    "removeRow": "Hapus baris",
+    "noSpecifications": "Belum ada specification. Klik \"+ Tambah Detail\".",
+    "specType": {
+      "text": "Text",
+      "number": "Angka",
+      "date": "Tanggal",
+      "boolean": "Ya/Tidak"
+    },
+ 
+    "deleteCategoryTitle": "Hapus Kategori",
+    "deleteCategoryConfirm": "Apakah kamu yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
+    "deleteCategory": "Hapus",
+    "deleting": "Menghapus...",
+    "deleteFailed": "Gagal menghapus kategori.",
+ 
+    "retainedSpecificationsWarning": "Beberapa specification tidak dapat dihapus karena masih digunakan oleh item yang ada: {names}"
   }
 }
