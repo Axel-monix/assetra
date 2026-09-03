@@ -1,46 +1,37 @@
-export const SPEC_TEMPLATES = {
-  komputer: [
-    { key: "brand", label: "Merek" },
-    { key: "processor", label: "Processor / CPU" },
-    { key: "ram", label: "RAM" },
-    { key: "storage", label: "Storage" },
-  ],
-  laptop: [
-    { key: "brand", label: "Merek" },
-    { key: "processor", label: "Processor / CPU" },
-    { key: "ram", label: "RAM" },
-    { key: "storage", label: "Storage" },
-  ],
-  layar: [
-    { key: "brand", label: "Merek" },
-    { key: "screen_size", label: "Ukuran Layar" },
-  ],
-  monitor: [
-    { key: "brand", label: "Merek" },
-    { key: "screen_size", label: "Ukuran Layar" },
-  ],
-  elektronik: [{ key: "brand", label: "Merek" }],
-  furniture: [{ key: "brand", label: "Merek / Material" }],
-};
-
-export const DEFAULT_SPEC_TEMPLATE = [{ key: "brand", label: "Merek" }];
-
-export function getSpecTemplate(categoryName) {
-  if (!categoryName) return DEFAULT_SPEC_TEMPLATE;
-  const normalized = String(categoryName).toLowerCase();
-  const matchedKey = Object.keys(SPEC_TEMPLATES).find((key) =>
-    normalized.includes(key),
-  );
-  return matchedKey ? SPEC_TEMPLATES[matchedKey] : DEFAULT_SPEC_TEMPLATE;
+export function getSpecTemplate(category) {
+  return category?.specifications || [];
 }
-
 export function buildSpecsPayload(template, values) {
-  const specs = {};
-  template.forEach(({ key }) => {
-    const value = (values[key] || "").trim();
-    if (value) specs[key] = value;
-  });
-  return specs;
+  return template
+    .map((field) => {
+      const raw = values[field.id];
+
+      let value;
+
+      if (field.type === "boolean") {
+        value = raw ? "true" : "false";
+      } else {
+        value = String(raw ?? "").trim();
+      }
+
+      return { id_specification: field.id, value };
+    })
+    .filter((entry) => entry.value !== "");
+}
+export function validateSpecValues(template, values) {
+  for (const field of template) {
+    if (!field.required) continue;
+
+    const raw = values[field.id];
+    const isEmpty =
+      field.type === "boolean" ? raw === undefined : !String(raw ?? "").trim();
+
+    if (isEmpty) {
+      return field.name;
+    }
+  }
+
+  return null;
 }
 
 const STATUS_ALIASES = {

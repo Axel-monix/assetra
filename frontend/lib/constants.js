@@ -14,7 +14,6 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
-  HISTORY: `${API_URL}/history`,
 
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
@@ -23,6 +22,8 @@ export const ENDPOINTS = {
   EXPORT_HISTORY: `${API_URL}/history/export`,
 
   CATEGORIES: `${API_URL}/categories`,
+  CATEGORY_BY_ID: (id) => `${API_URL}/categories/${id}`,
+
   ASSETS: `${API_URL}/assets`,
 
   ADMINS: `${API_URL}/admins`,
