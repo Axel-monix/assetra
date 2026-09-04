@@ -25,6 +25,7 @@ export const ENDPOINTS = {
   CATEGORY_BY_ID: (id) => `${API_URL}/categories/${id}`,
 
   ASSETS: `${API_URL}/assets`,
+   PUBLIC_ASSET_BY_CODE: (code) => `${API_URL}/assets/public/${code}`,
 
   ADMINS: `${API_URL}/admins`,
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`,
