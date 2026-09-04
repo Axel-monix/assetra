@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { X, Pencil, PackageX, Wrench } from "lucide-react";
 import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
@@ -8,8 +9,16 @@ import colors from "@/lib/colors";
 
 export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
   const t = useTranslations("itemDetail");
+  const [closing, setClosing] = useState(false);
 
   if (!item) return null;
+
+  function handleClose() {
+    if (closing) return;
+
+    setClosing(true);
+    window.setTimeout(onClose, 180);
+  }
 
   const statusKey = getAssetStatusLabelKey(item.status);
 
@@ -22,13 +31,15 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
   const statusStyle = getAssetStatusStyle(item.status);
 
   return (
-    <aside className="assetra-detail-panel w-80 shrink-0 border-l border-[var(--color-border)] bg-[var(--color-background)] p-5 overflow-y-auto">
+    <aside
+      className={`assetra-detail-panel w-80 shrink-0 border-l border-[var(--color-border)] bg-[var(--color-background)] p-5 overflow-y-auto ${closing ? "is-closing" : ""}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold">{t("title")}</h2>
 
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label={t("close")}
           className="text-[var(--color-text-secondary)] hover:text-[var(--color-white)] transition"
         >
