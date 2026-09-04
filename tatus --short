@@ -1,0 +1,22 @@
+warning: in the working copy of 'frontend/.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/app/globals.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/components/dashboard/header.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/eslint.config.mjs', LF will be replaced by CRLF the next time Git touches it
+ backend/public/qrcodes/AMB-0003.png               | Bin [31m1590[m -> [32m0[m bytes
+ backend/public/qrcodes/EJI-0005.png               | Bin [31m1529[m -> [32m0[m bytes
+ backend/public/qrcodes/KUR-0004.png               | Bin [31m1577[m -> [32m0[m bytes
+ backend/public/qrcodes/MOB-0006.png               | Bin [31m1470[m -> [32m0[m bytes
+ backend/public/qrcodes/RIS-0002.png               | Bin [31m1470[m -> [32m0[m bytes
+ backend/server.js                                 |   2 [31m-[m
+ frontend/.gitignore                               |   7 [32m+[m[31m-[m
+ frontend/app/[locale]/manage-items/page.js        |  45 [32m+[m[31m-[m
+ frontend/app/[locale]/printQr/page.js             |  79 [32m+[m[31m-[m
+ frontend/app/globals.css                          | 937 [32m+++++++++++++++++++++[m[31m-[m
+ frontend/components/admin/deactivateAdminModal.js |   3 [32m+[m[31m-[m
+ frontend/components/dashboard/dashboardLayout.js  |  50 [32m+[m[31m-[m
+ frontend/components/dashboard/header.js           |  65 [32m+[m[31m-[m
+ frontend/components/history/historyFilterBar.js   |   2 [32m+[m[31m-[m
+ frontend/eslint.config.mjs                        |  15 [32m+[m[31m-[m
+ frontend/messages/en.json                         |  35 [32m+[m[31m-[m
+ frontend/messages/id.json                         |  22 [32m+[m[31m-[m
+ 17 files changed, 1138 insertions(+), 124 deletions(-)

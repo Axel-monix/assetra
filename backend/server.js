@@ -11,8 +11,6 @@ const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
-
-// Register semua routes
 app.use("/api", routes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/assets", assetRoutes);     

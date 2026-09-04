@@ -78,7 +78,10 @@
     "loading": "Memuat...",
     "Trackyourstuff": "Lacak barang Anda",
     "user": "Pengguna",
-    "logout": "Logout"
+    "logout": "Logout",
+    "openMenu": "Buka menu navigasi",
+    "closeMenu": "Tutup menu navigasi",
+    "mobileNavigation": "Navigasi utama"
   },
 
   "manageAdmin": {
@@ -340,6 +343,23 @@
       "deactivateAdmin": "Nonaktif Admin",
       "deactivateItem": "Nonaktif Item",
       "unknown": "Aktivitas"
+    }
+  },
+  "guestAsset": {
+    "title": "Detail Item",
+    "subtitle": "Detail item hasil scan",
+    "loading": "Memuat item...",
+    "notFound": "Item tidak ditemukan.",
+    "loadError": "Gagal memuat data item.",
+    "category": "Kategori",
+    "location": "Lokasi",
+    "specifications": "Spesifikasi",
+    "edit": "Edit",
+    "deactivate": "Nonaktifkan",
+    "statusOptions": {
+      "functional": "Berfungsi",
+      "needs_repair": "Perlu Diperbaiki",
+      "unavailable": "Tidak Tersedia"
     }
   },
   "profile": {

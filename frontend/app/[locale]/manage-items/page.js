@@ -12,8 +12,7 @@ import BulkActionBar from "@/components/items/bulkActionBar";
 import AddItemForm from "@/components/items/addItemForm";
 import EditItemForm from "@/components/items/editItemForm";
 import DeactivateItemForm from "@/components/items/deactivateItemForm";
-
-import { LayoutGrid, List, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import FilterForm, {
   createDefaultFilters,
 } from "@/components/items/itemFilterForm";
@@ -67,12 +66,9 @@ export default function ManageItemsPage() {
   const [error, setError] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [mode, setMode] = useState("none");
-
-  const [viewMode, setViewMode] = useState("grid");
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const [filters, setFilters] = useState(createDefaultFilters());
   const [search, setSearch] = useState("");
-  // Modal/panel yang sedang terbuka
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [deactivateTarget, setDeactivateTarget] = useState(null);
@@ -150,7 +146,6 @@ export default function ManageItemsPage() {
     init();
   }, [router, fetchItems]);
 
-  // Bersihkan timer double-click kalau komponen unmount
   useEffect(() => {
     return () => {
       if (clickTimerRef.current) {
@@ -159,30 +154,27 @@ export default function ManageItemsPage() {
     };
   }, []);
 
-  // ================= SELEKSI ITEM =================
-  // Klik 1x -> pilih 1 item (buka detail panel), atau toggle kalau lagi mode multi.
-  // Klik 2x (double click) -> tambah item kedua ke seleksi, jadi mode multi.
-
   function handleSingleSelect(id) {
-    if (mode === "multi") {
-      setSelectedIds((prev) =>
-        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-      );
+    if (selectedIds.length > 0) {
+      const nextSelectedIds = selectedIds.includes(id)
+        ? selectedIds.filter((x) => x !== id)
+        : [...selectedIds, id];
+
+      setSelectedIds(nextSelectedIds);
       return;
     }
 
-    if (mode === "single" && selectedIds[0] === id) {
+    if (selectedItemId === id) {
       clearSelection();
       return;
     }
 
-    setSelectedIds([id]);
-    setMode("single");
+    setSelectedItemId(id);
   }
 
   function handleDoubleSelect(id) {
+    setSelectedItemId(null);
     setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
-    setMode("multi");
   }
 
   // Bedakan single click vs double click pakai delay kecil,
@@ -205,7 +197,7 @@ export default function ManageItemsPage() {
 
   function clearSelection() {
     setSelectedIds([]);
-    setMode("none");
+    setSelectedItemId(null);
   }
 
   function handleApplyFilters(nextFilters) {
@@ -282,8 +274,7 @@ export default function ManageItemsPage() {
 
   // ================= FILTER & DATA TURUNAN =================
 
-  const selectedItem =
-    mode === "single" ? items.find((item) => item.id === selectedIds[0]) : null;
+  const selectedItem = items.find((item) => item.id === selectedItemId) || null;
 
   function matchesFilters(item) {
     const searchTerm = search.trim().toLowerCase();
@@ -378,8 +369,10 @@ export default function ManageItemsPage() {
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
-      <div className="flex h-full">
-        <div className="flex-1 min-w-0">
+      <div
+        className={`assetra-items-layout h-full ${selectedItem ? "has-detail-panel" : ""}`}
+      >
+        <div className="assetra-items-content min-w-0">
           {error && (
             <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
           )}
@@ -413,7 +406,9 @@ export default function ManageItemsPage() {
               <ItemCard
                 key={item.id}
                 item={item}
-                selected={selectedIds.includes(item.id)}
+                selected={
+                  selectedIds.includes(item.id) || selectedItemId === item.id
+                }
                 onClick={handleCardClick}
               />
             ))}

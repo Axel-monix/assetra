@@ -18,15 +18,23 @@ import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 
 const LAYOUT_OPTIONS = [
   { key: "2x2", cols: 2, rows: 2 },
-  { key: "3x3", cols: 3, rows: 3 },
+  { key: "2x3", cols: 2, rows: 3 },
+  { key: "2x4", cols: 2, rows: 4 },
   { key: "3x4", cols: 3, rows: 4 },
-  { key: "4x4", cols: 4, rows: 4 },
 ];
-
+const PAPER_SIZE_OPTIONS = [
+  { key: "a3", label: "A3", cssSize: "A3" },
+  { key: "a4", label: "A4", cssSize: "A4" },
+  { key: "a5", label: "A5", cssSize: "A5" },
+  { key: "b4", label: "B4", cssSize: "B4" },
+  { key: "b5", label: "B5", cssSize: "B5" },
+  { key: "letter", label: "Letter", cssSize: "Letter" },
+  { key: "legal", label: "Legal", cssSize: "Legal" },
+];
 const LABEL_SIZE_OPTIONS = [
-  { key: "small", widthMm: 50, heightMm: 25 },
-  { key: "medium", widthMm: 64, heightMm: 34 },
-  { key: "large", widthMm: 90, heightMm: 50 },
+  { key: "small", widthMm: 40, heightMm: 50 },
+  { key: "medium", widthMm: 50, heightMm: 65 },
+  { key: "large", widthMm: 60, heightMm: 80 },
 ];
 
 export default function PrintQrLabelsPage() {
@@ -47,7 +55,6 @@ export default function PrintQrLabelsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [paperSize, setPaperSize] = useState("a4");
   const [orientation, setOrientation] = useState("portrait");
   const [layoutKey, setLayoutKey] = useState("3x4");
@@ -64,8 +71,14 @@ export default function PrintQrLabelsPage() {
 
   const layout = LAYOUT_OPTIONS.find((l) => l.key === layoutKey);
   const labelSize = LABEL_SIZE_OPTIONS.find((s) => s.key === labelSizeKey);
-  const perPage = layout.cols * layout.rows;
+
+  const effectiveCols = orientation === "landscape" ? layout.rows : layout.cols;
+  const effectiveRows = orientation === "landscape" ? layout.cols : layout.rows;
+  const perPage = effectiveCols * effectiveRows;
   const labelRatio = labelSize.widthMm / labelSize.heightMm;
+  const selectedPaper = PAPER_SIZE_OPTIONS.find(
+    (paper) => paper.key === paperSize,
+  );
 
   useEffect(() => {
     async function init() {
@@ -159,6 +172,16 @@ export default function PrintQrLabelsPage() {
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
+      {/* Dynamic print CSS */}
+      <style>{`
+        @media print {
+          @page {
+            size: ${selectedPaper?.cssSize || "A4"} ${orientation};
+            margin: 10mm;
+          }
+        }
+      `}</style>
+
       <div className="no-print">
         <div className="flex items-center justify-between mb-1">
           <div>
@@ -189,23 +212,31 @@ export default function PrintQrLabelsPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-5 mt-5">
-          {/* PRINT SETTINGS PANEL */}
           <div className="assetra-card p-4 h-fit">
             <h3 className="text-sm font-bold text-[var(--color-text)] mb-4">
               {t("printSettings")}
             </h3>
 
+            {/* Paper Size */}
             <div className="assetra-filter-section pt-0">
               <label className="assetra-form-label">{t("paperSize")}</label>
               <select
                 value={paperSize}
-                onChange={(e) => setPaperSize(e.target.value)}
+                onChange={(e) => {
+                  setPaperSize(e.target.value);
+                  setPreviewPage(0);
+                }}
                 className="assetra-form-input"
               >
-                <option value="a4">A4</option>
+                {PAPER_SIZE_OPTIONS.map((paper) => (
+                  <option key={paper.key} value={paper.key}>
+                    {paper.label}
+                  </option>
+                ))}
               </select>
             </div>
 
+            {/* Orientation */}
             <div className="assetra-filter-section">
               <label className="assetra-form-label">{t("orientation")}</label>
               <div className="flex gap-2">
@@ -213,7 +244,10 @@ export default function PrintQrLabelsPage() {
                   <button
                     key={o}
                     type="button"
-                    onClick={() => setOrientation(o)}
+                    onClick={() => {
+                      setOrientation(o);
+                      setPreviewPage(0);
+                    }}
                     className={`assetra-btn flex-1 ${
                       orientation === o
                         ? "assetra-btn-primary"
@@ -226,6 +260,7 @@ export default function PrintQrLabelsPage() {
               </div>
             </div>
 
+            {/* Labels Per Page */}
             <div className="assetra-filter-section">
               <label className="assetra-form-label">{t("labelsPerPage")}</label>
               <div className="grid grid-cols-4 gap-2">
@@ -252,6 +287,7 @@ export default function PrintQrLabelsPage() {
               </p>
             </div>
 
+            {/* Label Size */}
             <div className="assetra-filter-section">
               <label className="assetra-form-label">{t("labelSize")}</label>
               <select
@@ -270,6 +306,7 @@ export default function PrintQrLabelsPage() {
               </select>
             </div>
 
+            {/* Label Content */}
             <div className="assetra-filter-section border-b-0">
               <label className="assetra-form-label">{t("labelContent")}</label>
               <div className="assetra-filter-options">
@@ -304,7 +341,10 @@ export default function PrintQrLabelsPage() {
                   pages: totalPages,
                   paper: paperSize.toUpperCase(),
                   orientation: t(orientation),
-                  layout: layoutKey,
+                  layout:
+                    orientation === "landscape"
+                      ? `${layout.rows}×${layout.cols}`
+                      : `${layout.cols}×${layout.rows}`,
                 })}
               </span>
               <div className="flex items-center gap-2">
@@ -325,19 +365,18 @@ export default function PrintQrLabelsPage() {
                 </button>
               </div>
             </div>
-
             <div
               className="assetra-print-page-preview mx-auto"
               style={{
                 transform: `scale(${zoom / 100})`,
                 transformOrigin: "top center",
               }}
-              data-orientation={orientation}
             >
               <div
                 className="assetra-print-grid"
                 style={{
-                  gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
+                  gridTemplateColumns: `repeat(${effectiveCols}, 1fr)`,
+                  gridTemplateRows: `repeat(${effectiveRows}, 1fr)`,
                   "--label-ratio": labelRatio,
                 }}
               >
@@ -405,10 +444,9 @@ export default function PrintQrLabelsPage() {
         </div>
       </div>
 
-      {/* PRINT-ONLY AREA: renders ALL items (not just current preview page) */}
+      {/* Print-only pages */}
       <div
         className="print-only"
-        data-orientation={orientation}
         style={{
           "--label-w": `${labelSize.widthMm}mm`,
           "--label-h": `${labelSize.heightMm}mm`,
@@ -419,7 +457,8 @@ export default function PrintQrLabelsPage() {
             key={pageIndex}
             className="assetra-print-page"
             style={{
-              gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
+              gridTemplateColumns: `repeat(${effectiveCols}, 1fr)`,
+              gridTemplateRows: `repeat(${effectiveRows}, 1fr)`,
               "--label-ratio": labelRatio,
             }}
           >

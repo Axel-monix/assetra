@@ -1,9 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import Header from "./header";
-import { LayoutGrid, Boxes, History, Users, Layers, LogOut } from "lucide-react";
+import {
+  LayoutGrid,
+  Boxes,
+  History,
+  Users,
+  Layers,
+  LogOut,
+} from "lucide-react";
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
 
 const NAV_ITEMS = [
@@ -39,9 +47,20 @@ export default function DashboardLayout({ role, userName, children }) {
   const t = useTranslations("dashboard");
   const pathname = usePathname();
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const normalizedRole =
     typeof role === "object" ? role.name || role.role || role.role_name : role;
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.classList.toggle("assetra-menu-open", isSidebarOpen);
+
+    return () => document.body.classList.remove("assetra-menu-open");
+  }, [isSidebarOpen]);
 
   if (!role) {
     return (
@@ -69,10 +88,21 @@ export default function DashboardLayout({ role, userName, children }) {
 
   return (
     <div
-      className={`${FONTS.MAIN} h-screen overflow-hidden bg-[var(--color-background)] text-[var(--color-text)] flex`}
+      className={`${FONTS.MAIN} assetra-dashboard-shell h-screen overflow-hidden bg-[var(--color-background)] text-[var(--color-text)] flex`}
     >
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label={t("closeMenu")}
+          onClick={() => setIsSidebarOpen(false)}
+          className="assetra-sidebar-overlay"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-60 shrink-0 border-r border-[var(--color-border)] flex flex-col px-4 py-5 overflow-y-auto">
+      <aside
+        className={`assetra-dashboard-sidebar w-60 shrink-0 border-r border-[var(--color-border)] flex flex-col px-4 py-5 overflow-y-auto ${isSidebarOpen ? "is-open" : ""}`}
+      >
         <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>
 
         <div className="mb-6 px-2">
@@ -92,6 +122,7 @@ export default function DashboardLayout({ role, userName, children }) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition ${
                   active
                     ? "bg-[var(--color-primary)] text-[var(--color-primary-contrast)] font-medium"
@@ -122,8 +153,17 @@ export default function DashboardLayout({ role, userName, children }) {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
-        <Header userName={userName || t("user")} />
-        <main className="flex-1 min-h-0 overflow-y-auto p-6">{children}</main>
+        <Header
+          userName={userName || t("user")}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
+          mobileNavItems={navItems.filter(
+            (item) => item.href === "/" || item.href === "/manage-items",
+          )}
+        />
+        <main className="assetra-dashboard-main flex-1 min-h-0 overflow-y-auto p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

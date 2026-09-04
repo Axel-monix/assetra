@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Download } from "lucide-react";
+import {Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import HistoryFilterForm from "./historyFilterForm";
 import SearchBar from "@/components/common/searchBar";

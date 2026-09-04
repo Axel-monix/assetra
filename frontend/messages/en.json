@@ -78,7 +78,10 @@
     "loading": "Loading...",
     "Trackyourstuff": "Track your stuff",
     "user": "User",
-    "logout": "Logout"
+    "logout": "Logout",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "mobileNavigation": "Primary navigation"
   },
 
   "manageAdmin": {
@@ -169,7 +172,7 @@
     "searchPlaceholder": "Search items...",
     "specificationRequired": "{name} is required.",
     "needRepairTitle": "Report a problem",
-    "whatsWrong":"What's wrong?",
+    "whatsWrong": "What's wrong?",
     "repairDetails": "Details",
     "repairDetailsPlaceholder": "Describe the problem...",
     "confirmNeedRepair": "Report Problem",
@@ -255,6 +258,23 @@
     "reasonTooShort": "Reason must be at least {length} characters.",
     "statusChangeFailed": "Failed to change item status.",
     "serverResponseError": "Server response error. Please try again."
+  },
+  "guestAsset": {
+    "title": "Scanned Item",
+    "subtitle": "Scanned item details",
+    "loading": "Loading item...",
+    "notFound": "Item not found.",
+    "loadError": "Failed to load item data.",
+    "category": "Category",
+    "location": "Location",
+    "specifications": "Specifications",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "statusOptions": {
+      "functional": "Functional",
+      "needs_repair": "Needs Repair",
+      "unavailable": "Unavailable"
+    }
   },
   "profile": {
     "loading": "Loading...",
@@ -364,7 +384,7 @@
     "deactivated": "Deactivated",
     "noActivities": "No activities match the selected filters.",
     "showing": "Showing {from} to {to} of {total} entries.",
-    
+
     "export": {
       "title": "Export History",
       "subtitle": "Export the currently filtered activity history.",
@@ -391,7 +411,6 @@
       "exportError": "Failed to export data. Please try again.",
       "authError": "Authentication error. Please login again.",
       "timeoutError": "Request timed out. Please try again."
-      
     },
     "changedFields": {
       "name": "name",
@@ -478,7 +497,7 @@
     "cancel": "Cancel",
     "createFailed": "Failed to create category.",
     "editFailed": "Failed to update category.",
- 
+
     "editCategory": "Edit Category",
     "categoryName": "Category Name",
     "categoryNamePlaceholder": "e.g. Laptop",
@@ -489,7 +508,7 @@
     "saveChanges": "Save Changes",
     "addCategory": "Add Category",
     "atLeastOneSpecification": "At least one specification is required.",
- 
+
     "specifications": "Specifications",
     "addDetail": "+ Add Detail",
     "detailBarang": "Detail Barang",
@@ -505,13 +524,13 @@
       "date": "Date",
       "boolean": "Yes/No"
     },
- 
+
     "deleteCategoryTitle": "Delete Category",
     "deleteCategoryConfirm": "Are you sure you want to delete {name}? This can't be undone.",
     "deleteCategory": "Delete",
     "deleting": "Deleting...",
     "deleteFailed": "Failed to delete category.",
- 
+
     "retainedSpecificationsWarning": "Some specifications couldn't be removed because they're still used by existing items: {names}"
   }
 }

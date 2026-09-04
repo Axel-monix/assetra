@@ -6,8 +6,7 @@ import { useTranslations } from "next-intl";
 
 const STEP_FORM = "form";
 const STEP_CONFIRM = "confirm";
-const EXIT_DURATION = 180; // harus sama persis dengan durasi animasi exit di globals.css
-
+const EXIT_DURATION = 180; 
 export default function DeactivateAdminModal({ admin, onClose, onConfirm }) {
   const t = useTranslations("manageAdmin");
   const [step, setStep] = useState(STEP_FORM);
