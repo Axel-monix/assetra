@@ -784,6 +784,98 @@ async function getAssetQrCode(req, res) {
     });
   }
 }
+function buildViewerAndPermissions(user) {
+  const role = user?.role || null;
+  const isAdmin = role === "admin" || role === "super_admin";
+
+  return {
+    viewer: {
+      authenticated: isAdmin,
+      role: isAdmin ? role : "guest",
+    },
+    permissions: {
+      canEdit: isAdmin,
+      canDeactivate: isAdmin,
+    },
+  };
+}
+
+/**
+ * GET /api/assets/public/:code
+ *
+ * PUBLIC ENDPOINT (pakai optionalAuth, bukan authenticateToken).
+ * Dipakai halaman hasil scan QR (/items/[code]).
+ *
+ * HANYA mengembalikan field yang aman ditampilkan ke publik
+ * (nama, kategori, status, lokasi, gambar, specs). Tidak ada
+ * history/treatment/internal data di sini — beda dari listAssets.
+ */
+async function getPublicAsset(req, res) {
+  const { code } = req.params;
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT asset.id,
+              asset.id_category,
+              category.category_name,
+              asset.name,
+              asset.code,
+              asset.status,
+              asset.image_url,
+              asset.location,
+              asset.updated_at
+       FROM asset
+       LEFT JOIN category
+         ON category.id = asset.id_category
+       WHERE asset.code = $1`,
+      [code],
+    );
+
+    if (rows.length === 0) {
+      return error(res, {
+        messageKey: "notFound",
+        message: "Item tidak ditemukan.",
+        statusCode: 404,
+      });
+    }
+
+    const raw = rows[0];
+
+    const asset = {
+      databaseId: raw.id,
+      id: raw.code,
+      name: raw.name,
+      category: raw.category_name || null,
+      status: raw.status || "Unknown",
+      imageUrl: raw.image_url,
+      location: raw.location || null,
+      updatedAt: raw.updated_at,
+    };
+
+    const [assetWithSpecs] = await attachSpecsToAssets([asset]);
+
+    // databaseId cuma dipakai internal buat attachSpecsToAssets,
+    // jangan sampai bocor ke response publik
+    const { databaseId, ...publicAsset } = assetWithSpecs;
+
+    const { viewer, permissions } = buildViewerAndPermissions(req.user);
+
+    return success(res, {
+      data: {
+        asset: publicAsset,
+        viewer,
+        permissions,
+      },
+    });
+  } catch (err) {
+    console.error("Error in getPublicAsset:", err);
+
+    return error(res, {
+      messageKey: "loadFailed",
+      message: "Gagal mengambil data asset.",
+    });
+  }
+}
 
 module.exports = {
   listAssets,
@@ -791,4 +883,5 @@ module.exports = {
   updateAsset,
   deactivateAssets,
   getAssetQrCode,
+  getPublicAsset, 
 };

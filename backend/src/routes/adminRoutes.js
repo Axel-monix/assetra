@@ -6,7 +6,6 @@ const { authenticateToken } = require("../middleware/authMiddleware"); // sesuai
 const { requireSuperAdmin } = require("../middleware/requireSuperAdmin");
 const { listAdmins, createAdmin, toggleAdminStatus } = require("../controllers/adminController");
 
-// Semua endpoint di sini wajib login DAN wajib super_admin
 router.use(authenticateToken, requireSuperAdmin);
 
 router.get("/", listAdmins);
