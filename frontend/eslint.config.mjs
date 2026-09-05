@@ -1,10 +1,24 @@
-const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true, 
-  },
-};
+import { FlatCompat } from "@eslint/eslintrc";
 
-export default nextConfig;
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
+});
+
+const eslintConfig = [
+  ...compat.config({
+    extends: ["next/core-web-vitals"],
+  }),
+  ...compat.config({
+    extends: ["next/typescript"],
+  }),
+  {
+    ignores: [
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
+];
+
+export default eslintConfig;
