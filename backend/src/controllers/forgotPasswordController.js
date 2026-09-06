@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const pool = require("../config/db");
 const { generateVerificationCode, sendResetPasswordEmail } = require("../utils/mailer");
 const Resetcode = require("../utils/Resetcode"); 
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -49,8 +48,8 @@ async function forgotPassword(req, res) {
       success: true,
       message: "Code for reset password has been sent to your email. Valid for 5 minutes.",
     });
-  } catch (err) {
-    console.error("Error in forgotPassword:", err);
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred on the server.",

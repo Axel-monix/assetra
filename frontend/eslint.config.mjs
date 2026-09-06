@@ -12,12 +12,7 @@ const eslintConfig = [
     extends: ["next/typescript"],
   }),
   {
-    ignores: [
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-    ],
+    ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
   },
 ];
 
