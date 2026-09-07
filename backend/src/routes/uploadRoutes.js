@@ -33,13 +33,24 @@ const upload = multer({
   }
 });
 
-router.post("/", authenticateToken, upload.single("image"), async (req, res) => {
+router.post("/", authenticateToken, (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) {
+      return error(res, {
+        message: err.message || "Gagal upload gambar",
+        statusCode: err.code === "LIMIT_FILE_SIZE" ? 413 : 400,
+      });
+    }
+
+    next();
+  });
+}, async (req, res) => {
   try {
     if (!req.file) {
       return error(res, { message: "Tidak ada file yang diupload", statusCode: 400 });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     
     return success(res, {
       message: "Gambar berhasil diupload",

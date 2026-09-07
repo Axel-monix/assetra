@@ -5,6 +5,7 @@ const adminRoutes = require("./src/routes/adminRoutes");
 const assetRoutes = require("./src/routes/assetRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
 const uploadRoutes = require("./src/routes/uploadRoutes");
+const path = require("path");
 
 const app = express();
 const PORT = 5000;
@@ -16,6 +17,7 @@ app.use("/api/admins", adminRoutes);
 app.use("/api/assets", assetRoutes);     
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
