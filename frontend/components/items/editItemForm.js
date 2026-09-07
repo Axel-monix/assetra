@@ -274,7 +274,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
   async function uploadImageToServer(file) {
     const formData = new FormData();
-    formData.append("foto", file);
+    formData.append("image", file);
 
     const response = await fetch("/api/upload-proxy", {
       method: "POST",
@@ -292,7 +292,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       throw new Error(result.message || t("uploadError"));
     }
 
-    return result.foto;
+    return result.data?.url;
   }
 
   async function handleImageChange(event) {

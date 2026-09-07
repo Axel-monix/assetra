@@ -123,6 +123,24 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--assetra-white);
+  -webkit-box-shadow: 0 0 0 1000px var(--assetra-input) inset;
+  box-shadow: 0 0 0 1000px var(--assetra-input) inset;
+  caret-color: var(--assetra-white);
+}
+
+.assetra-login-field:focus-within {
+  border-color: var(--assetra-primary);
+  box-shadow: 0 0 0 1px var(--assetra-primary);
+}
+
+.assetra-login-field input:focus-visible {
+  outline: none;
+}
+
 /* =========================================================
    CARDS
    ========================================================= */

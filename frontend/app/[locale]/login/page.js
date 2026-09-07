@@ -146,7 +146,7 @@ export default function LoginPage() {
               {t("identifierLabel")}
             </label>
 
-            <div className="flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
+            <div className="assetra-login-field flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
               <input
                 id="identifier"
                 type="text"
@@ -169,7 +169,7 @@ export default function LoginPage() {
               {t("passwordLabel")}
             </label>
 
-            <div className="flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
+            <div className="assetra-login-field flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
