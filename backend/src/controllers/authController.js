@@ -24,7 +24,8 @@ const login = async (req, res) => {
         email,
         password,
         role,
-        status
+        status,
+        created_at
       FROM users
       WHERE LOWER(email) = LOWER($1)
          OR LOWER(name) = LOWER($1)
@@ -118,6 +119,7 @@ const login = async (req, res) => {
           email: user.email,
           role: user.role,
           status: user.status,
+          created_at: user.created_at,
         },
       },
     });

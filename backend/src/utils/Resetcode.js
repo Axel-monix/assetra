@@ -1,42 +1,49 @@
+const pool = require("../config/db");
+
 const CODE_EXPIRY_MS = 5 * 60 * 1000; // 5 menit
-const resetCodes = new Map();
 
-function setCode(email, code) {
-  resetCodes.set(email, {
-    code,
-    expiresAt: Date.now() + CODE_EXPIRY_MS,
-    verified: false,
-  });
+async function setCode(email, code) {
+  const expiresAt = new Date(Date.now() + CODE_EXPIRY_MS);
+  // hanya 1 kode aktif per email
+  await pool.query(`DELETE FROM password_reset_requests WHERE email = $1`, [email]);
+  await pool.query(
+    `INSERT INTO password_reset_requests (email, code, expires_at)
+     VALUES ($1, $2, $3)`,
+    [email, code, expiresAt]
+  );
 }
 
-function getEntry(email) {
-  return resetCodes.get(email);
+async function getEntry(email) {
+  const result = await pool.query(
+    `SELECT code, expires_at, verified
+     FROM password_reset_requests
+     WHERE email = $1
+     ORDER BY created_at DESC LIMIT 1`,
+    [email]
+  );
+  if (result.rows.length === 0) return null;
+
+  const row = result.rows[0];
+  return {
+    code: row.code,
+    expiresAt: new Date(row.expires_at).getTime(), // tetap angka ms, biar isExpired() gak perlu diubah
+    verified: row.verified,
+  };
 }
 
-function markVerified(email) {
-  const entry = resetCodes.get(email);
-  if (entry) {
-    entry.verified = true;
-    resetCodes.set(email, entry);
-  }
+async function markVerified(email) {
+  await pool.query(
+    `UPDATE password_reset_requests SET verified = true WHERE email = $1`,
+    [email]
+  );
 }
 
-function deleteEntry(email) {
-  resetCodes.delete(email);
+async function deleteEntry(email) {
+  await pool.query(`DELETE FROM password_reset_requests WHERE email = $1`, [email]);
 }
-
 function isExpired(entry) {
   return !entry || entry.expiresAt < Date.now();
 }
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [email, entry] of resetCodes.entries()) {
-    if (entry.expiresAt < now) {
-      resetCodes.delete(email);
-    }
-  }
-}, 60 * 1000);
 
 module.exports = {
   setCode,

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { authenticateToken } = require("../middleware/authMiddleware"); // sesuaikan nama file middleware auth lo
+const { authenticateToken } = require("../middleware/authMiddleware"); 
 const { requireSuperAdmin } = require("../middleware/requireSuperAdmin");
 const { listAdmins, createAdmin, toggleAdminStatus } = require("../controllers/adminController");
 

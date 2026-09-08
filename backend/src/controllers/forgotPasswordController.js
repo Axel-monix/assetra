@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
 const { generateVerificationCode, sendResetPasswordEmail } = require("../utils/mailer");
-const Resetcode = require("../utils/Resetcode"); 
+const Resetcode = require("../utils/Resetcode");
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -32,12 +32,12 @@ async function forgotPassword(req, res) {
     }
 
     const code = generateVerificationCode();
-    Resetcode.setCode(normalizedEmail, code);
+    await Resetcode.setCode(normalizedEmail, code); // <- tambah await
 
     const emailSent = await sendResetPasswordEmail(normalizedEmail, code);
 
     if (!emailSent) {
-      Resetcode.deleteEntry(normalizedEmail);
+      await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
       return res.status(500).json({
         success: false,
         message: "Failed to send verification email. Please try again.",
@@ -57,7 +57,6 @@ async function forgotPassword(req, res) {
   }
 }
 
-
 async function verifyResetCode(req, res) {
   try {
     const { email, code } = req.body;
@@ -70,7 +69,7 @@ async function verifyResetCode(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = Resetcode.getEntry(normalizedEmail);
+    const entry = await Resetcode.getEntry(normalizedEmail); // <- tambah await
 
     if (!entry) {
       return res.status(404).json({
@@ -80,7 +79,7 @@ async function verifyResetCode(req, res) {
     }
 
     if (Resetcode.isExpired(entry)) {
-      Resetcode.deleteEntry(normalizedEmail);
+      await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
       return res.status(400).json({
         success: false,
         message: "Verification code has expired. Please request a new code.",
@@ -94,7 +93,7 @@ async function verifyResetCode(req, res) {
       });
     }
 
-    Resetcode.markVerified(normalizedEmail);
+    await Resetcode.markVerified(normalizedEmail); // <- tambah await
 
     return res.json({
       success: true,
@@ -128,7 +127,7 @@ async function resetPassword(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = Resetcode.getEntry(normalizedEmail);
+    const entry = await Resetcode.getEntry(normalizedEmail); // <- tambah await
     if (!entry || Resetcode.isExpired(entry)) {
       return res.status(400).json({
         success: false,
@@ -157,7 +156,7 @@ async function resetPassword(req, res) {
       });
     }
 
-    Resetcode.deleteEntry(normalizedEmail);
+    await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
 
     return res.json({
       success: true,
