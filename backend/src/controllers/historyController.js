@@ -2,19 +2,15 @@ const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
 const PDFDocument = require("pdfkit");
 const ExcelJS = require("exceljs");
-
 const PAGE_SIZE = 10;
-
 const TYPE_GROUPS = {
   added: ["add_admin", "add_item"],
   updated: ["edit_item"],
   deactivated: ["deactivate_admin", "deactivate_item"],
 };
-
 const NEEDS_REPAIR_STATUS = "needs_repair";
 const UNAVAILABLE_STATUS = "unavailable";
 const REPAIRED_STATUS = "functional";
-
 const TYPE_LABELS = {
   add_admin: "Penambahan Admin",
   add_item: "Penambahan Barang",
@@ -22,13 +18,11 @@ const TYPE_LABELS = {
   deactivate_admin: "Penonaktifan Admin",
   deactivate_item: "Penonaktifan Barang",
 };
-
 const ASSET_STATUS_LABELS = {
   functional: "Baik / Berfungsi",
   needs_repair: "Perlu Perbaikan",
   unavailable: "Tidak Tersedia",
 };
-
 const EXPORT_LABELS = {
   id: {
     activity: "Aktivitas",
@@ -64,9 +58,7 @@ function getExportLocale(locale) {
   return String(locale).toLowerCase().startsWith("en") ? "en" : "id";
 }
 
-/* =========================================================
-   BUILD HISTORY FILTERS
-========================================================= */
+/* BUILD HISTORY FILTERS */
 
 function buildHistoryFilters(reqQuery) {
   const { type, types, search, dateFrom, dateTo } = reqQuery;
@@ -136,13 +128,7 @@ function buildHistoryFilters(reqQuery) {
   };
 }
 
-/* =========================================================
-   LIST HISTORY
-   (fetch SEMUA baris yang match filter, tanpa LIMIT.
-   Pagination-nya di-handle di frontend, sama kayak manage-admin)
-========================================================= */
-
-async function listHistory(req, res) {
+{
   try {
     const { type, types, search, dateFrom, dateTo } = req.query;
 
@@ -190,9 +176,9 @@ async function listHistory(req, res) {
   }
 }
 
-/* =========================================================
+/* 
    MAP EXPORT ROWS
-========================================================= */
+ */
 
 function mapRowsForExport(rows, locale = "id") {
   const lang = getExportLocale(locale);
@@ -237,11 +223,6 @@ function mapRowsForExport(rows, locale = "id") {
     description: row.description || "",
   }));
 }
-
-/* =========================================================
-   EXPORT SUMMARY
-========================================================= */
-
 async function getExportSummary() {
   const [addedResult, needsRepairResult, unavailableResult, repairedResult] =
     await Promise.all([
@@ -380,9 +361,7 @@ function buildPdfBuffer(rows, summary, locale = "id") {
   });
 }
 
-/* =========================================================
-   BUILD EXCEL
-========================================================= */
+/* BUILD EXCEL*/
 
 async function buildExcelBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
@@ -423,9 +402,7 @@ async function buildExcelBuffer(rows, summary, locale = "id") {
   return workbook.xlsx.writeBuffer();
 }
 
-/* =========================================================
-   EXPORT HISTORY
-========================================================= */
+/* EXPORT HISTORY*/
 
 async function exportHistory(req, res) {
   try {

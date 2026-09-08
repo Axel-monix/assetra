@@ -2,7 +2,6 @@ const express = require("express");
 const { authenticateToken } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 const { optionalAuth } = require("../middleware/optionalAuth");
-
 const {
   listAssets,
   createAsset,

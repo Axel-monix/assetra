@@ -4,9 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { authenticateToken } = require("../middleware/authMiddleware");
 const { success, error } = require("../../constants/response");
-
 const router = express.Router();
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = path.join(__dirname, "../../uploads");

@@ -1,16 +1,12 @@
 const express = require("express");
-
 const router = express.Router();
-
 const {
   login,
   getMe,
 } = require("../controllers/authController");
-
 const {
   authenticateToken,
 } = require("../middleware/authMiddleware");
-
 const {
   authorizeRoles,
 } = require("../middleware/roleMiddleware");
@@ -19,18 +15,15 @@ const {
   verifyResetCode,
   resetPassword,
 } = require("../controllers/forgotPasswordController");
-
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/forgot-password/verify", verifyResetCode);
 router.post("/forgot-password/reset", resetPassword);
-
 router.get(
   "/me",
   authenticateToken,
   getMe
 );
-
 router.get(
   "/superadmin",
   authenticateToken,

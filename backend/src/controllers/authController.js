@@ -10,7 +10,7 @@ const login = async (req, res) => {
     if (!identifier || !password) {
       return res.status(400).json({
         success: false,
-        message: "Username/email and password are required",
+        message: "invalidLoginInput",
         data: null,
       });
     }
@@ -36,7 +36,7 @@ const login = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(401).json({
         success: false,
-        message: "Invalid username/email or password",
+        message: "invalidCredentials",
         data: null,
       });
     }
@@ -46,10 +46,23 @@ const login = async (req, res) => {
     // CEK STATUS USER
 
     if (user.status !== "active") {
+      const deactivationResult = await pool.query(
+        `
+          SELECT reason
+          FROM admin_deactivation
+          WHERE id_user = $1
+          ORDER BY deactivated_at DESC
+          LIMIT 1
+        `,
+        [user.id],
+      );
+
       return res.status(403).json({
         success: false,
-        message: "Invalid username/email or password",
-        data: null,
+        message: "accountDeactivated",
+        data: {
+          reason: deactivationResult.rows[0]?.reason || "",
+        },
       });
     }
 
@@ -74,7 +87,7 @@ const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: "Invalid username/email or password",
+        message: "invalidCredentials",
         data: null,
       });
     }

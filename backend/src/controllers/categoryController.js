@@ -386,10 +386,6 @@ async function updateCategory(req, res) {
     if (client) client.release();
   }
 }
-
-/**
- * DELETE /api/categories/:id
- */
 async function deleteCategory(req, res) {
   const { id } = req.params;
 
