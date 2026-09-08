@@ -11,11 +11,15 @@ import {
   X,
   Briefcase,
   Lock,
-  Mail,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import RequestEmailChangeModal from "@/components/admin/requestEmailChangeModal";
-import { AUTH_USER_KEY, ROLES } from "@/lib/constants";
+import {
+  AUTH_USER_KEY,
+  AUTH_TOKEN_KEY,
+  ROLES,
+  ENDPOINTS,
+} from "@/lib/constants";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -69,6 +73,10 @@ export default function ProfilePage() {
   const roleLabel =
     user.role === ROLES.SUPER_ADMIN ? t("superAdmin") : t("administrator");
 
+  const getToken = () =>
+    window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+    window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+
   const handlePickPhoto = () => fileInputRef.current?.click();
 
   const handlePhotoChange = (e) => {
@@ -76,7 +84,6 @@ export default function ProfilePage() {
     if (!file) return;
     setAvatarPreview(URL.createObjectURL(file));
     // TODO: upload ke endpoint yang sesuai (mis. /api/users/me/photo)
-    // lalu update user.image_url setelah sukses.
   };
 
   const handleStartEditName = () => {
@@ -93,14 +100,11 @@ export default function ProfilePage() {
     if (!nameDraft.trim()) return;
     setSavingName(true);
     try {
-      const token =
-        window.localStorage.getItem("token") ||
-        window.sessionStorage.getItem("token");
       const res = await fetch(ENDPOINTS.UPDATE_PROFILE, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
         body: JSON.stringify({ name: nameDraft.trim() }),
       });
@@ -120,12 +124,6 @@ export default function ProfilePage() {
     const merged = { ...user, email: updatedUser.email };
     setUser(merged);
     window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(merged));
-    setShowEmailModal(false);
-  };
-
-  const handleSubmitEmailRequest = async (payload) => {
-    // TODO: POST /api/email-change-requests { newEmail, reason }
-    console.log("Email change request:", payload);
     setShowEmailModal(false);
   };
 
@@ -274,7 +272,7 @@ export default function ProfilePage() {
                     type="button"
                     className="assetra-profile-change-btn"
                     onClick={() => {
-                      // TODO: buka modal ganti password (pola sama kayak email modal)
+                      // TODO: buka modal ganti password
                     }}
                   >
                     {t("change")}

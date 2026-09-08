@@ -82,7 +82,7 @@ export default function RequestEmailChangeModal({
         setError(data.message || ERROR_MESSAGES.OTP_INVALID);
         return;
       }
-      onSuccess(data.data); // { id, name, email, role, status }
+      onSuccess(data.data);
     } catch {
       setError(ERROR_MESSAGES.CONNECTION_ERROR);
     } finally {
