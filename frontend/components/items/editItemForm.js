@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo, useState, useRef } from "react";
 import { X, Upload, AlertCircle, Wrench } from "lucide-react";
-import { ENDPOINTS, AUTH_TOKEN_KEY } from "@/lib/constants";
+import {
+  ENDPOINTS,
+  AUTH_TOKEN_KEY,
+  MAX_IMAGE_SIZE_BYTES,
+} from "@/lib/constants";
 import {
   getSpecTemplate,
   buildSpecsPayload,
@@ -276,8 +280,14 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch("/api/upload-proxy", {
+    const token =
+      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+      window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+    const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: formData,
     });
 
@@ -305,7 +315,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
       setError(t("fileTooLarge"));
       return;
     }

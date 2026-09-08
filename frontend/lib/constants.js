@@ -11,6 +11,7 @@ export const FONTS = {
 export const COLORS = colors;
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
@@ -31,6 +32,7 @@ export const ENDPOINTS = {
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`,
   PRINT_QR: `${API_URL}/assets/print-qr`,
   DEACTIVATE_ASSETS: `${API_URL}/assets/deactivate`,
+  UPLOAD_IMAGE: "/api/upload-proxy",
 };
 export const ROLES = {
   ADMIN: "admin",

@@ -3,15 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import {
-  User,
-  Camera,
-  Pencil,
-  Check,
-  X,
-  Briefcase,
-  Lock,
-} from "lucide-react";
+import { User, Camera, Pencil, Check, X, Briefcase, Lock } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import RequestEmailChangeModal from "@/components/admin/requestEmailChangeModal";
 import {
@@ -19,6 +11,7 @@ import {
   AUTH_TOKEN_KEY,
   ROLES,
   ENDPOINTS,
+  MAX_IMAGE_SIZE_BYTES,
 } from "@/lib/constants";
 
 export default function ProfilePage() {
@@ -34,6 +27,8 @@ export default function ProfilePage() {
 
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -79,11 +74,76 @@ export default function ProfilePage() {
 
   const handlePickPhoto = () => fileInputRef.current?.click();
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setAvatarPreview(URL.createObjectURL(file));
-    // TODO: upload ke endpoint yang sesuai (mis. /api/users/me/photo)
+
+    setPhotoError("");
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoError(t("photoMustBeImage"));
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setPhotoError(t("photoTooLarge"));
+      return;
+    }
+
+    const token = getToken();
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+    setUploadingPhoto(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const uploadResponse = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      const uploadResult = await uploadResponse.json();
+
+      if (!uploadResponse.ok || !uploadResult.success) {
+        throw new Error(uploadResult.message || t("photoUploadError"));
+      }
+
+      const imageUrl = uploadResult.data?.url || uploadResult.url;
+      if (!imageUrl) {
+        throw new Error(t("photoUploadError"));
+      }
+
+      const profileResponse = await fetch(ENDPOINTS.UPDATE_PROFILE, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ image_url: imageUrl }),
+      });
+      const profileResult = await profileResponse.json();
+
+      if (!profileResponse.ok || !profileResult.success) {
+        throw new Error(profileResult.message || t("photoUploadError"));
+      }
+
+      const updated = { ...user, image_url: imageUrl };
+      setUser(updated);
+      const storage = window.localStorage.getItem(AUTH_TOKEN_KEY)
+        ? window.localStorage
+        : window.sessionStorage;
+      storage.setItem(AUTH_USER_KEY, JSON.stringify(updated));
+    } catch (error) {
+      setAvatarPreview(user.image_url || null);
+      setPhotoError(error.message || t("photoUploadError"));
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = "";
+    }
   };
 
   const handleStartEditName = () => {
@@ -146,6 +206,7 @@ export default function ProfilePage() {
               className="assetra-profile-avatar-edit-btn"
               onClick={handlePickPhoto}
               aria-label={t("changePhoto")}
+              disabled={uploadingPhoto}
             >
               <Camera size={13} strokeWidth={2} />
             </button>
@@ -170,9 +231,15 @@ export default function ProfilePage() {
               type="button"
               className="assetra-profile-change-photo"
               onClick={handlePickPhoto}
+              disabled={uploadingPhoto}
             >
-              {t("changePhoto")} &rarr;
+              {uploadingPhoto ? t("uploadingPhoto") : `${t("changePhoto")} →`}
             </button>
+            {photoError && (
+              <p className="mt-2 text-xs text-[var(--color-danger)]">
+                {photoError}
+              </p>
+            )}
           </div>
         </div>
 
