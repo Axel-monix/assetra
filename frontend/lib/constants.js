@@ -14,6 +14,7 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
+  CURRENT_USER: `${API_URL}/auth/me`,
 
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
@@ -23,7 +24,7 @@ export const ENDPOINTS = {
   CATEGORIES: `${API_URL}/categories`,
   CATEGORY_BY_ID: (id) => `${API_URL}/categories/${id}`,
   ASSETS: `${API_URL}/assets`,
-   PUBLIC_ASSET_BY_CODE: (code) => `${API_URL}/assets/public/${code}`,
+  PUBLIC_ASSET_BY_CODE: (code) => `${API_URL}/assets/public/${code}`,
   ADMINS: `${API_URL}/admins`,
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`,
   PRINT_QR: `${API_URL}/assets/print-qr`,

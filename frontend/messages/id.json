@@ -12,7 +12,19 @@
     "forgotPassword": "Lupa kata sandi?",
     "signingIn": "Sedang masuk...",
     "signIn": "Masuk →",
-    "accessRestricted": "🛡 Akses terbatas untuk pengguna Assetra yang berwenang."
+    "errorTitle": "Login belum berhasil",
+    "accountDeactivatedTitle": "Login gagal",
+    "accessRestricted": "🛡 Akses terbatas untuk pengguna Assetra yang berwenang.",
+    "loadingTitle": "Memeriksa akun",
+    "successTitle": "Berhasil masuk",
+    "loginSuccess": "Selamat datang kembali.",
+    "invalidCredentials": "Username/email atau kata sandi salah.",
+    "invalidLoginInput": "Username/email dan kata sandi wajib diisi.",
+    "loginFailed": "Login belum berhasil. Silakan coba lagi.",
+    "connectionError": "Koneksi sedang bermasalah. Periksa internet Anda lalu coba lagi.",
+    "accountDeactivated": "Akun ini sudah dinonaktifkan karena {reason}",
+    "deactivationReasonUnknown": "alasan yang ditentukan administrator",
+    "close": "Tutup"
   },
 
   "dashboard": {

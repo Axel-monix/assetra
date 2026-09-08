@@ -4,12 +4,7 @@ import { useState } from "react";
 import { useRouter } from "@/i18n/navigation"; // ← PAKE INI!
 import { Link } from "@/i18n/navigation"; // ← PAKE INI!
 import { useTranslations } from "next-intl";
-import {
-  ENDPOINTS,
-  AUTH_TOKEN_KEY,
-  AUTH_USER_KEY,
-  ERROR_MESSAGES,
-} from "@/lib/constants";
+import { ENDPOINTS, AUTH_TOKEN_KEY, AUTH_USER_KEY } from "@/lib/constants";
 
 function EyeIcon() {
   return (
@@ -65,6 +60,34 @@ function EyeOffIcon() {
   );
 }
 
+function FeedbackIcon({ type }) {
+  if (type === "loading") {
+    return <span className="assetra-feedback-spinner" aria-hidden="true" />;
+  }
+
+  const isSuccess = type === "success";
+
+  return (
+    <svg
+      className={isSuccess ? "checkmark" : "crossmark"}
+      viewBox="0 0 52 52"
+      aria-hidden="true"
+    >
+      <circle
+        className={isSuccess ? "checkmark__circle" : "crossmark__circle"}
+        cx="26"
+        cy="26"
+        r="25"
+      />
+      {isSuccess ? (
+        <path className="checkmark__check" d="m14 27 7 7 17-17" />
+      ) : (
+        <path className="crossmark__check" d="m17 17 18 18m0-18L17 35" />
+      )}
+    </svg>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter(); // ← OTOMATIS PAKE LOCALE!
   const t = useTranslations("login");
@@ -74,13 +97,34 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [feedback, setFeedback] = useState(null);
+
+  function getErrorInfo(result) {
+    if (result.message === "accountDeactivated") {
+      return {
+        title: t("accountDeactivatedTitle"),
+        message: t("accountDeactivated", {
+          reason: result.data?.reason || t("deactivationReasonUnknown"),
+        }),
+      };
+    }
+
+    const translatedMessage = {
+      invalidCredentials: t("invalidCredentials"),
+      invalidLoginInput: t("invalidLoginInput"),
+    }[result.message];
+
+    return {
+      title: t("errorTitle"),
+      message: translatedMessage || t("loginFailed"),
+    };
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    setError("");
     setLoading(true);
+    setFeedback({ type: "loading", message: t("signingIn") });
 
     try {
       const response = await fetch(ENDPOINTS.LOGIN, {
@@ -98,12 +142,17 @@ export default function LoginPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        setError(result.message || ERROR_MESSAGES.LOGIN_FAILED);
+        const { title, message } = getErrorInfo(result);
+        setFeedback({ type: "error", title, message });
         return;
       }
 
       if (!result.data?.token || !result.data?.user) {
-        setError(ERROR_MESSAGES.GENERIC_ERROR);
+        setFeedback({
+          type: "error",
+          title: t("errorTitle"),
+          message: t("loginFailed"),
+        });
         return;
       }
 
@@ -114,10 +163,15 @@ export default function LoginPage() {
       storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
 
       // Dashboard berada di halaman utama locale: /en atau /id.
-      router.push("/");
+      setFeedback({ type: "success", message: t("loginSuccess") });
+      window.setTimeout(() => router.push("/"), 700);
     } catch (err) {
       console.error("Login error:", err);
-      setError(ERROR_MESSAGES.CONNECTION_ERROR);
+      setFeedback({
+        type: "error",
+        title: t("errorTitle"),
+        message: t("connectionError"),
+      });
     } finally {
       setLoading(false);
     }
@@ -213,11 +267,6 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {error && (
-            <div className="mb-4 rounded-lg border border-[var(--color-danger-background)]/20 bg-[var(--color-danger-background)]/10 px-3 py-2 text-sm text-[var(--color-danger)]">
-              {error}
-            </div>
-          )}
           <button
             type="submit"
             disabled={loading}
@@ -231,6 +280,35 @@ export default function LoginPage() {
           {t("accessRestricted")}
         </div>
       </div>
+
+      {feedback && (
+        <div className="modal-overlay" role="alertdialog" aria-live="assertive">
+          <div className="modal-box popup-card">
+            <div className="icon-box">
+              <FeedbackIcon type={feedback.type} />
+            </div>
+            <h2>
+              {feedback.type === "success"
+                ? t("successTitle")
+                : feedback.type === "loading"
+                  ? t("loadingTitle")
+                  : feedback.title}
+            </h2>
+            <p>{feedback.message}</p>
+            {feedback.type === "error" && (
+              <div className="modal-buttons">
+                <button
+                  type="button"
+                  className="btn-modal"
+                  onClick={() => setFeedback(null)}
+                >
+                  {t("close")}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

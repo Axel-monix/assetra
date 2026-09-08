@@ -54,7 +54,9 @@ function SpecField({ field, value, onChange, disabled }) {
 
   return (
     <input
-      type={field.type === "number" || field.type === "date" ? field.type : "text"}
+      type={
+        field.type === "number" || field.type === "date" ? field.type : "text"
+      }
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       placeholder={`${field.name}${field.required ? " *" : ""}`}
@@ -132,8 +134,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
   }, [t]);
 
   const selectedCategory = useMemo(
-    () =>
-      categories.find((cat) => String(cat.id) === String(form.id_category)),
+    () => categories.find((cat) => String(cat.id) === String(form.id_category)),
     [categories, form.id_category],
   );
 

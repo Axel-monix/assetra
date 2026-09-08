@@ -12,7 +12,13 @@ import {
   Layers,
   LogOut,
 } from "lucide-react";
-import { AUTH_TOKEN_KEY, AUTH_USER_KEY, FONTS, ROLES } from "@/lib/constants";
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  ENDPOINTS,
+  FONTS,
+  ROLES,
+} from "@/lib/constants";
 
 const NAV_ITEMS = [
   {
@@ -55,6 +61,51 @@ export default function DashboardLayout({ role, userName, children }) {
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    let isLoggedOut = false;
+
+    function clearSession() {
+      window.localStorage.removeItem(AUTH_TOKEN_KEY);
+      window.localStorage.removeItem(AUTH_USER_KEY);
+      window.sessionStorage.removeItem(AUTH_TOKEN_KEY);
+      window.sessionStorage.removeItem(AUTH_USER_KEY);
+    }
+
+    async function validateSession() {
+      const token =
+        window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+        window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+
+      if (!token || isLoggedOut) {
+        return;
+      }
+
+      try {
+        const response = await fetch(ENDPOINTS.CURRENT_USER, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+
+        if (!response.ok && !isLoggedOut) {
+          isLoggedOut = true;
+          clearSession();
+          router.replace("/login");
+        }
+      } catch {
+        // Keep the current session when the server is temporarily unreachable.
+      }
+    }
+
+    validateSession();
+    const intervalId = window.setInterval(validateSession, 5000);
+    window.addEventListener("focus", validateSession);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", validateSession);
+    };
+  }, [router]);
 
   useEffect(() => {
     document.body.classList.toggle("assetra-menu-open", isSidebarOpen);

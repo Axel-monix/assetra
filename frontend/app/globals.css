@@ -141,6 +141,204 @@ input:-webkit-autofill:focus {
   outline: none;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--color-overlay) 85%, transparent);
+  font-family: var(--font-main);
+  animation: fadeInOverlay 0.3s ease;
+}
+
+.modal-box.popup-card {
+  width: min(320px, 100%);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  animation: zoomInModal 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.modal-box.popup-card h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.modal-box.popup-card p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.icon-box {
+  display: flex;
+  justify-content: center;
+  min-height: 70px;
+  margin-bottom: 20px;
+}
+
+.checkmark,
+.crossmark {
+  stroke: var(--color-danger);
+  display: block;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  fill: none;
+  stroke-miterlimit: 10;
+  stroke-width: 2;
+}
+
+.checkmark__circle {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-success) 55%, white);
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px var(--color-success));
+  animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.crossmark__circle {
+  fill: none;
+  stroke: var(--color-danger);
+  stroke-opacity: 1;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px var(--color-danger))
+    drop-shadow(
+      0 0 10px color-mix(in srgb, var(--color-danger) 70%, transparent)
+    );
+  animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark {
+  box-shadow: inset 0 0 0 var(--color-success);
+  animation:
+    fillSuccess 0.4s ease-in-out 0.4s forwards,
+    scaleUp 0.3s ease-in-out 0.9s both;
+}
+
+.crossmark {
+  box-shadow:
+    inset 0 0 0 var(--color-danger),
+    0 0 8px color-mix(in srgb, var(--color-danger) 70%, transparent),
+    0 0 18px color-mix(in srgb, var(--color-danger) 45%, transparent);
+  animation:
+    fillError 0.4s ease-in-out 0.4s forwards,
+    scaleUp 0.3s ease-in-out 0.9s both;
+}
+
+.crossmark__check,
+.checkmark__check {
+  stroke: var(--color-white);
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: strokeCircle 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+.crossmark .crossmark__check {
+  stroke: var(--color-white);
+}
+
+.assetra-feedback-spinner {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border: 4px solid color-mix(in srgb, var(--color-white) 20%, transparent);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: feedbackSpin 0.8s linear infinite;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-modal {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.btn-modal:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+}
+
+@keyframes feedbackSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes strokeCircle {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fillSuccess {
+  100% {
+    box-shadow: inset 0 0 0 40px var(--color-success);
+  }
+}
+
+@keyframes fillError {
+  100% {
+    box-shadow: inset 0 0 0 40px var(--color-danger);
+  }
+}
+
+@keyframes scaleUp {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
 /* =========================================================
    CARDS
    ========================================================= */

@@ -12,7 +12,19 @@
     "forgotPassword": "Forgot password?",
     "signingIn": "Signing in...",
     "signIn": "Sign In →",
-    "accessRestricted": "🛡 Access restricted to authorized Assetra users."
+    "accessRestricted": "🛡 Access restricted to authorized Assetra users.",
+    "loadingTitle": "Checking account",
+    "successTitle": "Signed in successfully",
+    "loginSuccess": "Welcome back.",
+    "invalidCredentials": "Your username/email or password is incorrect.",
+    "invalidLoginInput": "Username/email and password are required.",
+    "loginFailed": "Login was unsuccessful. Please try again.",
+    "connectionError": "The connection is unstable. Check your internet and try again.",
+    "accountDeactivated": "This account has been deactivated because {reason}",
+    "deactivationReasonUnknown": "a reason provided by the administrator",
+    "close": "Close",
+    "errorTitle": "Login unsuccessful",
+    "accountDeactivatedTitle": "Login failed"
   },
 
   "dashboard": {

@@ -31,7 +31,7 @@ const colors = {
 
   warning: "#FBBF24",
   info: "#60A5FA",
-  succes: "#60A5FA",
+  success: "#60A5FA",
 
   accentCyan: "#22D3EE",
   accentOrange: "#FB923C",
