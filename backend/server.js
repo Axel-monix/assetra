@@ -14,11 +14,11 @@ app.use(cors());
 app.use(express.json());
 app.use("/api", routes);
 app.use("/api/admins", adminRoutes);
-app.use("/api/assets", assetRoutes);     
+app.use("/api/assets", assetRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-}); 
+});

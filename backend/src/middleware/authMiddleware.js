@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../config/db");
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -27,7 +28,30 @@ const authenticateToken = (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    req.user = decoded;
+    const { rows } = await pool.query(
+      `
+        SELECT id, name, email, role, status
+        FROM users
+        WHERE id = $1
+      `,
+      [decoded.id],
+    );
+
+    if (rows.length === 0 || rows[0].status !== "active") {
+      return res.status(401).json({
+        success: false,
+        message: "Account is inactive",
+        data: null,
+      });
+    }
+
+    req.user = {
+      ...decoded,
+      name: rows[0].name,
+      email: rows[0].email,
+      role: rows[0].role,
+      status: rows[0].status,
+    };
 
     next();
   } catch (error) {

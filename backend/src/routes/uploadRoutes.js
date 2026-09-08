@@ -50,7 +50,7 @@ router.post("/", authenticateToken, (req, res, next) => {
       return error(res, { message: "Tidak ada file yang diupload", statusCode: 400 });
     }
 
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const imageUrl = `/uploads/${req.file.filename}`;
     
     return success(res, {
       message: "Gambar berhasil diupload",
