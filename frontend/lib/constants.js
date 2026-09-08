@@ -15,7 +15,9 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export const ENDPOINTS = {
   LOGIN: `${API_URL}/auth/login`,
   CURRENT_USER: `${API_URL}/auth/me`,
-
+  UPDATE_PROFILE: `${API_URL}/users/me`,
+  REQUEST_EMAIL_CHANGE: `${API_URL}/users/me/email-change/request`,
+  VERIFY_EMAIL_CHANGE: `${API_URL}/users/me/email-change/verify`,
   FORGOT_PASSWORD_REQUEST: `${API_URL}/auth/forgot-password`,
   FORGOT_PASSWORD_VERIFY: `${API_URL}/auth/forgot-password/verify`,
   FORGOT_PASSWORD_RESET: `${API_URL}/auth/forgot-password/reset`,
@@ -53,6 +55,8 @@ export const ERROR_MESSAGES = {
   LOGIN_FAILED: "Login failed",
   OTP_INVALID: "Kode verifikasi salah atau sudah kedaluwarsa.",
   GENERIC_ERROR: "Terjadi kesalahan. Coba lagi.",
+  EMAIL_ALREADY_USED: "Email sudah digunakan.",
+  NAME_REQUIRED: "Nama wajib diisi.",
   CONNECTION_ERROR: "Unable to connect to server",
 };
 export const FORGOT_PASSWORD_STEP = {

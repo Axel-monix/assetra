@@ -338,7 +338,214 @@ input:-webkit-autofill:focus {
     transform: scale3d(1.1, 1.1, 1);
   }
 }
+/* =========================================================
+   ADMIN PROFILE PAGE (self-profile)
+   ========================================================= */
 
+.assetra-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--assetra-border);
+  border-radius: 0.875rem;
+  background: var(--assetra-card);
+  margin-bottom: 1.25rem;
+}
+
+.assetra-profile-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.assetra-profile-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 0.875rem;
+  background: var(--assetra-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--assetra-text-muted);
+  overflow: hidden;
+}
+
+.assetra-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.assetra-profile-avatar-edit-btn {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--assetra-primary);
+  color: var(--assetra-primary-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid var(--assetra-card);
+  transition: background-color 150ms ease;
+}
+.assetra-profile-avatar-edit-btn:hover {
+  background: var(--assetra-primary-hover);
+}
+
+.assetra-profile-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--assetra-text);
+}
+
+.assetra-profile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--assetra-text-secondary);
+  margin-top: 0.2rem;
+}
+
+.assetra-profile-role-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--assetra-success);
+  flex-shrink: 0;
+}
+
+.assetra-profile-change-photo {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--assetra-primary-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  background: transparent;
+}
+.assetra-profile-change-photo:hover {
+  color: var(--assetra-primary);
+}
+
+.assetra-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 768px) {
+  .assetra-profile-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.assetra-profile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--assetra-border);
+  color: var(--assetra-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.assetra-profile-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.assetra-profile-field-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--assetra-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.assetra-profile-field-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.assetra-profile-field-value {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--assetra-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assetra-profile-field-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.assetra-profile-icon-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--assetra-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.assetra-profile-icon-btn:hover {
+  background: var(--assetra-surface);
+  color: var(--assetra-primary-soft);
+}
+
+.assetra-profile-change-btn {
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--assetra-surface);
+  color: var(--assetra-text-secondary);
+  border: 1px solid var(--assetra-border);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.assetra-profile-change-btn:hover {
+  border-color: var(--assetra-primary);
+  color: var(--assetra-primary-soft);
+}
+
+.assetra-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 0.5rem;
+  background: rgba(96, 165, 250, 0.08);
+  color: var(--assetra-info);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
 /* =========================================================
    CARDS
    ========================================================= */

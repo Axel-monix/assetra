@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import {
-  ArrowLeft,
   User,
+  Camera,
+  Pencil,
+  Check,
+  X,
+  Briefcase,
+  Lock,
   Mail,
-  Shield,
-  Calendar,
-  Activity,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
-import { Link } from "@/i18n/navigation";
+import RequestEmailChangeModal from "@/components/admin/requestEmailChangeModal";
 import { AUTH_USER_KEY, ROLES } from "@/lib/constants";
 
 export default function ProfilePage() {
@@ -21,6 +23,14 @@ export default function ProfilePage() {
 
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  const [savingName, setSavingName] = useState(false);
+
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const raw =
@@ -37,6 +47,7 @@ export default function ProfilePage() {
       const parsed = JSON.parse(raw);
       timer = setTimeout(() => {
         setUser(parsed);
+        setNameDraft(parsed.name || parsed.username || "");
         setChecking(false);
       }, 0);
     } catch {
@@ -56,112 +67,232 @@ export default function ProfilePage() {
   }
 
   const roleLabel =
-    user.role === ROLES.SUPER_ADMIN ? t("superAdmin") : t("admin");
-  const isActive = user.status === "active";
+    user.role === ROLES.SUPER_ADMIN ? t("superAdmin") : t("administrator");
 
-  const infoItems = [
-    {
-      icon: User,
-      label: t("name"),
-      value: user.name || user.username || "-",
-    },
-    {
-      icon: Mail,
-      label: t("email"),
-      value: user.email || "-",
-    },
-    {
-      icon: Shield,
-      label: t("role"),
-      value: roleLabel,
-    },
-    {
-      icon: Activity,
-      label: t("status"),
-      value: isActive ? t("active") : t("inactive"),
-      valueClass: isActive
-        ? "text-[var(--color-success)]"
-        : "text-[var(--color-danger)]",
-    },
-    {
-      icon: Calendar,
-      label: t("joined"),
-      value: user.created_at
-        ? new Date(user.created_at).toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          })
-        : "-",
-    },
-  ];
+  const handlePickPhoto = () => fileInputRef.current?.click();
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarPreview(URL.createObjectURL(file));
+    // TODO: upload ke endpoint yang sesuai (mis. /api/users/me/photo)
+    // lalu update user.image_url setelah sukses.
+  };
+
+  const handleStartEditName = () => {
+    setNameDraft(user.name || user.username || "");
+    setIsEditingName(true);
+  };
+
+  const handleCancelEditName = () => {
+    setIsEditingName(false);
+    setNameDraft(user.name || user.username || "");
+  };
+
+  const handleSaveName = async () => {
+    if (!nameDraft.trim()) return;
+    setSavingName(true);
+    try {
+      const token =
+        window.localStorage.getItem("token") ||
+        window.sessionStorage.getItem("token");
+      const res = await fetch(ENDPOINTS.UPDATE_PROFILE, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: nameDraft.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const updated = { ...user, name: data.data.name };
+        setUser(updated);
+        window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updated));
+        setIsEditingName(false);
+      }
+    } finally {
+      setSavingName(false);
+    }
+  };
+
+  const handleEmailChangeSuccess = (updatedUser) => {
+    const merged = { ...user, email: updatedUser.email };
+    setUser(merged);
+    window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(merged));
+    setShowEmailModal(false);
+  };
+
+  const handleSubmitEmailRequest = async (payload) => {
+    // TODO: POST /api/email-change-requests { newEmail, reason }
+    console.log("Email change request:", payload);
+    setShowEmailModal(false);
+  };
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
       <div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition mb-4"
-        >
-          <ArrowLeft size={16} strokeWidth={1.75} />
-          {t("backToDashboard")}
-        </Link>
+        {/* Profile header */}
+        <div className="assetra-profile-header">
+          <div className="assetra-profile-avatar-wrap">
+            <div className="assetra-profile-avatar">
+              {avatarPreview || user.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarPreview || user.image_url} alt={user.name} />
+              ) : (
+                <User size={32} strokeWidth={1.5} />
+              )}
+            </div>
+            <button
+              type="button"
+              className="assetra-profile-avatar-edit-btn"
+              onClick={handlePickPhoto}
+              aria-label={t("changePhoto")}
+            >
+              <Camera size={13} strokeWidth={2} />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handlePhotoChange}
+            />
+          </div>
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold">{t("title")}</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            {t("subtitle")}
-          </p>
+          <div>
+            <div className="assetra-profile-name">
+              {user.name || user.username}
+            </div>
+            <div className="assetra-profile-role-badge">
+              <span className="assetra-profile-role-dot" />
+              {roleLabel}
+            </div>
+            <button
+              type="button"
+              className="assetra-profile-change-photo"
+              onClick={handlePickPhoto}
+            >
+              {t("changePhoto")} &rarr;
+            </button>
+          </div>
         </div>
 
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden">
-          {/* Profile header */}
-          <div className="flex items-center gap-4 px-6 py-5 border-b border-[var(--color-border)]">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-primary)]/15 text-[var(--color-primary)]">
-              <User size={28} strokeWidth={1.5} />
+        {/* Identity + Security */}
+        <div className="assetra-profile-grid">
+          {/* Identity */}
+          <div className="assetra-card">
+            <div className="assetra-profile-card-header">
+              <Briefcase size={16} strokeWidth={1.75} />
+              {t("identity")}
             </div>
-            <div>
-              <div className="text-lg font-semibold">
-                {user.name || user.username}
+            <div className="assetra-profile-card-body">
+              <div>
+                <div className="assetra-profile-field-label">
+                  {t("fullName")}
+                </div>
+                {isEditingName ? (
+                  <div className="assetra-profile-field-row">
+                    <input
+                      type="text"
+                      className="assetra-form-input assetra-profile-field-input"
+                      value={nameDraft}
+                      onChange={(e) => setNameDraft(e.target.value)}
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      className="assetra-profile-icon-btn"
+                      onClick={handleSaveName}
+                      disabled={savingName}
+                      aria-label={t("save")}
+                    >
+                      <Check size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      className="assetra-profile-icon-btn"
+                      onClick={handleCancelEditName}
+                      aria-label={t("cancel")}
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="assetra-profile-field-row">
+                    <div className="assetra-profile-field-value">
+                      {user.name || user.username}
+                    </div>
+                    <button
+                      type="button"
+                      className="assetra-profile-icon-btn"
+                      onClick={handleStartEditName}
+                      aria-label={t("edit")}
+                    >
+                      <Pencil size={14} strokeWidth={1.75} />
+                    </button>
+                  </div>
+                )}
               </div>
-              <div className="text-sm text-[var(--color-text-muted)]">
-                {roleLabel}
+
+              <div>
+                <div className="assetra-profile-field-label">
+                  {t("emailAddress")}
+                </div>
+                <div className="assetra-profile-field-row">
+                  <div className="assetra-profile-field-value">
+                    {user.email || "-"}
+                  </div>
+                  <button
+                    type="button"
+                    className="assetra-profile-change-btn"
+                    onClick={() => setShowEmailModal(true)}
+                  >
+                    {t("change")}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Profile info */}
-          <div className="divide-y divide-[var(--color-border)]">
-            {infoItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.label}
-                  className="flex items-center gap-4 px-6 py-4"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-border)]">
-                    <Icon
-                      size={16}
-                      strokeWidth={1.75}
-                      className="text-[var(--color-text-secondary)]"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)]">
-                      {item.label}
-                    </div>
-                    <div
-                      className={`text-sm font-medium ${item.valueClass || "text-[var(--color-text)]"}`}
-                    >
-                      {item.value}
-                    </div>
-                  </div>
+          {/* Security */}
+          <div className="assetra-card">
+            <div className="assetra-profile-card-header">
+              <Lock size={16} strokeWidth={1.75} />
+              {t("security")}
+            </div>
+            <div className="assetra-profile-card-body">
+              <div>
+                <div className="assetra-profile-field-label">
+                  {t("password")}
                 </div>
-              );
-            })}
+                <div className="assetra-profile-field-row">
+                  <div className="assetra-profile-field-value">
+                    ••••••••••••
+                  </div>
+                  <button
+                    type="button"
+                    className="assetra-profile-change-btn"
+                    onClick={() => {
+                      // TODO: buka modal ganti password (pola sama kayak email modal)
+                    }}
+                  >
+                    {t("change")}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {showEmailModal && (
+        <RequestEmailChangeModal
+          currentEmail={user.email}
+          onClose={() => setShowEmailModal(false)}
+          onSuccess={handleEmailChangeSuccess}
+        />
+      )}
     </DashboardLayout>
   );
 }
