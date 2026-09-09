@@ -35,8 +35,13 @@ export default function SuperAdminOverview({
     name: asset.name,
     category:
       typeof asset.category === "object" && asset.category !== null
-        ? asset.category.category_name || asset.category.name || "-"
-        : asset.category || asset.categoryName || asset.category_name || "-",
+        ? asset.category.category_name ||
+          asset.category.name ||
+          "-"
+        : asset.category ||
+          asset.categoryName ||
+          asset.category_name ||
+          "-",
     status: asset.status,
     date: asset.createdAt
       ? new Date(asset.createdAt).toLocaleDateString("id-ID")
@@ -51,7 +56,7 @@ export default function SuperAdminOverview({
   );
 
   return (
-    <div>
+    <div className="min-w-0">
       {error && (
         <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
       )}
@@ -59,6 +64,7 @@ export default function SuperAdminOverview({
       <h1 className="text-2xl font-semibold mb-6">
         {t("superadmin.greeting")} {userName || t("roles.superAdmin")}
       </h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
           icon={<Archive size={20} strokeWidth={1.75} />}
@@ -88,11 +94,12 @@ export default function SuperAdminOverview({
       {/* Grid Content Utama */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Aktivitas Terbaru */}
-        <div className="lg:col-span-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+        <div className="lg:col-span-2 min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold">
               {t("superadmin.recentActivity")}
             </h2>
+
             <Link
               href="/history"
               className="text-xs text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
@@ -100,17 +107,29 @@ export default function SuperAdminOverview({
               {t("superadmin.viewAll")}
             </Link>
           </div>
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-sm border-collapse min-w-[700px] whitespace-nowrap">
+
+          <div className="w-full min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[700px] text-sm border-collapse whitespace-nowrap">
               <thead>
                 <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                  <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
-                  <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
-                  <th className="py-2.5 font-medium">{t("admin.user")}</th>
-                  <th className="py-2.5 font-medium">{t("admin.status")}</th>
-                  <th className="py-2.5 font-medium">{t("admin.date")}</th>
+                  <th className="py-2.5 font-medium">
+                    {t("admin.itemId")}
+                  </th>
+                  <th className="py-2.5 font-medium">
+                    {t("admin.itemName")}
+                  </th>
+                  <th className="py-2.5 font-medium">
+                    {t("admin.user")}
+                  </th>
+                  <th className="py-2.5 font-medium">
+                    {t("admin.status")}
+                  </th>
+                  <th className="py-2.5 font-medium">
+                    {t("admin.date")}
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 {recentActivity.map((row) => (
                   <tr
@@ -122,10 +141,15 @@ export default function SuperAdminOverview({
                     >
                       {row.itemId}
                     </td>
-                    <td className="py-3 font-medium">{row.name}</td>
+
+                    <td className="py-3 font-medium">
+                      {row.name}
+                    </td>
+
                     <td className="py-3 text-[var(--color-text-secondary)]">
                       {row.category}
                     </td>
+
                     <td className="py-3">
                       <span
                         className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
@@ -135,6 +159,7 @@ export default function SuperAdminOverview({
                           : row.status}
                       </span>
                     </td>
+
                     <td className="py-3 text-[var(--color-text-muted)] text-xs">
                       {row.date}
                     </td>
@@ -145,13 +170,16 @@ export default function SuperAdminOverview({
           </div>
         </div>
 
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+        {/* Maintenance Alerts */}
+        <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <h2 className="text-sm font-semibold mb-4">
             {t("superadmin.maintenanceAlerts")}
           </h2>
+
           <div className="flex flex-col gap-3">
             {maintenanceAlerts.slice(0, 4).map((asset) => {
               const isBroken = asset.status === ASSET_STATUS.BROKEN;
+
               return (
                 <div
                   key={asset.id || asset.databaseId}
@@ -169,13 +197,16 @@ export default function SuperAdminOverview({
                     }`}
                   >
                     <AlertTriangle size={14} strokeWidth={1.75} />
+
                     {ASSET_STATUS_LABELS[asset.status]
                       ? t(ASSET_STATUS_LABELS[asset.status])
                       : asset.status}
                   </div>
+
                   <p className="text-xs text-[var(--color-text-secondary)]">
                     {asset.name} ({asset.id})
                   </p>
+
                   {asset.repair && (
                     <>
                       <button
@@ -192,13 +223,17 @@ export default function SuperAdminOverview({
                             ? "admin.hideRepairDetails"
                             : "admin.viewRepairDetails",
                         )}
+
                         <ChevronDown
                           size={14}
                           className={
-                            expandedRepairId === asset.id ? "rotate-180" : ""
+                            expandedRepairId === asset.id
+                              ? "rotate-180"
+                              : ""
                           }
                         />
                       </button>
+
                       {expandedRepairId === asset.id && (
                         <div className="mt-2 border-t border-[var(--color-border)] pt-2 text-xs text-[var(--color-text-secondary)]">
                           {asset.repair.specifications?.length > 0 && (
@@ -209,6 +244,7 @@ export default function SuperAdminOverview({
                                 .join(", ")}
                             </p>
                           )}
+
                           {asset.repair.details && (
                             <p>{asset.repair.details}</p>
                           )}
