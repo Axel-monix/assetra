@@ -166,6 +166,7 @@
     "borrowed": "Dipinjam",
     "unavailable": "Tidak Tersedia",
     "dateAdded": "Tanggal Ditambahkan",
+    "addDamageReport": "Laporkan kerusakan lainnya",
     "from": "Dari",
     "to": "Sampai",
     "resetAll": "Atur Ulang Semua",
@@ -422,6 +423,7 @@
     "verificationCode": "Kode Verifikasi",
     "changeAddress": "Ganti alamat email",
     "verifying": "Memverifikasi...",
+    "back": "Kembali",
     "verifyAndSave": "Verifikasi & Simpan",
     "sending": "Mengirim..."
   },

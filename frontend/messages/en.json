@@ -261,6 +261,7 @@
     "removeImage": "Remove image",
     "editFailed": "Failed to edit item.",
     "saving": "Saving...",
+    "addDamageReport": "Add Damage Report",
     "deactivate": "Deactivate",
     "markUnavailable": "Mark Unavailable",
     "markUnavailableTitle": "Mark Item Unavailable",
@@ -330,6 +331,7 @@
     "verificationCode": "Verification Code",
     "changeAddress": "Change Email Address",
     "verifying": "Verifying...",
+    "back": "Back",
     "verifyAndSave": "Verify & Save"
   },
   "forgotPassword": {
