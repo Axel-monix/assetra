@@ -3668,6 +3668,30 @@ textarea:focus-visible {
   background: rgba(248, 113, 113, 0.22);
 }
 /* =========================================================
+   SPECIFICATION FIELD — DAMAGE INDICATOR
+   ========================================================= */
+
+.assetra-spec-field-wrap {
+  position: relative;
+}
+
+.assetra-form-input.is-damaged {
+  border-color: var(--assetra-danger);
+  padding-right: 2.25rem;
+}
+
+.assetra-spec-damage-icon {
+  position: absolute;
+  top: 50%;
+  right: 0.65rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--assetra-danger);
+  cursor: help;
+}
+/* =========================================================
    PAGINATION
    ========================================================= */
 
