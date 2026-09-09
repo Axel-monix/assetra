@@ -11,8 +11,15 @@ const path = require("path");
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://assetra-navy.vercel.app"],
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
+
 app.use("/api", routes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/assets", assetRoutes);
