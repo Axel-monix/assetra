@@ -745,6 +745,7 @@ async function deactivateAssets(req, res) {
  */
 async function getAssetQrCode(req, res) {
   const { id } = req.params;
+   console.log("DEBUG APP_URL runtime:", process.env.APP_URL);
 
   try {
     const { rows } = await pool.query(
@@ -768,9 +769,7 @@ async function getAssetQrCode(req, res) {
 
     res.set({
       "Content-Type": "image/png",
-
-      "Cache-Control": "public, max-age=31536000, immutable",
-
+      "Cache-Control": "public, max-age=3600",
       "Content-Length": pngBuffer.length,
     });
 
@@ -883,5 +882,5 @@ module.exports = {
   updateAsset,
   deactivateAssets,
   getAssetQrCode,
-  getPublicAsset, 
+  getPublicAsset,
 };

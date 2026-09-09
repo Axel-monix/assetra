@@ -17,14 +17,13 @@ router.use((req, res, next) => {
   console.log(req.method, req.originalUrl);
   next();
 });
+router.use(authenticateToken);
 router.get("/:id/qr", getAssetQrCode);
 router.get("/public/:code", optionalAuth, getPublicAsset);
-
-router.use(authenticateToken);
-
 router.get("/", listAssets);
 router.post("/", createAsset);
 router.patch("/deactivate", deactivateAssets);
 router.patch("/:id", updateAsset);
+
 
 module.exports = router;

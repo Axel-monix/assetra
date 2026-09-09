@@ -79,7 +79,7 @@ async function verifyResetCode(req, res) {
     }
 
     if (Resetcode.isExpired(entry)) {
-      await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
+      await Resetcode.deleteEntry(normalizedEmail);
       return res.status(400).json({
         success: false,
         message: "Verification code has expired. Please request a new code.",
@@ -93,7 +93,7 @@ async function verifyResetCode(req, res) {
       });
     }
 
-    await Resetcode.markVerified(normalizedEmail); // <- tambah await
+    await Resetcode.markVerified(normalizedEmail); 
 
     return res.json({
       success: true,
