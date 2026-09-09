@@ -35,13 +35,8 @@ export default function SuperAdminOverview({
     name: asset.name,
     category:
       typeof asset.category === "object" && asset.category !== null
-        ? asset.category.category_name ||
-          asset.category.name ||
-          "-"
-        : asset.category ||
-          asset.categoryName ||
-          asset.category_name ||
-          "-",
+        ? asset.category.category_name || asset.category.name || "-"
+        : asset.category || asset.categoryName || asset.category_name || "-",
     status: asset.status,
     date: asset.createdAt
       ? new Date(asset.createdAt).toLocaleDateString("id-ID")
@@ -108,23 +103,23 @@ export default function SuperAdminOverview({
             </Link>
           </div>
 
-          <div className="w-full min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[700px] text-sm border-collapse whitespace-nowrap">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm border-collapse">
               <thead>
                 <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[100px]">
                     {t("admin.itemId")}
                   </th>
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[160px]">
                     {t("admin.itemName")}
                   </th>
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
                     {t("admin.user")}
                   </th>
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[110px]">
                     {t("admin.status")}
                   </th>
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 font-medium whitespace-nowrap w-[100px]">
                     {t("admin.date")}
                   </th>
                 </tr>
@@ -137,20 +132,20 @@ export default function SuperAdminOverview({
                     className="border-b border-[var(--color-surface)] last:border-0"
                   >
                     <td
-                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
+                      className={`${FONTS.CODE} py-3 pr-4 text-xs text-[var(--color-text-secondary)] whitespace-nowrap`}
                     >
                       {row.itemId}
                     </td>
 
-                    <td className="py-3 font-medium">
+                    <td className="py-3 pr-4 font-medium whitespace-nowrap">
                       {row.name}
                     </td>
 
-                    <td className="py-3 text-[var(--color-text-secondary)]">
+                    <td className="py-3 pr-4 text-[var(--color-text-secondary)] whitespace-nowrap">
                       {row.category}
                     </td>
 
-                    <td className="py-3">
+                    <td className="py-3 pr-4 whitespace-nowrap">
                       <span
                         className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
                       >
@@ -160,7 +155,7 @@ export default function SuperAdminOverview({
                       </span>
                     </td>
 
-                    <td className="py-3 text-[var(--color-text-muted)] text-xs">
+                    <td className="py-3 text-[var(--color-text-muted)] text-xs whitespace-nowrap">
                       {row.date}
                     </td>
                   </tr>
@@ -227,9 +222,7 @@ export default function SuperAdminOverview({
                         <ChevronDown
                           size={14}
                           className={
-                            expandedRepairId === asset.id
-                              ? "rotate-180"
-                              : ""
+                            expandedRepairId === asset.id ? "rotate-180" : ""
                           }
                         />
                       </button>

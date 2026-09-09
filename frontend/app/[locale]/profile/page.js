@@ -3,7 +3,17 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { User, Camera, Pencil, Check, X, Briefcase, Lock } from "lucide-react";
+import {
+  User,
+  Camera,
+  Pencil,
+  Check,
+  X,
+  Briefcase,
+  Lock,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import RequestEmailChangeModal from "@/components/admin/requestEmailChangeModal";
 import {
@@ -59,8 +69,9 @@ export default function ProfilePage() {
 
   if (checking || !user) {
     return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
+      <div className="min-h-screen bg-[var(--color-background)] flex flex-col items-center justify-center gap-3 text-[var(--color-text-secondary)] text-sm">
+        <Loader2 size={28} className="animate-spin text-[var(--color-primary)]" />
+        <span>{t("loading")}</span>
       </div>
     );
   }
@@ -97,7 +108,7 @@ export default function ProfilePage() {
 
     try {
       const formData = new FormData();
-      formData.append("foto", file); // <-- UBAH DI SINI
+      formData.append("foto", file);
 
       const uploadResponse = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
         method: "POST",
@@ -112,7 +123,7 @@ export default function ProfilePage() {
         throw new Error(uploadResult.message || t("photoUploadError"));
       }
 
-      const imageUrl = uploadResult.foto; // <-- UBAH DI SINI
+      const imageUrl = uploadResult.foto;
       if (!imageUrl) {
         throw new Error(t("photoUploadError"));
       }
@@ -145,6 +156,7 @@ export default function ProfilePage() {
       e.target.value = "";
     }
   };
+
   const handleStartEditName = () => {
     setNameDraft(user.name || user.username || "");
     setIsEditingName(true);
@@ -187,7 +199,16 @@ export default function ProfilePage() {
   };
 
   return (
-    <DashboardLayout role={user.role} userName={user.name || user.username}>
+    <DashboardLayout role={user.role} userName={user.name || user.username} userImage={user.image_url}>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="mb-4 flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)] transition"
+      >
+        <ArrowLeft size={16} strokeWidth={1.75} />
+        {t("back")}
+      </button>
+
       <div>
         {/* Profile header */}
         <div className="assetra-profile-header">
@@ -226,14 +247,12 @@ export default function ProfilePage() {
               <span className="assetra-profile-role-dot" />
               {roleLabel}
             </div>
-            <button
-              type="button"
-              className="assetra-profile-change-photo"
-              onClick={handlePickPhoto}
-              disabled={uploadingPhoto}
-            >
-              {uploadingPhoto ? t("uploadingPhoto") : `${t("changePhoto")} →`}
-            </button>
+            {uploadingPhoto && (
+              <p className="mt-2 text-xs text-[var(--color-text-secondary)] flex items-center gap-1">
+                <Loader2 size={12} className="animate-spin" />
+                {t("uploadingPhoto")}
+              </p>
+            )}
             {photoError && (
               <p className="mt-2 text-xs text-[var(--color-danger)]">
                 {photoError}
@@ -338,7 +357,6 @@ export default function ProfilePage() {
                     type="button"
                     className="assetra-profile-change-btn"
                     onClick={() => {
-                      // TODO: buka modal ganti password
                     }}
                   >
                     {t("change")}

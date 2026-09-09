@@ -49,14 +49,46 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function DashboardLayout({ role, userName, children }) {
+export default function DashboardLayout({ role, userName, userImage, children }) {
   const t = useTranslations("dashboard");
   const pathname = usePathname();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Fallback: kalau page pemanggil gak ngirim role/userName/userImage,
+  // baca sendiri dari storage biar gak perlu diulang di tiap page.js
+  const [storedUser, setStoredUser] = useState(null);
+
+  useEffect(() => {
+    function readUserFromStorage() {
+      try {
+        const raw =
+          window.localStorage.getItem(AUTH_USER_KEY) ||
+          window.sessionStorage.getItem(AUTH_USER_KEY);
+        setStoredUser(raw ? JSON.parse(raw) : null);
+      } catch {
+        setStoredUser(null);
+      }
+    }
+
+    readUserFromStorage();
+    window.addEventListener("storage", readUserFromStorage);
+    window.addEventListener("focus", readUserFromStorage);
+
+    return () => {
+      window.removeEventListener("storage", readUserFromStorage);
+      window.removeEventListener("focus", readUserFromStorage);
+    };
+  }, []);
+
+  const effectiveRole = role ?? storedUser?.role;
+  const effectiveUserName = userName ?? storedUser?.name ?? storedUser?.username;
+  const effectiveUserImage = userImage ?? storedUser?.image_url;
+
   const normalizedRole =
-    typeof role === "object" ? role.name || role.role || role.role_name : role;
+    typeof effectiveRole === "object"
+      ? effectiveRole.name || effectiveRole.role || effectiveRole.role_name
+      : effectiveRole;
 
   useEffect(() => {
     setIsSidebarOpen(false);
@@ -111,7 +143,7 @@ export default function DashboardLayout({ role, userName, children }) {
     return () => document.body.classList.remove("assetra-menu-open");
   }, [isSidebarOpen]);
 
-  if (!role) {
+  if (!effectiveRole) {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
         {t("loading")}
@@ -200,7 +232,8 @@ export default function DashboardLayout({ role, userName, children }) {
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
         <Header
-          userName={userName || t("user")}
+          userName={effectiveUserName || t("user")}
+          userImage={effectiveUserImage}
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
           mobileNavItems={navItems.filter(

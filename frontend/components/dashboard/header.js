@@ -7,6 +7,7 @@ import LanguageSwitcher from "./languageSwitcher";
 
 export default function Header({
   userName,
+  userImage,
   isSidebarOpen,
   onToggleSidebar,
   mobileNavItems = [],
@@ -48,8 +49,17 @@ export default function Header({
             <span className="text-sm text-[var(--color-text)] assetra-header-user-name">
               {userName || t("user")}
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-border)]">
-              <User size={16} className="text-[var(--color-text-secondary)]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-border)] overflow-hidden">
+              {userImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={userImage}
+                  alt={userName || t("user")}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <User size={16} className="text-[var(--color-text-secondary)]" />
+              )}
             </div>
           </Link>
         </div>

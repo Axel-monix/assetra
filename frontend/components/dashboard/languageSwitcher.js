@@ -50,6 +50,7 @@ export default function LanguageSwitcher() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="language-switcher-trigger"
+        aria-expanded={open}
       >
         <CurrentFlag
           className="language-switcher-flag"
@@ -65,31 +66,34 @@ export default function LanguageSwitcher() {
         />
       </button>
 
-      {open && (
-        <div className="language-switcher-menu">
-          {LOCALES.map((l) => {
-            const Flag = l.flag;
+      <div
+        className="language-switcher-menu"
+        data-state={open ? "open" : "closed"}
+        aria-hidden={!open}
+      >
+        {LOCALES.map((l) => {
+          const Flag = l.flag;
 
-            return (
-              <button
-                key={l.code}
-                type="button"
-                onClick={() => {
-                  router.replace(pathname, { locale: l.code });
-                  setOpen(false);
-                }}
-                className={`language-switcher-option ${
-                  l.code === locale ? "is-active" : ""
-                }`}
-              >
-                <Flag className="language-switcher-flag" title={l.label} />
+          return (
+            <button
+              key={l.code}
+              type="button"
+              tabIndex={open ? 0 : -1}
+              onClick={() => {
+                router.replace(pathname, { locale: l.code });
+                setOpen(false);
+              }}
+              className={`language-switcher-option ${
+                l.code === locale ? "is-active" : ""
+              }`}
+            >
+              <Flag className="language-switcher-flag" title={l.label} />
 
-                <span>{l.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
+              <span>{l.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -143,14 +143,14 @@ export default function AdminOverview({ assets = [], error = "" }) {
             {t("admin.recentActivity")}
           </h2>
 
-          <div className="w-full min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[600px] text-left text-sm border-collapse whitespace-nowrap">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[420px] text-left text-sm border-collapse">
               <thead>
                 <tr className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
                     {t("admin.itemId")}
                   </th>
-                  <th className="py-2.5 font-medium">
+                  <th className="py-2.5 font-medium whitespace-nowrap">
                     {t("admin.itemName")}
                   </th>
                 </tr>
@@ -163,12 +163,12 @@ export default function AdminOverview({ assets = [], error = "" }) {
                     className="border-b border-[var(--color-surface)] last:border-0"
                   >
                     <td
-                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
+                      className={`${FONTS.CODE} py-3 pr-4 text-xs text-[var(--color-text-secondary)] whitespace-nowrap`}
                     >
                       {activity.id}
                     </td>
 
-                    <td className="py-3 font-medium">
+                    <td className="py-3 font-medium whitespace-nowrap">
                       {activity.name}
                     </td>
                   </tr>
@@ -200,21 +200,11 @@ export default function AdminOverview({ assets = [], error = "" }) {
           <table className="w-full min-w-[800px] text-sm whitespace-nowrap">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                <th className="py-2.5 font-medium">
-                  {t("admin.itemId")}
-                </th>
-                <th className="py-2.5 font-medium">
-                  {t("admin.itemName")}
-                </th>
-                <th className="py-2.5 font-medium">
-                  {t("admin.category")}
-                </th>
-                <th className="py-2.5 font-medium">
-                  {t("admin.status")}
-                </th>
-                <th className="py-2.5 font-medium">
-                  {t("admin.action")}
-                </th>
+                <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
+                <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
+                <th className="py-2.5 font-medium">{t("admin.category")}</th>
+                <th className="py-2.5 font-medium">{t("admin.status")}</th>
+                <th className="py-2.5 font-medium">{t("admin.action")}</th>
               </tr>
             </thead>
 
@@ -271,9 +261,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                           <ChevronDown
                             size={16}
                             className={
-                              expandedRepairId === item.id
-                                ? "rotate-180"
-                                : ""
+                              expandedRepairId === item.id ? "rotate-180" : ""
                             }
                           />
                         </button>
@@ -310,9 +298,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                           </p>
                         )}
 
-                        {item.repair.details && (
-                          <p>{item.repair.details}</p>
-                        )}
+                        {item.repair.details && <p>{item.repair.details}</p>}
                       </td>
                     </tr>
                   )}
