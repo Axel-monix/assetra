@@ -734,15 +734,6 @@ async function deactivateAssets(req, res) {
     });
   }
 }
-
-/**
- * GET /api/assets/:id/qr
- *
- * PUBLIC ENDPOINT.
- *
- * QR tidak disimpan ke database maupun filesystem.
- * PNG dibuat langsung di memory dan dikirim ke client.
- */
 async function getAssetQrCode(req, res) {
   const { id } = req.params;
    console.log("DEBUG APP_URL runtime:", process.env.APP_URL);
