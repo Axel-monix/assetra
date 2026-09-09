@@ -278,11 +278,12 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
   async function uploadImageToServer(file) {
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("foto", file);
 
     const token =
       window.localStorage.getItem(AUTH_TOKEN_KEY) ||
       window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+
     const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
       method: "POST",
       headers: {
@@ -302,7 +303,7 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       throw new Error(result.message || t("uploadError"));
     }
 
-    return result.data?.url;
+    return result.foto;
   }
 
   async function handleImageChange(event) {

@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
     try {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("foto", file); // <-- UBAH DI SINI
 
       const uploadResponse = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
         method: "POST",
@@ -112,7 +112,7 @@ export default function ProfilePage() {
         throw new Error(uploadResult.message || t("photoUploadError"));
       }
 
-      const imageUrl = uploadResult.data?.url || uploadResult.url;
+      const imageUrl = uploadResult.foto; // <-- UBAH DI SINI
       if (!imageUrl) {
         throw new Error(t("photoUploadError"));
       }
@@ -145,7 +145,6 @@ export default function ProfilePage() {
       e.target.value = "";
     }
   };
-
   const handleStartEditName = () => {
     setNameDraft(user.name || user.username || "");
     setIsEditingName(true);

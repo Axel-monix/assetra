@@ -180,34 +180,27 @@ export default function AddItemForm({ onClose, onSubmit }) {
     setError("");
   }
 
-  async function uploadImageToServer(file) {
-    const formData = new FormData();
+async function uploadImageToServer(file) {
+  const formData = new FormData();
+  formData.append("foto", file);
 
-    formData.append("image", file);
+  const token =
+    window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+    window.sessionStorage.getItem(AUTH_TOKEN_KEY);
 
-    const token =
-      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-      window.sessionStorage.getItem(AUTH_TOKEN_KEY);
-    const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+  const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
 
-    if (!response.ok) {
-      throw new Error(t("uploadError"));
-    }
+  if (!response.ok) throw new Error(t("uploadError"));
 
-    const result = await response.json();
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || t("uploadError"));
 
-    if (!result.success) {
-      throw new Error(result.message || t("uploadError"));
-    }
-
-    return result.data?.url;
-  }
+  return result.foto;
+}
 
   async function handleImageChange(event) {
     const file = event.target.files[0];

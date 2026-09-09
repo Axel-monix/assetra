@@ -92,9 +92,7 @@ export default function DashboardLayout({ role, userName, children }) {
           clearSession();
           router.replace("/login");
         }
-      } catch {
-        // Keep the current session when the server is temporarily unreachable.
-      }
+      } catch {}
     }
 
     validateSession();
@@ -196,9 +194,6 @@ export default function DashboardLayout({ role, userName, children }) {
             <LogOut size={18} strokeWidth={1.75} />
             {t("logout")}
           </button>
-          <div className="mt-2 px-3 text-[10px] text-[var(--color-text-subtle)]">
-            v1.0.4
-          </div>
         </div>
       </aside>
 
