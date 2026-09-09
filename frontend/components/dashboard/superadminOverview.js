@@ -100,47 +100,49 @@ export default function SuperAdminOverview({
               {t("superadmin.viewAll")}
             </Link>
           </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
-                <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
-                <th className="py-2.5 font-medium">{t("admin.user")}</th>
-                <th className="py-2.5 font-medium">{t("admin.status")}</th>
-                <th className="py-2.5 font-medium">{t("admin.date")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentActivity.map((row) => (
-                <tr
-                  key={row.itemId}
-                  className="border-b border-[var(--color-surface)] last:border-0"
-                >
-                  <td
-                    className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
-                  >
-                    {row.itemId}
-                  </td>
-                  <td className="py-3 font-medium">{row.name}</td>
-                  <td className="py-3 text-[var(--color-text-secondary)]">
-                    {row.category}
-                  </td>
-                  <td className="py-3">
-                    <span
-                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
-                    >
-                      {ASSET_STATUS_LABELS[row.status]
-                        ? t(ASSET_STATUS_LABELS[row.status])
-                        : row.status}
-                    </span>
-                  </td>
-                  <td className="py-3 text-[var(--color-text-muted)] text-xs">
-                    {row.date}
-                  </td>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm border-collapse min-w-[600px]">
+              <thead>
+                <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+                  <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
+                  <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
+                  <th className="py-2.5 font-medium">{t("admin.user")}</th>
+                  <th className="py-2.5 font-medium">{t("admin.status")}</th>
+                  <th className="py-2.5 font-medium">{t("admin.date")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentActivity.map((row) => (
+                  <tr
+                    key={row.itemId}
+                    className="border-b border-[var(--color-surface)] last:border-0"
+                  >
+                    <td
+                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
+                    >
+                      {row.itemId}
+                    </td>
+                    <td className="py-3 font-medium">{row.name}</td>
+                    <td className="py-3 text-[var(--color-text-secondary)]">
+                      {row.category}
+                    </td>
+                    <td className="py-3">
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
+                      >
+                        {ASSET_STATUS_LABELS[row.status]
+                          ? t(ASSET_STATUS_LABELS[row.status])
+                          : row.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--color-text-muted)] text-xs">
+                      {row.date}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">

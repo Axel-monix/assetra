@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { X, Upload, AlertCircle, Wrench } from "lucide-react";
+import { X, Upload, AlertCircle, AlertTriangle, Wrench, Plus } from "lucide-react";
 import {
   ENDPOINTS,
   AUTH_TOKEN_KEY,
@@ -67,33 +67,53 @@ function normalizeSpecsForCompare(specValues) {
   );
 }
 
-function SpecField({ field, value, onChange, disabled }) {
+function SpecField({ field, value, onChange, disabled, isDamaged, damageNote }) {
   if (field.type === "boolean") {
     return (
-      <label className="flex items-center gap-2 assetra-form-input cursor-pointer select-none">
-        <input
-          type="checkbox"
-          checked={Boolean(value)}
-          onChange={(e) => onChange(e.target.checked)}
-          disabled={disabled}
-          className="h-4 w-4 accent-[var(--assetra-primary)]"
-        />
-        {field.name}
-      </label>
+      <div className="assetra-spec-field-wrap">
+        <label
+          className={`flex items-center gap-2 assetra-form-input cursor-pointer select-none ${
+            isDamaged ? "is-damaged" : ""
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            onChange={(e) => onChange(e.target.checked)}
+            disabled={disabled}
+            className="h-4 w-4 accent-[var(--assetra-primary)]"
+          />
+          {field.name}
+        </label>
+
+        {isDamaged && (
+          <span className="assetra-spec-damage-icon" title={damageNote || undefined}>
+            <AlertTriangle size={14} strokeWidth={2} />
+          </span>
+        )}
+      </div>
     );
   }
 
   return (
-    <input
-      type={
-        field.type === "number" || field.type === "date" ? field.type : "text"
-      }
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={`${field.name}${field.required ? " *" : ""}`}
-      disabled={disabled}
-      className="assetra-form-input"
-    />
+    <div className="assetra-spec-field-wrap">
+      <input
+        type={
+          field.type === "number" || field.type === "date" ? field.type : "text"
+        }
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={`${field.name}${field.required ? " *" : ""}`}
+        disabled={disabled}
+        className={`assetra-form-input ${isDamaged ? "is-damaged" : ""}`}
+      />
+
+      {isDamaged && (
+        <span className="assetra-spec-damage-icon" title={damageNote || undefined}>
+          <AlertTriangle size={14} strokeWidth={2} />
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -119,8 +139,10 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   const [closing, setClosing] = useState(false);
 
   // Menampung hasil NeedRepairModal (dikirim ikut payload saat submit).
-  // showNeedRepairModal true berarti status baru saja diarahkan ke
-  // "needs_repair" dan menunggu modal ini dikonfirmasi dulu.
+  // showNeedRepairModal true berarti modal sedang terbuka, baik karena
+  // status baru saja diarahkan ke "needs_repair" (transisi pertama)
+  // maupun karena admin memencet tombol "Tambah laporan kerusakan"
+  // saat status sudah needs_repair sebelumnya.
   const [repairPayload, setRepairPayload] = useState(null);
   const [showNeedRepairModal, setShowNeedRepairModal] = useState(false);
 
@@ -203,6 +225,35 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       .map((spec) => spec.name);
   }, [repairPayload, repairableSpecs]);
 
+  // Dipakai buat nge-render icon warning di kotak spesifikasi yang
+  // sedang dilaporkan rusak. Diturunin langsung dari repairPayload,
+  // jadi gak butuh endpoint tambahan buat sekarang.
+  const damagedSpecIds = useMemo(() => {
+    if (!repairPayload) return [];
+
+    if (repairPayload.specifications) {
+      return repairPayload.specifications.map(
+        (spec) => spec.id_specification ?? spec.id,
+      );
+    }
+
+    return repairPayload.specIds || [];
+  }, [repairPayload]);
+
+  function getDamageNote(fieldId) {
+    if (!repairPayload) return "";
+
+    if (repairPayload.specifications) {
+      const match = repairPayload.specifications.find(
+        (spec) => (spec.id_specification ?? spec.id) === fieldId,
+      );
+
+      if (match?.details) return match.details;
+    }
+
+    return repairPayload.details || "";
+  }
+
   const initialCategoryId = useMemo(
     () =>
       String(
@@ -249,7 +300,10 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
     if (name === "status") {
       // FR-REP-02: transisi ke Need Repair harus lewat modal dulu.
-      // Kalau sebelumnya sudah needs_repair, tidak perlu tanya ulang.
+      // Kalau sebelumnya sudah needs_repair, dropdown ini tidak akan
+      // fire onChange (value tidak berubah) — untuk kasus "tambah
+      // laporan lagi", lihat tombol addDamageReport di bawah, bukan
+      // di sini.
       if (value === "needs_repair" && form.status !== "needs_repair") {
         setShowNeedRepairModal(true);
         return; // status belum di-set, menunggu konfirmasi modal
@@ -557,6 +611,17 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                   </p>
                 </div>
               )}
+
+              {form.status === "needs_repair" && (
+                <button
+                  type="button"
+                  onClick={() => setShowNeedRepairModal(true)}
+                  className="mt-2 flex items-center gap-1 text-xs font-medium text-[var(--assetra-primary)] hover:underline"
+                >
+                  <Plus size={12} strokeWidth={2.25} />
+                  {t("addDamageReport")}
+                </button>
+              )}
             </div>
 
             {specTemplate.length > 0 && (
@@ -573,6 +638,8 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                       value={specValues[field.id]}
                       onChange={(value) => handleSpecChange(field.id, value)}
                       disabled={loading}
+                      isDamaged={damagedSpecIds.includes(field.id)}
+                      damageNote={getDamageNote(field.id)}
                     />
                   ))}
                 </div>

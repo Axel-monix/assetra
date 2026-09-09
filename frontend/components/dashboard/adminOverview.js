@@ -136,23 +136,30 @@ export default function AdminOverview({ assets = [], error = "" }) {
           <h2 className="text-sm font-semibold mb-4">
             {t("admin.recentActivity")}
           </h2>
-          <div className="flex flex-col gap-4">
-            {assets.slice(0, 3).map((activity) => (
-              <div
-                key={activity.id || activity.databaseId}
-                className="flex items-start gap-3"
-              >
-                <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] shrink-0" />
-                <div>
-                  <p className="text-sm text-[var(--color-text)] font-medium">
-                    {activity.name}
-                  </p>
-                  <p className="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wide mt-0.5 font-mono">
-                    {activity.id}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left text-sm border-collapse min-w-[600px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+                  <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
+                  <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assets.slice(0, 3).map((activity) => (
+                  <tr
+                    key={activity.id || activity.databaseId}
+                    className="border-b border-[var(--color-surface)] last:border-0"
+                  >
+                    <td
+                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
+                    >
+                      {activity.id}
+                    </td>
+                    <td className="py-3 font-medium">{activity.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
