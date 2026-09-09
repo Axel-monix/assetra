@@ -137,7 +137,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
             {t("admin.recentActivity")}
           </h2>
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left text-sm border-collapse min-w-[600px]">
+            <table className="w-full text-left text-sm border-collapse min-w-[600px] whitespace-nowrap">
               <thead>
                 <tr className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
                   <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
