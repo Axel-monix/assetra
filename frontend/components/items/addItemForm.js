@@ -1,25 +1,19 @@
 "use client";
-
 import { useEffect, useMemo, useRef, useState } from "react";
-
 import { X, Upload, AlertCircle } from "lucide-react";
-
+import ImagePreviewModal from "./imagePreviewModal";
 import {
   ENDPOINTS,
   AUTH_TOKEN_KEY,
   MAX_IMAGE_SIZE_BYTES,
 } from "@/lib/constants";
-
 import { ASSET_STATUS } from "@/lib/assetStatus";
-
 import {
   getSpecTemplate,
   buildSpecsPayload,
   validateSpecValues,
 } from "@/lib/itemHelper";
-
 import { useTranslations } from "next-intl";
-
 const STATUS_OPTIONS = [
   ASSET_STATUS.FUNCTIONAL,
   ASSET_STATUS.NEEDS_REPAIR,
@@ -91,7 +85,7 @@ export default function AddItemForm({ onClose, onSubmit }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
-
+  const [showImagePreview, setShowImagePreview] = useState(false);
   const fileInputRef = useRef(null);
 
   function handleClose() {
@@ -180,27 +174,27 @@ export default function AddItemForm({ onClose, onSubmit }) {
     setError("");
   }
 
-async function uploadImageToServer(file) {
-  const formData = new FormData();
-  formData.append("foto", file);
+  async function uploadImageToServer(file) {
+    const formData = new FormData();
+    formData.append("foto", file);
 
-  const token =
-    window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-    window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+    const token =
+      window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+      window.sessionStorage.getItem(AUTH_TOKEN_KEY);
 
-  const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
+    const response = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
 
-  if (!response.ok) throw new Error(t("uploadError"));
+    if (!response.ok) throw new Error(t("uploadError"));
 
-  const result = await response.json();
-  if (!result.success) throw new Error(result.message || t("uploadError"));
+    const result = await response.json();
+    if (!result.success) throw new Error(result.message || t("uploadError"));
 
-  return result.foto;
-}
+    return result.foto;
+  }
 
   async function handleImageChange(event) {
     const file = event.target.files[0];
@@ -354,9 +348,21 @@ async function uploadImageToServer(file) {
                     <img
                       src={imagePreview}
                       alt={t("imagePreview")}
-                      className="w-full h-48 object-cover"
+                      className="
+    w-full
+    h-48
+    object-cover
+    cursor-zoom-in
+    transition-transform
+    duration-300
+    hover:scale-[1.02]
+  "
+                      onClick={() => {
+                        if (!isUploading) {
+                          setShowImagePreview(true);
+                        }
+                      }}
                     />
-
                     {isUploading && (
                       <div className="absolute inset-0 bg-[var(--color-overlay)]/60 flex items-center justify-center">
                         <div className="flex items-center gap-2 text-[var(--color-white)]">
@@ -579,6 +585,13 @@ async function uploadImageToServer(file) {
           </form>
         </div>
       </div>
+      {showImagePreview && imagePreview && (
+        <ImagePreviewModal
+          src={imagePreview}
+          alt={t("imagePreview")}
+          onClose={() => setShowImagePreview(false)}
+        />
+      )}
     </>
   );
 }

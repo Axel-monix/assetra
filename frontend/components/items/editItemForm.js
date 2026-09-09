@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { X, Upload, AlertCircle, AlertTriangle, Wrench, Plus } from "lucide-react";
+import {
+  X,
+  Upload,
+  AlertCircle,
+  AlertTriangle,
+  Wrench,
+  Plus,
+} from "lucide-react";
 import {
   ENDPOINTS,
   AUTH_TOKEN_KEY,
@@ -15,6 +22,7 @@ import {
 } from "@/lib/itemHelper";
 import { useTranslations } from "next-intl";
 import NeedRepairModal from "./needRepairModal";
+import ImagePreviewModal from "./imagePreviewModal";
 
 const STATUS_OPTIONS = [
   { value: "functional" },
@@ -33,11 +41,6 @@ function findCategoryId(categories, categoryName) {
 
   return match ? String(match.id) : "";
 }
-
-// item.specs sekarang array [{ id_specification, name, value }] dari
-// backend (lihat attachSpecsToAssets di assetController.js). Diubah
-// jadi map { [id_specification]: value } supaya cocok dengan bentuk
-// specValues yang dipakai form (sama seperti addItemForm.js).
 function specsArrayToValues(specs) {
   if (!Array.isArray(specs)) {
     return specs && typeof specs === "object"
@@ -67,7 +70,14 @@ function normalizeSpecsForCompare(specValues) {
   );
 }
 
-function SpecField({ field, value, onChange, disabled, isDamaged, damageNote }) {
+function SpecField({
+  field,
+  value,
+  onChange,
+  disabled,
+  isDamaged,
+  damageNote,
+}) {
   if (field.type === "boolean") {
     return (
       <div className="assetra-spec-field-wrap">
@@ -87,7 +97,10 @@ function SpecField({ field, value, onChange, disabled, isDamaged, damageNote }) 
         </label>
 
         {isDamaged && (
-          <span className="assetra-spec-damage-icon" title={damageNote || undefined}>
+          <span
+            className="assetra-spec-damage-icon"
+            title={damageNote || undefined}
+          >
             <AlertTriangle size={14} strokeWidth={2} />
           </span>
         )}
@@ -109,7 +122,10 @@ function SpecField({ field, value, onChange, disabled, isDamaged, damageNote }) 
       />
 
       {isDamaged && (
-        <span className="assetra-spec-damage-icon" title={damageNote || undefined}>
+        <span
+          className="assetra-spec-damage-icon"
+          title={damageNote || undefined}
+        >
           <AlertTriangle size={14} strokeWidth={2} />
         </span>
       )}
@@ -131,18 +147,13 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
 
   const [specValues, setSpecValues] = useState(specsArrayToValues(item?.specs));
   const [imagePreview, setImagePreview] = useState(item?.imageUrl || null);
+  const [showImagePreview, setShowImagePreview] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
-
-  // Menampung hasil NeedRepairModal (dikirim ikut payload saat submit).
-  // showNeedRepairModal true berarti modal sedang terbuka, baik karena
-  // status baru saja diarahkan ke "needs_repair" (transisi pertama)
-  // maupun karena admin memencet tombol "Tambah laporan kerusakan"
-  // saat status sudah needs_repair sebelumnya.
   const [repairPayload, setRepairPayload] = useState(null);
   const [showNeedRepairModal, setShowNeedRepairModal] = useState(false);
 
@@ -224,10 +235,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
       .filter((spec) => repairPayload?.specIds?.includes(spec.id))
       .map((spec) => spec.name);
   }, [repairPayload, repairableSpecs]);
-
-  // Dipakai buat nge-render icon warning di kotak spesifikasi yang
-  // sedang dilaporkan rusak. Diturunin langsung dari repairPayload,
-  // jadi gak butuh endpoint tambahan buat sekarang.
   const damagedSpecIds = useMemo(() => {
     if (!repairPayload) return [];
 
@@ -488,7 +495,20 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                   <img
                     src={imagePreview}
                     alt={t("imagePreview")}
-                    className="w-full h-48 object-cover"
+                    className="
+    w-full
+    h-48
+    object-cover
+    cursor-zoom-in
+    transition-transform
+    duration-300
+    hover:scale-[1.02]
+  "
+                    onClick={() => {
+                      if (!isUploading) {
+                        setShowImagePreview(true);
+                      }
+                    }}
                   />
                 ) : (
                   <div className="flex h-48 w-full items-center justify-center bg-[var(--color-input)] text-[var(--color-text-muted)]">
@@ -600,15 +620,34 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
               </select>
 
               {repairPayload && (
-                <div className="mt-2 rounded-lg border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-3 py-2 text-xs text-[var(--color-warning)]">
-                  <div className="flex items-center gap-2 font-semibold">
-                    <Wrench size={14} strokeWidth={1.9} />
-                    {t("repairMarked")}
+                <div className="assetra-repair-summary">
+                  <div className="assetra-repair-summary-header">
+                    <span className="assetra-icon-badge assetra-icon-badge--warning">
+                      <Wrench size={15} strokeWidth={1.9} />
+                    </span>
+
+                    <div className="assetra-repair-summary-heading">
+                      <p className="assetra-repair-summary-title">
+                        {t("repairMarked")}
+                      </p>
+
+                      {selectedRepairNames.length > 0 && (
+                        <div className="assetra-repair-tag-list">
+                          {selectedRepairNames.map((name) => (
+                            <span key={name} className="assetra-repair-tag">
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <p className="mt-1 text-[var(--color-text-secondary)]">
-                    {selectedRepairNames.join(", ")}
-                    {repairPayload.details && `: ${repairPayload.details}`}
-                  </p>
+
+                  {repairPayload.details && (
+                    <p className="assetra-repair-summary-details">
+                      {repairPayload.details}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -616,9 +655,9 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                 <button
                   type="button"
                   onClick={() => setShowNeedRepairModal(true)}
-                  className="mt-2 flex items-center gap-1 text-xs font-medium text-[var(--assetra-primary)] hover:underline"
+                  className="assetra-btn assetra-btn-warning-soft assetra-repair-add-btn mt-2 inline-flex items-center gap-1.5"
                 >
-                  <Plus size={12} strokeWidth={2.25} />
+                  <Plus size={13} strokeWidth={2.25} />
                   {t("addDamageReport")}
                 </button>
               )}
@@ -699,6 +738,13 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
             setForm((prev) => ({ ...prev, status: "needs_repair" }));
             setShowNeedRepairModal(false);
           }}
+        />
+      )}
+      {showImagePreview && imagePreview && (
+        <ImagePreviewModal
+          src={imagePreview}
+          alt={t("imagePreview")}
+          onClose={() => setShowImagePreview(false)}
         />
       )}
     </>
