@@ -1,27 +1,21 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 const { authenticateToken } = require("../middleware/authMiddleware");
 const { success, error } = require("../../constants/response");
 const router = express.Router();
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, "../../uploads");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, "asset-" + uniqueSuffix + ext);
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "assetra",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
 const upload = multer({
-  storage: storage,
+  storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: function (req, file, cb) {
     if (!file.mimetype.startsWith("image/")) {
@@ -55,11 +49,13 @@ router.post(
         });
       }
 
-      const imageUrl = `/uploads/${req.file.filename}`;
-
+      // req.file.path = full Cloudinary URL, req.file.filename = public_id
       return success(res, {
         message: "Gambar berhasil diupload",
-        data: { url: imageUrl },
+        data: {
+          url: req.file.path,
+          public_id: req.file.filename,
+        },
       });
     } catch (err) {
       console.error("Upload error:", err);

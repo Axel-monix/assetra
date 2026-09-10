@@ -32,7 +32,7 @@ export const ENDPOINTS = {
   ADMIN_STATUS: (id) => `${API_URL}/admins/${id}/status`,
   PRINT_QR: `${API_URL}/assets/print-qr`,
   DEACTIVATE_ASSETS: `${API_URL}/assets/deactivate`,
-  UPLOAD_IMAGE: "/api/upload-proxy",
+  UPLOAD_IMAGE: `${API_URL}/upload`,
 };
 export const ROLES = {
   ADMIN: "admin",

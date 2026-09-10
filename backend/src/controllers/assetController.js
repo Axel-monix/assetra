@@ -21,20 +21,10 @@ function assetIdentifierClause(parameterIndex = 1) {
   return `(code = $${parameterIndex} OR id::text = $${parameterIndex})`;
 }
 function buildQrCodeUrl(code) {
-  const apiUrl = process.env.API_URL || "http://localhost:5000";
+  const apiUrl = process.env.API_URL;
 
   return `${apiUrl}/api/assets/${encodeURIComponent(code)}/qr`;
 }
-
-/**
- * specs yang diterima dari frontend berbentuk:
- *   [{ id_specification: number, value: string }, ...]
- * (lihat lib/itemHelper.js -> buildSpecsPayload)
- *
- * Sebelum disimpan, tiap id_specification divalidasi harus benar-benar
- * milik category dari asset yang bersangkutan (NFR-03 referential
- * integrity) dan diambil `name`-nya untuk cache spec_key.
- */
 async function replaceAssetSpecifications(
   client,
   { idAsset, idCategory, specs },
@@ -63,9 +53,6 @@ async function replaceAssetSpecifications(
   for (const spec of specs) {
     const idSpecification = Number(spec.id_specification);
     const specName = validSpecMap.get(idSpecification);
-
-    // Lewati spec yang bukan milik category ini (mis. sisa dari
-    // category lama sebelum item dipindah kategori).
     if (!specName) continue;
 
     const value = spec.value == null ? "" : String(spec.value).trim();
@@ -79,14 +66,6 @@ async function replaceAssetSpecifications(
     );
   }
 }
-
-/**
- * Menyimpan hasil Need Repair modal: satu row di `reason`
- * (action='need_repair') + banyak row di `reason_specification`
- * untuk tiap specification yang dicentang (FR-REP-01..FR-REP-10).
- *
- * repair: { details: string, specIds: number[] }
- */
 async function saveRepairDetails(
   client,
   { idAsset, idCategory, actorId, repair },
@@ -216,10 +195,6 @@ async function attachSpecsToAssets(assets) {
     if (!specsByAsset.has(row.id_asset)) {
       specsByAsset.set(row.id_asset, []);
     }
-
-    // spec_key adalah cache nama specification (diisi saat value
-    // disimpan) — dipakai sebagai label tampilan supaya frontend
-    // tidak perlu join balik ke category_specification.
     specsByAsset.get(row.id_asset).push({
       id_specification: row.id_specification,
       name: row.spec_key,
@@ -295,6 +270,7 @@ async function listAssets(req, res) {
               asset.status,
               asset.image_url,
               asset.location,
+              asset.description,
               asset.created_at,
               asset.updated_at
        FROM asset
@@ -316,6 +292,7 @@ async function listAssets(req, res) {
 
       imageUrl: asset.image_url,
       location: asset.location || null,
+      description: asset.description || "",
       qrCodeUrl: buildQrCodeUrl(asset.code),
 
       createdAt: asset.created_at,
@@ -341,8 +318,16 @@ async function listAssets(req, res) {
 }
 
 async function createAsset(req, res) {
-  const { name, code_item, id_category, status, image_url, location, specs } =
-    req.body;
+  const {
+    name,
+    code_item,
+    id_category,
+    status,
+    image_url,
+    location,
+    description,
+    specs,
+  } = req.body;
 
   if (!name || !name.trim()) {
     return error(res, {
@@ -379,10 +364,11 @@ async function createAsset(req, res) {
          status,
          image_url,
          location,
+         description,
          created_by,
          updated_by
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $7)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $8)
        RETURNING id`,
       [
         id_category,
@@ -391,6 +377,7 @@ async function createAsset(req, res) {
         status || "functional",
         image_url || null,
         location?.trim() || null,
+        description?.trim() || null,
         actorId,
       ],
     );
@@ -398,7 +385,6 @@ async function createAsset(req, res) {
     const newId = insertResult.rows[0].id;
 
     const finalCode = code_item?.trim() || generateAssetCode(name);
-
     const { rows } = await client.query(
       `UPDATE asset
        SET code = $1,
@@ -411,6 +397,7 @@ async function createAsset(req, res) {
                  status,
                  image_url,
                  location,
+                 description,
                  created_at,
                  updated_at`,
       [finalCode, newId],
@@ -543,9 +530,10 @@ async function updateAsset(req, res) {
            status = $3,
            image_url = $4,
            location = $5,
-           updated_by = $6,
+           description = $6,
+           updated_by = $7,
            updated_at = CURRENT_TIMESTAMP
-       WHERE ${assetIdentifierClause(7)}
+       WHERE ${assetIdentifierClause(8)}
        RETURNING id,
                  id_category,
                  name,
@@ -553,6 +541,7 @@ async function updateAsset(req, res) {
                  status,
                  image_url,
                  location,
+                 description,
                  created_at,
                  updated_at`,
       [
@@ -561,6 +550,7 @@ async function updateAsset(req, res) {
         status || "functional",
         image_url || null,
         location?.trim() || null,
+        description?.trim() || null,
         actorId,
         id,
       ],
@@ -614,10 +604,6 @@ async function updateAsset(req, res) {
     });
 
     await client.query("COMMIT");
-
-    // description belum punya kolom di tabel asset — kalau nanti
-    // ditambahkan, tinggal masukkan ke UPDATE di atas.
-    void description;
 
     return success(res, {
       messageKey: "editSuccess",
@@ -736,7 +722,7 @@ async function deactivateAssets(req, res) {
 }
 async function getAssetQrCode(req, res) {
   const { id } = req.params;
-   console.log("DEBUG APP_URL runtime:", process.env.APP_URL);
+  console.log("DEBUG APP_URL runtime:", process.env.APP_URL);
 
   try {
     const { rows } = await pool.query(
@@ -789,17 +775,6 @@ function buildViewerAndPermissions(user) {
     },
   };
 }
-
-/**
- * GET /api/assets/public/:code
- *
- * PUBLIC ENDPOINT (pakai optionalAuth, bukan authenticateToken).
- * Dipakai halaman hasil scan QR (/items/[code]).
- *
- * HANYA mengembalikan field yang aman ditampilkan ke publik
- * (nama, kategori, status, lokasi, gambar, specs). Tidak ada
- * history/treatment/internal data di sini — beda dari listAssets.
- */
 async function getPublicAsset(req, res) {
   const { code } = req.params;
 
@@ -813,6 +788,7 @@ async function getPublicAsset(req, res) {
               asset.status,
               asset.image_url,
               asset.location,
+              asset.description,
               asset.updated_at
        FROM asset
        LEFT JOIN category
@@ -839,6 +815,7 @@ async function getPublicAsset(req, res) {
       status: raw.status || "Unknown",
       imageUrl: raw.image_url,
       location: raw.location || null,
+      description: raw.description || null,
       updatedAt: raw.updated_at,
     };
 

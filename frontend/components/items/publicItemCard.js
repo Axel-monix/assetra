@@ -73,13 +73,8 @@ export default function PublicItemCard({
           )}
         </div>
       </div>
-
-      {/* Page Title - FIX: pake t("title") atau fallback */}
       <h1 className="guest-page-title">{t("title") || "Asset Detail"}</h1>
-
-      {/* Main Card */}
       <div className="guest-card">
-        {/* Media Section */}
         <div className="guest-media-wrapper">
           {asset.imageUrl ? (
             <img

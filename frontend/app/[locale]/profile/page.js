@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -70,7 +69,10 @@ export default function ProfilePage() {
   if (checking || !user) {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex flex-col items-center justify-center gap-3 text-[var(--color-text-secondary)] text-sm">
-        <Loader2 size={28} className="animate-spin text-[var(--color-primary)]" />
+        <Loader2
+          size={28}
+          className="animate-spin text-[var(--color-primary)]"
+        />
         <span>{t("loading")}</span>
       </div>
     );
@@ -108,7 +110,7 @@ export default function ProfilePage() {
 
     try {
       const formData = new FormData();
-      formData.append("foto", file);
+      formData.append("image", file);
 
       const uploadResponse = await fetch(ENDPOINTS.UPLOAD_IMAGE, {
         method: "POST",
@@ -123,7 +125,7 @@ export default function ProfilePage() {
         throw new Error(uploadResult.message || t("photoUploadError"));
       }
 
-      const imageUrl = uploadResult.foto;
+      const imageUrl = uploadResult.image;
       if (!imageUrl) {
         throw new Error(t("photoUploadError"));
       }
@@ -199,7 +201,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <DashboardLayout role={user.role} userName={user.name || user.username} userImage={user.image_url}>
+    <DashboardLayout
+      role={user.role}
+      userName={user.name || user.username}
+      userImage={user.image_url}
+    >
       <button
         type="button"
         onClick={() => router.back()}
@@ -356,8 +362,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     className="assetra-profile-change-btn"
-                    onClick={() => {
-                    }}
+                    onClick={() => {}}
                   >
                     {t("change")}
                   </button>
