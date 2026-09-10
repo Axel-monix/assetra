@@ -1,10 +1,28 @@
 "use client";
 
-import { Pencil, PackageX, X, Cpu, MemoryStick, HardDrive, Camera, Calendar, User, Clock, MapPin, FolderOpen, ChevronDown } from "lucide-react";
+import {
+  Pencil,
+  PackageX,
+  X,
+  Cpu,
+  MemoryStick,
+  HardDrive,
+  Camera,
+  Calendar,
+  User,
+  Clock,
+  MapPin,
+  FolderOpen,
+  ChevronDown,
+  AlertTriangle,
+} from "lucide-react";
 import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Ganti sesuai enum status kerusakan yang sebenarnya dipakai di assetStatus.js
+const DAMAGED_STATUS = "needs_repair";
 
 export default function PublicItemCard({
   asset,
@@ -15,6 +33,27 @@ export default function PublicItemCard({
 }) {
   const t = useTranslations("guestAsset");
   const [isLangOpen, setIsLangOpen] = useState(false);
+
+  // --- Damage alert modal state ---
+  const [showDamageModal, setShowDamageModal] = useState(false);
+  const [isClosingModal, setIsClosingModal] = useState(false);
+
+  const isDamaged = asset?.status === DAMAGED_STATUS;
+
+  useEffect(() => {
+    if (isDamaged) {
+      setShowDamageModal(true);
+    }
+  }, [isDamaged, asset?.id]);
+
+  const handleCloseDamageModal = () => {
+    setIsClosingModal(true);
+    // tunggu animasi exit selesai baru unmount
+    setTimeout(() => {
+      setShowDamageModal(false);
+      setIsClosingModal(false);
+    }, 200);
+  };
 
   const statusKey = getAssetStatusLabelKey(asset.status);
   const statusLabel = statusKey
@@ -47,10 +86,44 @@ export default function PublicItemCard({
 
   return (
     <div className="guest-container">
+      {/* Damage Alert Modal */}
+      {showDamageModal && (
+        <div
+          className={`guest-modal-overlay ${isClosingModal ? "is-closing" : "is-open"}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="damage-modal-title"
+        >
+          <div className={`guest-modal-box guest-modal-danger ${isClosingModal ? "is-closing" : "is-open"}`}>
+            <div className="guest-modal-icon-wrapper">
+              <AlertTriangle size={28} />
+            </div>
+            <h3 id="damage-modal-title" className="guest-modal-title">
+              {t("damageAlertTitle") || "Item Damaged"}
+            </h3>
+            <p className="guest-modal-message">
+              {t("damageAlertMessage") ||
+                "This item is currently reported as damaged / needing repair."}
+            </p>
+            <button
+              type="button"
+              className="guest-modal-btn guest-modal-btn-danger"
+              onClick={handleCloseDamageModal}
+            >
+              {t("gotIt") || "Got it"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="guest-nav">
         <div className="guest-nav-left">
-          <span className="guest-logo">✦</span>
+          <img
+            src="/assetra-logo.svg"
+            alt="Assetra"
+            className="guest-logo-img"
+          />
           <span className="guest-logo-text">Assetra</span>
         </div>
         <div className="guest-nav-right">
@@ -101,6 +174,13 @@ export default function PublicItemCard({
             <h2 className="guest-asset-name">{asset.name}</h2>
             <p className={`guest-asset-id ${FONTS.CODE}`}>{asset.id}</p>
           </div>
+
+          {/* Description */}
+          {asset.description && (
+            <p className={`guest-asset-description ${FONTS.DESCRIPTION}`}>
+              {asset.description}
+            </p>
+          )}
 
           {/* Info Grid - 2 kolom atas + 1 full width bawah */}
           <div className="guest-info-grid">
@@ -168,7 +248,7 @@ export default function PublicItemCard({
             </div>
           )}
 
-          {/* Recent Maintenance Section - FIX: pake data dari props */}
+          {/* Recent Maintenance Section */}
           {maintenance && maintenance.length > 0 && (
             <div className="guest-section">
               <div className="guest-section-header">
