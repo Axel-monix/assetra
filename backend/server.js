@@ -17,9 +17,7 @@ app.use(
     credentials: true,
   }),
 );
-
 app.use(express.json());
-
 app.use("/api", routes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/assets", assetRoutes);

@@ -26,7 +26,7 @@ async function getEntry(email) {
   const row = result.rows[0];
   return {
     code: row.code,
-    expiresAt: new Date(row.expires_at).getTime(), // tetap angka ms, biar isExpired() gak perlu diubah
+    expiresAt: new Date(row.expires_at).getTime(), 
     verified: row.verified,
   };
 }

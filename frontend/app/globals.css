@@ -352,9 +352,9 @@ input:-webkit-autofill:focus {
     transform: scale3d(1.1, 1.1, 1);
   }
 }
-/* =========================================================
+/* ==
    ADMIN PROFILE PAGE (self-profile)
-   ========================================================= */
+   == */
 
 .assetra-profile-header {
   display: flex;
@@ -560,9 +560,9 @@ input:-webkit-autofill:focus {
   font-size: 0.72rem;
   line-height: 1.4;
 }
-/* =========================================================
+/* ==
    CARDS
-   ========================================================= */
+   == */
 
 .assetra-card {
   border: 1px solid var(--assetra-border);
@@ -714,9 +714,9 @@ input:-webkit-autofill:focus {
   color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ==
    ADD ITEM DROP CARD
-   ========================================================= */
+   == */
 
 .assetra-add-item-card {
   min-height: 168px;
@@ -753,9 +753,9 @@ input:-webkit-autofill:focus {
   transform: translateY(0);
 }
 
-/* =========================================================
+/* ==
    STATUS
-   ========================================================= */
+   == */
 
 .assetra-status-dot {
   display: inline-block;
@@ -811,9 +811,9 @@ input:-webkit-autofill:focus {
   background-color: var(--assetra-text-muted);
 }
 
-/* =========================================================
+/* ==
    INPUT / BUTTON
-   ========================================================= */
+   == */
 
 .assetra-input {
   border: 1px solid var(--assetra-border);
@@ -927,9 +927,9 @@ input:-webkit-autofill:focus {
   color: var(--assetra-primary);
 }
 
-/* =========================================================
+/* ==
    DETAIL PANEL ANIMATION
-   ========================================================= */
+   == */
 
 .assetra-detail-panel {
   animation: assetra-detail-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -956,9 +956,9 @@ input:-webkit-autofill:focus {
   overflow: hidden;
 }
 
-/* =========================================================
+/* ==
    DASHBOARD RESPONSIVE NAVIGATION
-   ========================================================= */
+   == */
 
 .assetra-dashboard-header {
   position: relative;
@@ -1158,9 +1158,9 @@ input:-webkit-autofill:focus {
   }
 }
 
-/* =========================================================
+/* ==
    MODAL ANIMATION
-   ========================================================= */
+   == */
 
 .assetra-modal-overlay {
   position: fixed;
@@ -1302,9 +1302,9 @@ input:-webkit-autofill:focus {
   }
 }
 
-/* =========================================================
+/* ==
    FORM
-   ========================================================= */
+   == */
 
 .assetra-form-label {
   display: block;
@@ -1705,9 +1705,9 @@ input:-webkit-autofill:focus {
   color: var(--assetra-primary);
 }
 
-/* =========================================================
+/* ==
    BUTTON SYSTEM
-   ========================================================= */
+   == */
 
 .assetra-btn {
   min-height: 38px;
@@ -1771,9 +1771,9 @@ input:-webkit-autofill:focus {
   background: rgba(251, 191, 36, 0.14);
 }
 
-/* =========================================================
+/* ==
    ICON BADGE
-   ========================================================= */
+    */
 
 .assetra-icon-badge {
   width: 34px;
@@ -1790,9 +1790,9 @@ input:-webkit-autofill:focus {
   background: rgba(251, 191, 36, 0.1);
   color: var(--assetra-warning);
 }
-/* =========================================================
-   REPAIR SUMMARY (Edit Item — status: needs repair)
-   ========================================================= */
+/* ===
+   REPAIR SUMMARY
+   ==== */
 
 .assetra-repair-summary {
   margin-top: 0.65rem;
@@ -1892,9 +1892,9 @@ input:-webkit-autofill:focus {
   animation: image-preview-image 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* =========================================================
+/* 
    TOGGLE SWITCH
-   ========================================================= */
+    */
 
 .toggle-track {
   background-color: var(--color-border);
@@ -1916,9 +1916,9 @@ input:-webkit-autofill:focus {
   outline-offset: 2px;
 }
 
-/* =========================================================
+/* 
    REDUCED MOTION
-   ========================================================= */
+    */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2105,9 +2105,9 @@ input:-webkit-autofill:focus {
   padding: 0.15rem 0.4rem;
   font-size: 0.6rem;
 }
-/* =========================================================
+/* 
    PRINT QR LABELS
-   ========================================================= */
+    */
 
 .assetra-print-page-preview {
   width: 100%;
@@ -2378,9 +2378,9 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* =========================================================
+/* 
    CARDS
-   ========================================================= */
+    */
 
 .assetra-card {
   border: 1px solid var(--assetra-border);
@@ -2532,9 +2532,9 @@ textarea:focus-visible {
   color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* 
    ADD ITEM DROP CARD
-   ========================================================= */
+    */
 
 .assetra-add-item-card {
   min-height: 168px;
@@ -2571,9 +2571,9 @@ textarea:focus-visible {
   transform: translateY(0);
 }
 
-/* =========================================================
+/* 
    STATUS
-   ========================================================= */
+    */
 
 .assetra-status-dot {
   display: inline-block;
@@ -2628,10 +2628,64 @@ textarea:focus-visible {
 .assetra-status-dot.assetra-status-muted {
   background-color: var(--assetra-text-muted);
 }
+/* Guest Page*/
+.guest-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.guest-modal-overlay.is-open {
+  opacity: 1;
+}
+.guest-modal-overlay.is-closing {
+  opacity: 0;
+}
 
-/* =========================================================
-   INPUT / BUTTON
-   ========================================================= */
+.guest-modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  transform: scale(0.9) translateY(10px);
+  opacity: 0;
+  transition:
+    transform 200ms ease,
+    opacity 200ms ease;
+}
+.guest-modal-box.is-open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+.guest-modal-box.is-closing {
+  transform: scale(0.9) translateY(10px);
+  opacity: 0;
+}
+
+.guest-modal-icon-wrapper {
+  color: var(--color-danger);
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.guest-modal-btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+}
+/* INPUT BUTTON */
 
 .assetra-input {
   border: 1px solid var(--assetra-border);
@@ -2745,9 +2799,9 @@ textarea:focus-visible {
   color: var(--assetra-primary);
 }
 
-/* =========================================================
+/* ==
    DETAIL PANEL ANIMATION
-   ========================================================= */
+   == */
 
 .assetra-detail-panel {
   animation: assetra-detail-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -2766,9 +2820,9 @@ textarea:focus-visible {
   }
 }
 
-/* =========================================================
+/* ==
    MODAL ANIMATION
-   ========================================================= */
+   == */
 
 .assetra-modal-overlay {
   position: fixed;
@@ -2910,9 +2964,9 @@ textarea:focus-visible {
   }
 }
 
-/* =========================================================
+/* ==
    FORM
-   ========================================================= */
+   == */
 
 .assetra-form-label {
   display: block;
@@ -3313,9 +3367,9 @@ textarea:focus-visible {
   color: var(--assetra-primary);
 }
 
-/* =========================================================
+/* ==
    BUTTON SYSTEM
-   ========================================================= */
+   == */
 
 .assetra-btn {
   min-height: 38px;
@@ -3379,9 +3433,9 @@ textarea:focus-visible {
   background: rgba(251, 191, 36, 0.14);
 }
 
-/* =========================================================
+/* ==
    ICON BADGE
-   ========================================================= */
+   == */
 
 .assetra-icon-badge {
   width: 34px;
@@ -3399,9 +3453,9 @@ textarea:focus-visible {
   color: var(--assetra-warning);
 }
 
-/* =========================================================
+/* ==
    TOGGLE SWITCH
-   ========================================================= */
+   == */
 
 .toggle-track {
   background-color: var(--color-border);
@@ -3422,9 +3476,9 @@ textarea:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
-/* =========================================================
+/* ==
    Animation Language Switcher
-   ========================================================= */
+   == */
 .language-switcher-menu {
   transition:
     opacity 0.15s ease,
@@ -3452,9 +3506,9 @@ textarea:focus-visible {
   transform: rotate(180deg);
 }
 
-/* =========================================================
+/* ==
    REDUCED MOTION
-   ========================================================= */
+   == */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -3641,9 +3695,9 @@ textarea:focus-visible {
   padding: 0.15rem 0.4rem;
   font-size: 0.6rem;
 }
-/* =========================================================
+/* ==
    PRINT QR LABELS
-   ========================================================= */
+   == */
 
 .assetra-print-page-preview {
   width: 100%;
@@ -3811,9 +3865,9 @@ textarea:focus-visible {
 .assetra-btn-danger-soft:hover {
   background: rgba(248, 113, 113, 0.22);
 }
-/* =========================================================
+/* ==
    SPECIFICATION FIELD — DAMAGE INDICATOR
-   ========================================================= */
+   == */
 
 .assetra-spec-field-wrap {
   position: relative;
@@ -3835,9 +3889,9 @@ textarea:focus-visible {
   color: var(--assetra-danger);
   cursor: help;
 }
-/* =========================================================
+/* ==
    PAGINATION
-   ========================================================= */
+   == */
 
 .assetra-pagination {
   display: flex;
@@ -3928,9 +3982,9 @@ textarea:focus-visible {
   font-size: 0.8rem;
   color: var(--assetra-text-muted);
 }
-/* =========================================================
+/* ==
    GUEST / SCAN QR PAGE - FIXED
-   ========================================================= */
+   == */
 
 .guest-container {
   max-width: 440px;
@@ -4507,9 +4561,9 @@ textarea:focus-visible {
   border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* =========================================================
+/* ==
    RESPONSIVE
-   ========================================================= */
+   == */
 
 @media (max-width: 480px) {
   .guest-container {

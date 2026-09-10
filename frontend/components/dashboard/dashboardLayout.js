@@ -50,7 +50,12 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function DashboardLayout({ role, userName, userImage, children }) {
+export default function DashboardLayout({
+  role,
+  userName,
+  userImage,
+  children,
+}) {
   const t = useTranslations("dashboard");
   const pathname = usePathname();
   const router = useRouter();
@@ -80,7 +85,8 @@ export default function DashboardLayout({ role, userName, userImage, children })
   }, []);
 
   const effectiveRole = role ?? storedUser?.role;
-  const effectiveUserName = userName ?? storedUser?.name ?? storedUser?.username;
+  const effectiveUserName =
+    userName ?? storedUser?.name ?? storedUser?.username;
   const effectiveUserImage = userImage ?? storedUser?.image_url;
 
   const normalizedRole =
