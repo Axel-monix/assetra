@@ -188,11 +188,14 @@ export default function AddItemForm({ onClose, onSubmit }) {
       body: formData,
     });
 
-    if (!response.ok || !result.success)
-       throw new Error(t(result.messageKey || "uploadError"));
-    return result.url;
-  }
+    const result = await response.json();
 
+    if (!response.ok || !result.success) {
+      throw new Error(t(result.messageKey || "uploadError"));
+    }
+
+    return result.data.url;
+  }
   async function handleImageChange(event) {
     const file = event.target.files[0];
 
