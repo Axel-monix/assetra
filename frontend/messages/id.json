@@ -64,7 +64,7 @@
       "itemName": "Nama Item",
       "category": "Kategori",
       "status": "Status",
-      "action": "Aksi",
+      "detail": "detail",
       "user": "Kategori",
       "date": "Tanggal",
       "thisMonth": "+12 Bulan Ini",

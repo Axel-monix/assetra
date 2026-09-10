@@ -19,6 +19,7 @@ import {
   FONTS,
   ROLES,
 } from "@/lib/constants";
+import BrandLogo from "@/components/common/brandLogo";
 
 const NAV_ITEMS = [
   {
@@ -54,9 +55,6 @@ export default function DashboardLayout({ role, userName, userImage, children })
   const pathname = usePathname();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Fallback: kalau page pemanggil gak ngirim role/userName/userImage,
-  // baca sendiri dari storage biar gak perlu diulang di tiap page.js
   const [storedUser, setStoredUser] = useState(null);
 
   useEffect(() => {
@@ -184,14 +182,13 @@ export default function DashboardLayout({ role, userName, userImage, children })
       <aside
         className={`assetra-dashboard-sidebar w-60 shrink-0 border-r border-[var(--color-border)] flex flex-col px-4 py-5 overflow-y-auto ${isSidebarOpen ? "is-open" : ""}`}
       >
-        <div className="mb-6 px-2 text-lg font-semibold">Assetra</div>
-
         <div className="mb-6 px-2">
-          <div className="text-sm font-semibold text-[var(--color-primary)]">
-            {roleLabel}
-          </div>
-          <div className="text-xs text-[var(--color-text-muted)]">
+          <BrandLogo className="text-lg font-semibold" />
+          <div className="mt-2 text-xs text-[var(--color-text-muted)]">
             {t("Trackyourstuff")}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-[var(--color-primary)]">
+            {roleLabel}
           </div>
         </div>
 

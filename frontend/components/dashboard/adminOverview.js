@@ -204,7 +204,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                 <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
                 <th className="py-2.5 font-medium">{t("admin.category")}</th>
                 <th className="py-2.5 font-medium">{t("admin.status")}</th>
-                <th className="py-2.5 font-medium">{t("admin.action")}</th>
+                <th className="py-2.5 font-medium">{t("admin.detail")}</th>
               </tr>
             </thead>
 

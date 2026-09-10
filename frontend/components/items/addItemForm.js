@@ -188,11 +188,8 @@ export default function AddItemForm({ onClose, onSubmit }) {
       body: formData,
     });
 
-    if (!response.ok) throw new Error(t("uploadError"));
-
-    const result = await response.json();
-    if (!result.success) throw new Error(result.message || t("uploadError"));
-
+    if (!response.ok || !result.success)
+       throw new Error(t(result.messageKey || "uploadError"));
     return result.url;
   }
 

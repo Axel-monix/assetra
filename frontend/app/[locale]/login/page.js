@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation"; // ← PAKE INI!
 import { Link } from "@/i18n/navigation"; // ← PAKE INI!
 import { useTranslations } from "next-intl";
 import { ENDPOINTS, AUTH_TOKEN_KEY, AUTH_USER_KEY } from "@/lib/constants";
+import BrandLogo from "@/components/common/brandLogo";
 
 function EyeIcon() {
   return (
@@ -179,7 +180,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] flex flex-col items-center justify-center px-4">
-      <div className="mb-12 text-2xl font-semibold">Assetra</div>
+      <BrandLogo className="mb-12 text-2xl font-semibold" />
 
       <div className="w-full max-w-[405px] rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-7 shadow-2xl">
         <div className="mb-8">
