@@ -21,6 +21,7 @@ import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import ImagePreviewModal from "./imagePreviewModal";
+import languageSwitcher from "../common/languageSwitcher";
 const DAMAGED_STATUS = "needs_repair";
 
 export default function PublicItemCard({
@@ -46,7 +47,6 @@ export default function PublicItemCard({
 
   const handleCloseDamageModal = () => {
     setIsClosingModal(true);
-    // tunggu animasi exit selesai baru unmount
     setTimeout(() => {
       setShowDamageModal(false);
       setIsClosingModal(false);
@@ -60,8 +60,6 @@ export default function PublicItemCard({
   const statusStyle = getAssetStatusStyle(asset.status);
 
   const showActions = permissions?.canEdit || permissions?.canDeactivate;
-
-  // Mapping icon buat spesifikasi
   const getSpecIcon = (name) => {
     const lower = name.toLowerCase();
     if (lower.includes("processor") || lower.includes("cpu"))
@@ -78,8 +76,6 @@ export default function PublicItemCard({
       return <Camera size={16} />;
     return null;
   };
-
-  // Format date helper
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
@@ -126,7 +122,6 @@ export default function PublicItemCard({
           </div>
         </>
       )}
-
       {/* Navigation */}
       <div className="guest-nav">
         <div className="guest-nav-left">
@@ -138,28 +133,9 @@ export default function PublicItemCard({
           <span className="guest-logo-text">Assetra</span>
         </div>
         <div className="guest-nav-right">
-          <button
-            className="guest-lang-btn"
-            onClick={() => setIsLangOpen(!isLangOpen)}
-          >
-            <span className="guest-flag">🇬🇧</span>
-            <ChevronDown
-              size={14}
-              className={`guest-lang-chevron ${isLangOpen ? "is-open" : ""}`}
-            />
-          </button>
-          {isLangOpen && (
-            <div className="guest-lang-dropdown">
-              <button className="guest-lang-option is-active">
-                <span className="guest-flag">🇬🇧</span> English
-              </button>
-              <button className="guest-lang-option">
-                <span className="guest-flag">🇮🇩</span> Indonesia
-              </button>
-            </div>
-          )}
+          <LanguageSwitcher />
         </div>
-      </div>
+      </div>{" "}
       <h1 className="guest-page-title">{t("title") || "Asset Detail"}</h1>
       <div className="guest-card">
         <div className="guest-media-wrapper">
