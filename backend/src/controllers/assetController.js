@@ -789,6 +789,7 @@ async function getPublicAsset(req, res) {
               asset.image_url,
               asset.location,
               asset.description,
+              asset.created_at
               asset.updated_at
        FROM asset
        LEFT JOIN category

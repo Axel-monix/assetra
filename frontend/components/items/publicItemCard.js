@@ -149,22 +149,19 @@ export default function PublicItemCard({
               <span className="guest-media-icon">📦</span>
             </div>
           )}
-          {/* Status Badge overlay di kiri bawah */}
           <div className="guest-status-overlay">
             <span className={`guest-status-dot ${statusStyle}`} />
             <span className="guest-status-label">{statusLabel}</span>
           </div>
         </div>
-
-        {/* Content */}
+        
         <div className="guest-content">
-          {/* Title & ID */}
           <div className="guest-header-group">
             <h2 className="guest-asset-name">{asset.name}</h2>
             <p className={`guest-asset-id ${FONTS.CODE}`}>{asset.id}</p>
           </div>
 
-          {/* Description */}
+          
           {asset.description && (
             <div className="guest-description-wrapper">
               <p className={`guest-asset-description ${FONTS.DESCRIPTION}`}>
@@ -173,7 +170,7 @@ export default function PublicItemCard({
             </div>
           )}
 
-          {/* Info Grid - 2 kolom atas + 1 full width bawah */}
+
           <div className="guest-info-grid">
             <div className="guest-info-item">
               <div className="guest-info-icon-wrapper">
@@ -198,8 +195,6 @@ export default function PublicItemCard({
               </div>
             </div>
           </div>
-
-          {/* Procured - Full width di bawah */}
           <div className="guest-info-full">
             <div className="guest-info-item guest-info-item-full">
               <div className="guest-info-icon-wrapper">
@@ -214,7 +209,6 @@ export default function PublicItemCard({
             </div>
           </div>
 
-          {/* Specifications Section */}
           {asset.specs?.length > 0 && (
             <div className="guest-section">
               <div className="guest-section-header">
@@ -222,9 +216,6 @@ export default function PublicItemCard({
                   <Cpu size={18} className="guest-section-icon" />
                   <h3 className="guest-section-title">{t("specifications")}</h3>
                 </div>
-                <button className="guest-close-btn" aria-label="Close">
-                  <X size={18} />
-                </button>
               </div>
               <div className="guest-specs-list">
                 {asset.specs.map((spec) => {
