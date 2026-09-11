@@ -822,10 +822,8 @@ async function getPublicAsset(req, res) {
     };
 
     const [assetWithSpecs] = await attachSpecsToAssets([asset]);
-
-    // databaseId cuma dipakai internal buat attachSpecsToAssets,
-    // jangan sampai bocor ke response publik
-    const { databaseId, ...publicAsset } = assetWithSpecs;
+    const [assetWithRepair] = await attachRepairDetails([assetWithSpecs]);
+    const { databaseId, ...publicAsset } = assetWithRepair;
 
     const { viewer, permissions } = buildViewerAndPermissions(req.user);
 

@@ -727,7 +727,6 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
           </form>
         </div>
       </div>
-
       {showNeedRepairModal && (
         <NeedRepairModal
           item={item}
