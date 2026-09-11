@@ -13,7 +13,6 @@ import {
   Clock,
   MapPin,
   FolderOpen,
-  ChevronDown,
   AlertTriangle,
 } from "lucide-react";
 import { FONTS } from "@/lib/constants";
@@ -32,7 +31,6 @@ export default function PublicItemCard({
   onDeactivate,
 }) {
   const t = useTranslations("guestAsset");
-  const [isLangOpen, setIsLangOpen] = useState(false);
   const [showDamageModal, setShowDamageModal] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
