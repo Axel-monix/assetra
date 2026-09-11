@@ -3,7 +3,6 @@
 import {
   Pencil,
   PackageX,
-  X,
   Cpu,
   MemoryStick,
   HardDrive,
@@ -203,7 +202,7 @@ export default function PublicItemCard({
               <div className="guest-info-text">
                 <span className="guest-info-label">Procured</span>
                 <span className="guest-info-value">
-                  {formatDate(asset.created_at)}
+                  {formatDate(asset.createdAt)}
                 </span>
               </div>
             </div>
