@@ -2628,63 +2628,41 @@ textarea:focus-visible {
 .assetra-status-dot.assetra-status-muted {
   background-color: var(--assetra-text-muted);
 }
-/* Guest Page*/
-.guest-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-.guest-modal-overlay.is-open {
-  opacity: 1;
-}
-.guest-modal-overlay.is-closing {
-  opacity: 0;
-}
-
-.guest-modal-box {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  max-width: 360px;
-  width: 90%;
+.guest-damage-modal {
   text-align: center;
-  transform: scale(0.9) translateY(10px);
-  opacity: 0;
-  transition:
-    transform 200ms ease,
-    opacity 200ms ease;
-}
-.guest-modal-box.is-open {
-  transform: scale(1) translateY(0);
-  opacity: 1;
-}
-.guest-modal-box.is-closing {
-  transform: scale(0.9) translateY(10px);
-  opacity: 0;
 }
 
-.guest-modal-icon-wrapper {
-  color: var(--color-danger);
+.guest-damage-modal-icon {
   display: flex;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
+  color: var(--color-danger);
 }
-.guest-modal-btn-danger {
-  background: var(--color-danger);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 24px;
+
+.guest-damage-modal-title {
+  margin: 0;
+  color: var(--assetra-text);
+  font-size: 1rem;
   font-weight: 600;
-  cursor: pointer;
-  margin-top: 16px;
 }
+
+.guest-damage-modal-message {
+  margin: 0.5rem 0 0;
+  color: var(--assetra-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.assetra-btn-danger {
+  background: var(--color-danger-background);
+  color: var(--color-white);
+  margin-top: 1rem;
+}
+
+.assetra-btn-danger:hover {
+  background: var(--color-danger-hover);
+}
+
 /* INPUT BUTTON */
 
 .assetra-input {
@@ -4013,6 +3991,18 @@ textarea:focus-visible {
 .guest-logo {
   font-size: 1.1rem;
   color: var(--assetra-primary);
+}
+.guest-logo-img {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.guest-asset-description {
+  margin: 0 0 1.25rem 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--assetra-text-secondary);
 }
 
 .guest-logo-text {
