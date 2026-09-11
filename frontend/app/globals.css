@@ -4642,6 +4642,22 @@ textarea:focus-visible {
     right: -0.25rem;
   }
 }
+.guest-damage-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-danger);
+  color: #fff;
+  padding: 8px 28px;
+  border-radius: 999px; /* ini yang bikin oval/pill-shape */
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  pointer-events: none; /* biar nggak ganggu klik zoom-in foto */
+}
 
 @media (min-width: 481px) and (max-width: 768px) {
   .guest-info-grid {

@@ -130,7 +130,7 @@ export default function PublicItemCard({
           <span className="guest-logo-text">Assetra</span>
         </div>
         <div className="guest-nav-right">
-          <LanguageSwitcher/>
+          <LanguageSwitcher />
         </div>
       </div>{" "}
       <h1 className="guest-page-title">{t("title") || "Asset Detail"}</h1>
@@ -148,19 +148,23 @@ export default function PublicItemCard({
               <span className="guest-media-icon">📦</span>
             </div>
           )}
+          {isDamaged && (
+            <div className="guest-damage-badge">
+              {t("damagedBadge") || "Broken"}
+            </div>
+          )}
           <div className="guest-status-overlay">
             <span className={`guest-status-dot ${statusStyle}`} />
             <span className="guest-status-label">{statusLabel}</span>
           </div>
         </div>
-        
+
         <div className="guest-content">
           <div className="guest-header-group">
             <h2 className="guest-asset-name">{asset.name}</h2>
             <p className={`guest-asset-id ${FONTS.CODE}`}>{asset.id}</p>
           </div>
 
-          
           {asset.description && (
             <div className="guest-description-wrapper">
               <p className={`guest-asset-description ${FONTS.DESCRIPTION}`}>
@@ -168,7 +172,6 @@ export default function PublicItemCard({
               </p>
             </div>
           )}
-
 
           <div className="guest-info-grid">
             <div className="guest-info-item">
