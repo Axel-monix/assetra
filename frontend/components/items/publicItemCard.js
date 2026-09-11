@@ -17,7 +17,6 @@ import {
 import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
-import { useState, useEffect } from "react";
 import { useState, useEffect, useMemo } from "react";
 import ImagePreviewModal from "./imagePreviewModal";
 import LanguageSwitcher from "../common/languageSwitcher";
