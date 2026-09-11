@@ -39,9 +39,6 @@ export default function NeedRepairModal({
     event.preventDefault();
 
     const trimmedDetails = details.trim();
-
-    // FR-REP-07/08/09: detail wajib HANYA kalau tidak ada checkbox
-    // yang dicentang.
     if (checkedIds.length === 0 && trimmedDetails.length < DETAILS_MIN_LENGTH) {
       setError(t("repairDetailsRequired", { length: DETAILS_MIN_LENGTH }));
       return;

@@ -12,7 +12,7 @@ export default function GuestAssetPage() {
   const params = useParams();
   const code = params.code;
   const t = useTranslations("guestAsset");
-  const tItem = useTranslations("manageItem")
+  const tItem = useTranslations("manageItem");
 
   const [state, setState] = useState({
     loading: true,
@@ -35,7 +35,7 @@ export default function GuestAssetPage() {
     const token = getToken();
 
     try {
-      const response = await fetch(ENDPOINTS.ASSETS(code), {
+      const response = await fetch(ENDPOINTS.PUBLIC_ASSET_BY_CODE(code), {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
@@ -86,7 +86,7 @@ export default function GuestAssetPage() {
   async function handleEditSubmit(itemId, payload) {
     const token = getToken();
 
-    const response = await fetch(ENDPOINTS.ASSETS(itemId), {
+    const response = await fetch(`${ENDPOINTS.ASSETS}/${itemId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -131,7 +131,9 @@ export default function GuestAssetPage() {
       {state.loading ? (
         <div className="flex flex-col items-center gap-3 mt-20">
           <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-[var(--color-text-muted)]">{t("loading")}</p>
+          <p className="text-sm text-[var(--color-text-muted)]">
+            {t("loading")}
+          </p>
         </div>
       ) : state.error ? (
         <div className="w-full max-w-md mx-4 p-6 text-center bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl">
