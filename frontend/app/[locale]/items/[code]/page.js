@@ -35,7 +35,7 @@ export default function GuestAssetPage() {
     const token = getToken();
 
     try {
-      const response = await fetch(ENDPOINTS.PUBLIC_ASSET_BY_CODE(code), {
+      const response = await fetch(ENDPOINTS.ASSETS(code), {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
@@ -86,7 +86,7 @@ export default function GuestAssetPage() {
   async function handleEditSubmit(itemId, payload) {
     const token = getToken();
 
-    const response = await fetch(ENDPOINTS.ASSET_BY_ID(itemId), {
+    const response = await fetch(ENDPOINTS.ASSETS(itemId), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

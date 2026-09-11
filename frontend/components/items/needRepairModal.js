@@ -6,17 +6,11 @@ import { useTranslations } from "next-intl";
 
 const EXIT_DURATION = 180;
 const DETAILS_MIN_LENGTH = 5;
-
-/**
- * props:
- *  - item: { name, id (kode) }
- *  - repairableSpecs: [{ id, name }]  (category_specification dengan repairable = true)
- *  - onClose()
- *  - onConfirm({ specIds: number[], details: string }) -> Promise
- */
 export default function NeedRepairModal({
   item,
   repairableSpecs,
+  initialSpecIds = [],
+  initialDetails = "",
   onClose,
   onConfirm,
 }) {

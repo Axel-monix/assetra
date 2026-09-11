@@ -732,6 +732,10 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         <NeedRepairModal
           item={item}
           repairableSpecs={repairableSpecs}
+          initialSpecIds={form.status === "needs_repair" ? damagedSpecIds : []}
+          initialDetails={
+            form.status === "needs_repair" ? repairPayload?.details || "" : ""
+          }
           onClose={() => setShowNeedRepairModal(false)}
           onConfirm={async (payload) => {
             setRepairPayload(payload);

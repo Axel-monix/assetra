@@ -37,7 +37,7 @@ export function validateSpecValues(template, values) {
 const STATUS_ALIASES = {
   functional: "functional",
   needs_repair: "needs_repair",
-  maintenance: "needs_repair",
+  unavailable: "unavailable",
 };
 
 export function normalizeStatus(raw) {
