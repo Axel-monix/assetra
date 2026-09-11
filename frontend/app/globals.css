@@ -4004,6 +4004,18 @@ textarea:focus-visible {
   line-height: 1.5;
   color: var(--assetra-text-secondary);
 }
+.guest-description-wrapper {
+  padding-bottom: 16px;
+}
+
+.guest-description-wrapper::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: 16px 20px 0 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
 
 .guest-logo-text {
   font-size: 1rem;

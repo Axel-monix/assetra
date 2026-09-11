@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Menu, User, X } from "lucide-react";
-import LanguageSwitcher from "./languageSwitcher";
+import LanguageSwitcher from "../common/languageSwitcher";
 
 export default function Header({
   userName,

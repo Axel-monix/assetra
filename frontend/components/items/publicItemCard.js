@@ -192,9 +192,11 @@ export default function PublicItemCard({
 
           {/* Description */}
           {asset.description && (
-            <p className={`guest-asset-description ${FONTS.DESCRIPTION}`}>
-              {asset.description}
-            </p>
+            <div className="guest-description-wrapper">
+              <p className={`guest-asset-description ${FONTS.DESCRIPTION}`}>
+                {asset.description}
+              </p>
+            </div>
           )}
 
           {/* Info Grid - 2 kolom atas + 1 full width bawah */}
@@ -232,7 +234,7 @@ export default function PublicItemCard({
               <div className="guest-info-text">
                 <span className="guest-info-label">Procured</span>
                 <span className="guest-info-value">
-                  {formatDate(asset.procuredDate)}
+                  {formatDate(asset.created_at)}
                 </span>
               </div>
             </div>
