@@ -21,7 +21,7 @@ import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import ImagePreviewModal from "./imagePreviewModal";
-import languageSwitcher from "../common/languageSwitcher";
+import LanguageSwitcher from "../common/languageSwitcher";
 const DAMAGED_STATUS = "needs_repair";
 
 export default function PublicItemCard({
@@ -133,7 +133,7 @@ export default function PublicItemCard({
           <span className="guest-logo-text">Assetra</span>
         </div>
         <div className="guest-nav-right">
-          <LanguageSwitcher />
+          <LanguageSwitcher/>
         </div>
       </div>{" "}
       <h1 className="guest-page-title">{t("title") || "Asset Detail"}</h1>
