@@ -285,6 +285,7 @@
     "location": "Location",
     "specifications": "Specifications",
     "edit": "Edit",
+    "damageBadge": "broken",
     "damageAlertTitle": "Item Damaged",
     "damageAlertMessage": "This item is currently reported as damaged / needing repair.",
     "gotIt": "Got it",

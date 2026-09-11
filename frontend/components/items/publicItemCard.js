@@ -18,6 +18,7 @@ import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ImagePreviewModal from "./imagePreviewModal";
 import LanguageSwitcher from "../common/languageSwitcher";
 const DAMAGED_STATUS = "needs_repair";
@@ -49,7 +50,17 @@ export default function PublicItemCard({
       setIsClosingModal(false);
     }, 200);
   };
+  const damagedSpecIds = useMemo(() => {
+    if (!asset?.repair) return [];
 
+    if (asset.repair.specifications) {
+      return asset.repair.specifications.map(
+        (spec) => spec.id_specification ?? spec.id,
+      );
+    }
+
+    return asset.repair.specIds || [];
+  }, [asset?.repair]);
   const statusKey = getAssetStatusLabelKey(asset.status);
   const statusLabel = statusKey
     ? t(statusKey, { defaultValue: asset.status })
@@ -148,11 +159,7 @@ export default function PublicItemCard({
               <span className="guest-media-icon">📦</span>
             </div>
           )}
-          {isDamaged && (
-            <div className="guest-damage-badge">
-              {t("damagedBadge") || "Broken"}
-            </div>
-          )}
+
           <div className="guest-status-overlay">
             <span className={`guest-status-dot ${statusStyle}`} />
             <span className="guest-status-label">{statusLabel}</span>
@@ -222,6 +229,10 @@ export default function PublicItemCard({
               <div className="guest-specs-list">
                 {asset.specs.map((spec) => {
                   const Icon = getSpecIcon(spec.name);
+                  const isSpecDamaged = damagedSpecIds.includes(
+                    spec.id_specification,
+                  );
+
                   return (
                     <div
                       key={spec.id_specification}
@@ -233,9 +244,20 @@ export default function PublicItemCard({
                         )}
                         <span className="guest-spec-name">{spec.name}</span>
                       </div>
-                      <span className={`guest-spec-value ${FONTS.DESCRIPTION}`}>
-                        {spec.value}
-                      </span>
+
+                      <div className="guest-spec-right">
+                        <span
+                          className={`guest-spec-value ${FONTS.DESCRIPTION}`}
+                        >
+                          {spec.value}
+                        </span>
+
+                        {isSpecDamaged && (
+                          <span className="guest-spec-damage-badge">
+                            {t("damagedBadge") || "Broken"}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

@@ -4412,6 +4412,27 @@ textarea:focus-visible {
   max-width: 55%;
   flex-shrink: 1;
 }
+.guest-spec-right {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.guest-spec-damage-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.15rem 0.55rem;
+  background: var(--color-danger-background);
+  color: var(--color-white);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
 
 /* Maintenance List */
 .guest-maintenance-list {
@@ -4641,22 +4662,6 @@ textarea:focus-visible {
     min-width: 120px;
     right: -0.25rem;
   }
-}
-.guest-damage-badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--color-danger);
-  color: #fff;
-  padding: 8px 28px;
-  border-radius: 999px; /* ini yang bikin oval/pill-shape */
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-  pointer-events: none; /* biar nggak ganggu klik zoom-in foto */
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
