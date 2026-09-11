@@ -241,22 +241,22 @@ export default function PublicItemCard({
                         {Icon && (
                           <span className="guest-spec-icon">{Icon}</span>
                         )}
-                        <span className="guest-spec-name">{spec.name}</span>
-                      </div>
 
-                      <div className="guest-spec-right">
-                        <span
-                          className={`guest-spec-value ${FONTS.DESCRIPTION}`}
-                        >
-                          {spec.value}
-                        </span>
-
-                        {isSpecDamaged && (
-                          <span className="guest-spec-damage-badge">
-                            {t("damagedBadge") || "Broken"}
+                        <div className="guest-spec-text">
+                          <span className="guest-spec-name">{spec.name}</span>
+                          <span
+                            className={`guest-spec-value ${FONTS.DESCRIPTION}`}
+                          >
+                            {spec.value}
                           </span>
-                        )}
+                        </div>
                       </div>
+
+                      {isSpecDamaged && (
+                        <span className="guest-spec-damage-badge">
+                          {t("damageBadge")}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
