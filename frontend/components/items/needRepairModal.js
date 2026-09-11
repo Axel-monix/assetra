@@ -16,8 +16,8 @@ export default function NeedRepairModal({
 }) {
   const t = useTranslations("manageItem");
 
-  const [checkedIds, setCheckedIds] = useState([]);
-  const [details, setDetails] = useState("");
+  const [checkedIds, setCheckedIds] = useState(initialSpecIds);
+  const [details, setDetails] = useState(initialDetails);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -107,9 +107,7 @@ export default function NeedRepairModal({
             {/* B. Bagian yang bermasalah */}
             {repairableSpecs.length > 0 && (
               <div>
-                <label className="assetra-form-label">
-                  {t("whatsWrong")}
-                </label>
+                <label className="assetra-form-label">{t("whatsWrong")}</label>
 
                 <div className="flex flex-col gap-1.5">
                   {repairableSpecs.map((spec) => (
