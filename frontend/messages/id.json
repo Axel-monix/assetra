@@ -372,7 +372,7 @@
     "specifications": "Spesifikasi",
     "edit": "Edit",
     "deactivate": "Nonaktifkan",
-    "damagedBadge": "Rusak",
+    "damageBadge": "Rusak",
     "statusOptions": {
       "functional": "Berfungsi",
       "needs_repair": "Perlu Diperbaiki",
