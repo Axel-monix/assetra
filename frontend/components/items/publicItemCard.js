@@ -20,8 +20,7 @@ import { FONTS } from "@/lib/constants";
 import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-
-// Ganti sesuai enum status kerusakan yang sebenarnya dipakai di assetStatus.js
+import ImagePreviewModal from "./imagePreviewModal";
 const DAMAGED_STATUS = "needs_repair";
 
 export default function PublicItemCard({
@@ -33,9 +32,8 @@ export default function PublicItemCard({
 }) {
   const t = useTranslations("guestAsset");
   const [isLangOpen, setIsLangOpen] = useState(false);
-
-  // --- Damage alert modal state ---
   const [showDamageModal, setShowDamageModal] = useState(false);
+  const [showImagePreview, setShowImagePreview] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
 
   const isDamaged = asset?.status === DAMAGED_STATUS;
@@ -66,10 +64,18 @@ export default function PublicItemCard({
   // Mapping icon buat spesifikasi
   const getSpecIcon = (name) => {
     const lower = name.toLowerCase();
-    if (lower.includes("processor") || lower.includes("cpu")) return <Cpu size={16} />;
-    if (lower.includes("ram") || lower.includes("memory")) return <MemoryStick size={16} />;
-    if (lower.includes("storage") || lower.includes("ssd") || lower.includes("disk")) return <HardDrive size={16} />;
-    if (lower.includes("gpu") || lower.includes("graphic")) return <Camera size={16} />;
+    if (lower.includes("processor") || lower.includes("cpu"))
+      return <Cpu size={16} />;
+    if (lower.includes("ram") || lower.includes("memory"))
+      return <MemoryStick size={16} />;
+    if (
+      lower.includes("storage") ||
+      lower.includes("ssd") ||
+      lower.includes("disk")
+    )
+      return <HardDrive size={16} />;
+    if (lower.includes("gpu") || lower.includes("graphic"))
+      return <Camera size={16} />;
     return null;
   };
 
@@ -77,10 +83,10 @@ export default function PublicItemCard({
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -88,32 +94,37 @@ export default function PublicItemCard({
     <div className="guest-container">
       {/* Damage Alert Modal */}
       {showDamageModal && (
-        <div
-          className={`guest-modal-overlay ${isClosingModal ? "is-closing" : "is-open"}`}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="damage-modal-title"
-        >
-          <div className={`guest-modal-box guest-modal-danger ${isClosingModal ? "is-closing" : "is-open"}`}>
-            <div className="guest-modal-icon-wrapper">
-              <AlertTriangle size={28} />
-            </div>
-            <h3 id="damage-modal-title" className="guest-modal-title">
-              {t("damageAlertTitle") || "Item Damaged"}
-            </h3>
-            <p className="guest-modal-message">
-              {t("damageAlertMessage") ||
-                "This item is currently reported as damaged / needing repair."}
-            </p>
-            <button
-              type="button"
-              className="guest-modal-btn guest-modal-btn-danger"
-              onClick={handleCloseDamageModal}
+        <>
+          <div
+            className={`assetra-modal-overlay ${isClosingModal ? "is-closing" : ""}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="damage-modal-title"
+          />
+          <div className="assetra-modal-wrapper">
+            <div
+              className={`assetra-modal-card assetra-modal-card--sm guest-damage-modal ${isClosingModal ? "is-closing" : ""}`}
             >
-              {t("gotIt") || "Got it"}
-            </button>
+              <div className="guest-damage-modal-icon">
+                <AlertTriangle size={28} />
+              </div>
+              <h3 id="damage-modal-title" className="guest-damage-modal-title">
+                {t("damageAlertTitle") || "Item Damaged"}
+              </h3>
+              <p className="guest-damage-modal-message">
+                {t("damageAlertMessage") ||
+                  "This item is currently reported as damaged / needing repair."}
+              </p>
+              <button
+                type="button"
+                className="assetra-btn assetra-btn-danger"
+                onClick={handleCloseDamageModal}
+              >
+                {t("gotIt") || "Got it"}
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Navigation */}
@@ -127,12 +138,15 @@ export default function PublicItemCard({
           <span className="guest-logo-text">Assetra</span>
         </div>
         <div className="guest-nav-right">
-          <button 
+          <button
             className="guest-lang-btn"
             onClick={() => setIsLangOpen(!isLangOpen)}
           >
             <span className="guest-flag">🇬🇧</span>
-            <ChevronDown size={14} className={`guest-lang-chevron ${isLangOpen ? 'is-open' : ''}`} />
+            <ChevronDown
+              size={14}
+              className={`guest-lang-chevron ${isLangOpen ? "is-open" : ""}`}
+            />
           </button>
           {isLangOpen && (
             <div className="guest-lang-dropdown">
@@ -153,7 +167,8 @@ export default function PublicItemCard({
             <img
               src={asset.imageUrl}
               alt={asset.name}
-              className="guest-media-image"
+              className="guest-media-image cursor-zoom-in"
+              onClick={() => setShowImagePreview(true)}
             />
           ) : (
             <div className="guest-media-placeholder">
@@ -190,7 +205,9 @@ export default function PublicItemCard({
               </div>
               <div className="guest-info-text">
                 <span className="guest-info-label">{t("category")}</span>
-                <span className="guest-info-value">{asset.category || "-"}</span>
+                <span className="guest-info-value">
+                  {asset.category || "-"}
+                </span>
               </div>
             </div>
             <div className="guest-info-item">
@@ -199,7 +216,9 @@ export default function PublicItemCard({
               </div>
               <div className="guest-info-text">
                 <span className="guest-info-label">{t("location")}</span>
-                <span className="guest-info-value">{asset.location || "-"}</span>
+                <span className="guest-info-value">
+                  {asset.location || "-"}
+                </span>
               </div>
             </div>
           </div>
@@ -212,7 +231,9 @@ export default function PublicItemCard({
               </div>
               <div className="guest-info-text">
                 <span className="guest-info-label">Procured</span>
-                <span className="guest-info-value">{formatDate(asset.procuredDate)}</span>
+                <span className="guest-info-value">
+                  {formatDate(asset.procuredDate)}
+                </span>
               </div>
             </div>
           </div>
@@ -233,9 +254,14 @@ export default function PublicItemCard({
                 {asset.specs.map((spec) => {
                   const Icon = getSpecIcon(spec.name);
                   return (
-                    <div key={spec.id_specification} className="guest-spec-item">
+                    <div
+                      key={spec.id_specification}
+                      className="guest-spec-item"
+                    >
                       <div className="guest-spec-left">
-                        {Icon && <span className="guest-spec-icon">{Icon}</span>}
+                        {Icon && (
+                          <span className="guest-spec-icon">{Icon}</span>
+                        )}
                         <span className="guest-spec-name">{spec.name}</span>
                       </div>
                       <span className={`guest-spec-value ${FONTS.DESCRIPTION}`}>
@@ -254,7 +280,9 @@ export default function PublicItemCard({
               <div className="guest-section-header">
                 <div className="guest-section-title-group">
                   <Clock size={18} className="guest-section-icon" />
-                  <h3 className="guest-section-title">{t("recentMaintenance") || "Recent Maintenance"}</h3>
+                  <h3 className="guest-section-title">
+                    {t("recentMaintenance") || "Recent Maintenance"}
+                  </h3>
                 </div>
               </div>
               <div className="guest-maintenance-list">
@@ -262,15 +290,21 @@ export default function PublicItemCard({
                   <div key={item.id} className="guest-maintenance-item">
                     <div className="guest-maintenance-left">
                       <div className="guest-timeline">
-                        <span className={`guest-timeline-dot ${item.status === 'active' ? 'is-active' : ''}`} />
+                        <span
+                          className={`guest-timeline-dot ${item.status === "active" ? "is-active" : ""}`}
+                        />
                         {index < maintenance.length - 1 && (
                           <span className="guest-timeline-line" />
                         )}
                       </div>
                       <div className="guest-maintenance-content">
-                        <span className="guest-maintenance-title">{item.title}</span>
+                        <span className="guest-maintenance-title">
+                          {item.title}
+                        </span>
                         <div className="guest-maintenance-meta">
-                          <span className="guest-maintenance-date">{formatDate(item.date)}</span>
+                          <span className="guest-maintenance-date">
+                            {formatDate(item.date)}
+                          </span>
                           <span className="guest-maintenance-separator">•</span>
                           <span className="guest-maintenance-admin">
                             <User size={12} />
@@ -309,6 +343,13 @@ export default function PublicItemCard({
                 </button>
               )}
             </div>
+          )}
+          {showImagePreview && asset.imageUrl && (
+            <ImagePreviewModal
+              src={asset.imageUrl}
+              alt={asset.name}
+              onClose={() => setShowImagePreview(false)}
+            />
           )}
         </div>
       </div>
