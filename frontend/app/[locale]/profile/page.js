@@ -125,7 +125,7 @@ export default function ProfilePage() {
         throw new Error(uploadResult.message || t("photoUploadError"));
       }
 
-      const imageUrl = uploadResult.image;
+      const imageUrl = uploadResult.data?.url;
       if (!imageUrl) {
         throw new Error(t("photoUploadError"));
       }

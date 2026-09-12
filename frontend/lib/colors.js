@@ -28,6 +28,8 @@ const colors = {
   dangerBackground: "#F87171",
   dangerHover: "#FCA5A5",
   danger: "#EF4444",
+  badgeDanger: "#FF062F",
+
 
   warning: "#FBBF24",
   info: "#60A5FA",

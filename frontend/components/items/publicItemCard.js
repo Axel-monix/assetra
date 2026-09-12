@@ -254,6 +254,7 @@ export default function PublicItemCard({
 
                       {isSpecDamaged && (
                         <span className="guest-spec-damage-badge">
+                          <span className="guest-spec-damage-dot" />
                           {t("damageBadge")}
                         </span>
                       )}

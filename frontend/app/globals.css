@@ -38,7 +38,6 @@
   --assetra-success: var(--assetra-info);
   --assetra-cyan: #22d3ee;
   --assetra-orange: #fb923c;
-
   --assetra-overlay: #000000;
 
   /* Compatibility aliases */
@@ -1892,9 +1891,7 @@ input:-webkit-autofill:focus {
   animation: image-preview-image 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* 
-   TOGGLE SWITCH
-    */
+/* TOGGLE SWITCH*/
 
 .toggle-track {
   background-color: var(--color-border);
@@ -1916,9 +1913,7 @@ input:-webkit-autofill:focus {
   outline-offset: 2px;
 }
 
-/* 
-   REDUCED MOTION
-    */
+/* REDUCED MOTION*/
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -4412,16 +4407,27 @@ textarea:focus-visible {
 .guest-spec-damage-badge {
   display: inline-flex;
   align-items: center;
+  border-radius: 5px;
+  gap: 0.35rem;
   flex-shrink: 0;
   padding: 0.2rem 0.6rem;
-  background: var(--color-danger-background);
-  color: var(--color-white);
-  border-radius: 999px;
+  background-color:color-mix(in srgb, var(--assetra-danger-background) 50%, transparent);
+     
+  border: 1px solid rgba(255, 6, 47, 0.8); 
+  color: #FF062F;                      
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   white-space: nowrap;
+}
+
+.guest-spec-damage-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #FF0000;
+  flex-shrink: 0;
 }
 
 /* Maintenance List */
