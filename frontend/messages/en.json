@@ -276,7 +276,7 @@
     "serverResponseError": "Server response error. Please try again."
   },
   "guestAsset": {
-    "title": "Scanned Item",
+    "title": "Details Item",
     "subtitle": "Scanned item details",
     "loading": "Loading item...",
     "notFound": "Item not found.",

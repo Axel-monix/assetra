@@ -359,7 +359,7 @@
     }
   },
   "guestAsset": {
-    "title": "Detail Item",
+    "title": "Detail Barang",
     "subtitle": "Detail item hasil scan",
     "loading": "Memuat item...",
     "notFound": "Item tidak ditemukan.",
