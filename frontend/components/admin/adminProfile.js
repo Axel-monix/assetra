@@ -55,9 +55,9 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
         {/* Profile Info */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="h-20 w-20 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-2xl font-bold text-[var(--color-text)] mb-3 overflow-hidden shadow-inner">
-            {admin.avatar ? (
+            {admin.image_url ? (  
               <img
-                src={admin.avatar}
+                src={admin.image_url}
                 alt={admin.name}
                 className="h-full w-full object-cover"
               />
@@ -75,7 +75,7 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
           </p>
         </div>
 
-          {/* Info Cards */}
+        {/* Info Cards */}
         <div className="space-y-3">
           {/* Tanggal Bergabung */}
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/40 p-3.5">

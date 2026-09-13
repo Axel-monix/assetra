@@ -12,10 +12,11 @@ export default function AddAdminModal({ onClose, onSubmit }) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === "email" ? value.toLowerCase() : value;
+
+    setForm((prev) => ({ ...prev, [name]: nextValue }));
     setError("");
   }
-
   async function handleSubmit(event) {
     event.preventDefault();
 

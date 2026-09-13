@@ -13,7 +13,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 async function listAdmins(req, res) {
   try {
     const { rows } = await pool.query(`
-      SELECT id, name, email, status, created_at, updated_at
+      SELECT id, name, email, status, created_at, updated_at, last_login, image_url
       FROM users
       WHERE role = 'admin'
       ORDER BY created_at DESC
@@ -26,7 +26,6 @@ async function listAdmins(req, res) {
     });
   } catch (err) {
     console.error("Error in listAdmins:", err);
-
     return res.status(500).json({
       success: false,
       message: "internalError",

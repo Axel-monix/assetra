@@ -188,10 +188,26 @@ export default function ManageAdminPage() {
     }
   };
 
+  const timeAgo = (dateStr) => {
+    const diffSec = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diffSec < 60) return t("justNow");
+
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return t("minutesAgo", { count: diffMin });
+
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return t("hoursAgo", { count: diffHour });
+
+    const diffDay = Math.floor(diffHour / 24);
+    if (diffDay < 30) return t("daysAgo", { count: diffDay });
+
+    return formatDate(dateStr);
+  };
+
   const formatLastActivity = (admin) => {
-    if (admin.last_activity) return admin.last_activity;
-    if (admin.last_login) return formatDate(admin.last_login);
-    return admin.status === "active" ? "2 mins ago" : "Inactive";
+    if (admin.status !== "active") return t("inactive");
+    if (admin.last_login) return timeAgo(admin.last_login);
+    return t("neverLoggedIn");
   };
 
   if (!user) {
@@ -200,7 +216,7 @@ export default function ManageAdminPage() {
         {t("loading")}
       </div>
     );
-  } 
+  }
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
@@ -307,9 +323,9 @@ export default function ManageAdminPage() {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3.5">
                           <div className="h-10 w-10 rounded-full border border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-sm font-semibold text-[var(--color-text)] shrink-0 group-hover:border-[var(--color-primary,#4f46e5)] transition-colors overflow-hidden">
-                            {admin.avatar ? (
+                            {admin.image_url ? (
                               <img
-                                src={admin.avatar}
+                                src={admin.image_url}
                                 alt={admin.name}
                                 className="h-full w-full rounded-full object-cover"
                               />
