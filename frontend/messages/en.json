@@ -322,6 +322,7 @@
     "emailAddress": "Email Address",
     "password": "Password",
     "change": "Change",
+    "sending":"Sending...",
     "save": "Save",
     "edit": "Edit",
     "cancel": "Cancel",

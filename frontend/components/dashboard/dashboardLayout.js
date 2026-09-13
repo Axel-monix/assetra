@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import Header from "./header";
@@ -83,7 +83,10 @@ export default function DashboardLayout({
       window.removeEventListener("focus", readUserFromStorage);
     };
   }, []);
-
+  const routerRef = useRef(router);
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
   const effectiveRole = role ?? storedUser?.role;
   const effectiveUserName =
     userName ?? storedUser?.name ?? storedUser?.username;
@@ -99,7 +102,14 @@ export default function DashboardLayout({
   }, [pathname]);
 
   useEffect(() => {
-    let isLoggedOut = false;
+    let cancelled = false;
+
+    function getToken() {
+      return (
+        window.localStorage.getItem(AUTH_TOKEN_KEY) ||
+        window.sessionStorage.getItem(AUTH_TOKEN_KEY)
+      );
+    }
 
     function clearSession() {
       window.localStorage.removeItem(AUTH_TOKEN_KEY);
@@ -108,38 +118,54 @@ export default function DashboardLayout({
       window.sessionStorage.removeItem(AUTH_USER_KEY);
     }
 
-    async function validateSession() {
-      const token =
-        window.localStorage.getItem(AUTH_TOKEN_KEY) ||
-        window.sessionStorage.getItem(AUTH_TOKEN_KEY);
+    function forceLogout() {
+      if (cancelled) return;
+      cancelled = true;
+      clearSession();
+      routerRef.current.replace("/login");
+    }
 
-      if (!token || isLoggedOut) {
-        return;
+    function isTokenExpired(token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (!payload.exp) return false;
+        return payload.exp * 1000 < Date.now();
+      } catch {
+        return true;
       }
+    }
+
+    function checkLocalExpiry() {
+      const token = getToken();
+      if (!token) return;
+      if (isTokenExpired(token)) forceLogout();
+    }
+
+    async function validateWithServer() {
+      const token = getToken();
+      if (!token || cancelled) return;
 
       try {
         const response = await fetch(ENDPOINTS.CURRENT_USER, {
           headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
         });
-
-        if (!response.ok && !isLoggedOut) {
-          isLoggedOut = true;
-          clearSession();
-          router.replace("/login");
-        }
+        if (!response.ok) forceLogout();
       } catch {}
     }
 
-    validateSession();
-    const intervalId = window.setInterval(validateSession, 5000);
-    window.addEventListener("focus", validateSession);
+    checkLocalExpiry();
+    validateWithServer();
+
+    const localCheckId = window.setInterval(checkLocalExpiry, 30000);
+    window.addEventListener("focus", validateWithServer);
 
     return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener("focus", validateSession);
+      cancelled = true;
+      window.clearInterval(localCheckId);
+      window.removeEventListener("focus", validateWithServer);
     };
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle("assetra-menu-open", isSidebarOpen);

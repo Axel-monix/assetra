@@ -156,7 +156,7 @@ async function resetPassword(req, res) {
       });
     }
 
-    await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
+    await Resetcode.deleteEntry(normalizedEmail);
 
     return res.json({
       success: true,
