@@ -148,6 +148,11 @@
     "finalConfirmationQuestion": "Apakah kamu yakin ingin membuat akun {name} tidak aktif karena",
     "yes": "Ya",
     "no": "Tidak",
+    "justNow": "Baru saja",
+    "minutesAgo": "{count} menit yang lalu",
+    "hoursAgo": "{count} jam yang lalu",
+    "daysAgo": "{count} hari yang lalu",
+    "neverLoggedIn": "Belum pernah login",
     "submitting": "Mengirim...",
     "cancel": "Batal"
   },
