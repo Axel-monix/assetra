@@ -3788,13 +3788,18 @@ textarea:focus-visible {
   }
 
   .assetra-print-label {
-    width: var(--label-w);
-    height: var(--label-h);
+    width: 100%;
+    height: 100%;
     border: 1px solid #ccc;
     break-inside: avoid;
     page-break-inside: avoid;
     box-sizing: border-box;
   }
+}
+.assetra-filter-option.is-selected-layout {
+  border-color: var(--assetra-primary);
+  background: var(--assetra-primary);
+  color: var(--assetra-primary-contrast);
 }
 .assetra-modal-overlay {
   backdrop-filter: blur(4px);
@@ -4411,10 +4416,14 @@ textarea:focus-visible {
   gap: 0.35rem;
   flex-shrink: 0;
   padding: 0.2rem 0.6rem;
-  background-color:color-mix(in srgb, var(--assetra-danger-background) 50%, transparent);
-     
-  border: 1px solid rgba(255, 6, 47, 0.8); 
-  color: #FF062F;                      
+  background-color: color-mix(
+    in srgb,
+    var(--assetra-danger-background) 50%,
+    transparent
+  );
+
+  border: 1px solid rgba(255, 6, 47, 0.8);
+  color: #ff062f;
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -4426,7 +4435,7 @@ textarea:focus-visible {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
-  background: #FF0000;
+  background: #ff0000;
   flex-shrink: 0;
 }
 

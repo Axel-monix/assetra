@@ -520,7 +520,7 @@
     "content_category": "Kategori",
     "content_location": "Lokasi",
     "printPreview": "Pratinjau Cetak",
-    "previewMeta": "{labels} Label | {pages} Halaman | {paper} {orientation} | Tata Letak {layout}",
+    "previewMeta": "{labels} Label | {pages} Halaman |  {orientation} | Tata Letak {layout}",
     "pageOf": "Halaman {current} dari {total}",
     "labelsReady": "{count} Label Siap",
     "printLabels": "Cetak {count} Label QR",

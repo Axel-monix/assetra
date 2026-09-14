@@ -532,7 +532,7 @@
     "content_category": "Category",
     "content_location": "Location",
     "printPreview": "Print Preview",
-    "previewMeta": "{labels} Labels | {pages} Pages | {paper} {orientation} | {layout} Layout",
+    "previewMeta": "{labels} Labels | {pages} Pages | {orientation} | {layout} Layout",
     "pageOf": "Page {current} of {total}",
     "labelsReady": "{count} labels Ready",
     "printLabels": "Print {count} QR Labels",

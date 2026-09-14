@@ -22,15 +22,6 @@ const LAYOUT_OPTIONS = [
   { key: "2x4", cols: 2, rows: 4 },
   { key: "3x4", cols: 3, rows: 4 },
 ];
-const PAPER_SIZE_OPTIONS = [
-  { key: "a3", label: "A3", cssSize: "A3" },
-  { key: "a4", label: "A4", cssSize: "A4" },
-  { key: "a5", label: "A5", cssSize: "A5" },
-  { key: "b4", label: "B4", cssSize: "B4" },
-  { key: "b5", label: "B5", cssSize: "B5" },
-  { key: "letter", label: "Letter", cssSize: "Letter" },
-  { key: "legal", label: "Legal", cssSize: "Legal" },
-];
 const LABEL_SIZE_OPTIONS = [
   { key: "small", widthMm: 40, heightMm: 50 },
   { key: "medium", widthMm: 50, heightMm: 65 },
@@ -55,7 +46,6 @@ export default function PrintQrLabelsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [paperSize, setPaperSize] = useState("a4");
   const [orientation, setOrientation] = useState("portrait");
   const [layoutKey, setLayoutKey] = useState("3x4");
   const [labelSizeKey, setLabelSizeKey] = useState("medium");
@@ -76,9 +66,6 @@ export default function PrintQrLabelsPage() {
   const effectiveRows = orientation === "landscape" ? layout.cols : layout.rows;
   const perPage = effectiveCols * effectiveRows;
   const labelRatio = labelSize.widthMm / labelSize.heightMm;
-  const selectedPaper = PAPER_SIZE_OPTIONS.find(
-    (paper) => paper.key === paperSize,
-  );
 
   useEffect(() => {
     async function init() {
@@ -176,7 +163,7 @@ export default function PrintQrLabelsPage() {
       <style>{`
         @media print {
           @page {
-            size: ${selectedPaper?.cssSize || "A4"} ${orientation};
+            size: A4 ${orientation};
             margin: 10mm;
           }
         }
@@ -217,27 +204,8 @@ export default function PrintQrLabelsPage() {
               {t("printSettings")}
             </h3>
 
-            {/* Paper Size */}
-            <div className="assetra-filter-section pt-0">
-              <label className="assetra-form-label">{t("paperSize")}</label>
-              <select
-                value={paperSize}
-                onChange={(e) => {
-                  setPaperSize(e.target.value);
-                  setPreviewPage(0);
-                }}
-                className="assetra-form-input"
-              >
-                {PAPER_SIZE_OPTIONS.map((paper) => (
-                  <option key={paper.key} value={paper.key}>
-                    {paper.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             {/* Orientation */}
-            <div className="assetra-filter-section">
+            <div className="assetra-filter-section pt-0">
               <label className="assetra-form-label">{t("orientation")}</label>
               <div className="flex gap-2">
                 {["portrait", "landscape"].map((o) => (
@@ -272,10 +240,8 @@ export default function PrintQrLabelsPage() {
                       setLayoutKey(l.key);
                       setPreviewPage(0);
                     }}
-                    className={`assetra-filter-option justify-center border ${
-                      layoutKey === l.key
-                        ? "border-[var(--color-primary)] text-[var(--color-primary-soft)]"
-                        : "border-[var(--color-border)]"
+                    className={`assetra-filter-option justify-center border font-semibold ${
+                      layoutKey === l.key ? "is-selected-layout" : ""
                     }`}
                   >
                     {l.key}
@@ -339,7 +305,6 @@ export default function PrintQrLabelsPage() {
                 {t("previewMeta", {
                   labels: items.length,
                   pages: totalPages,
-                  paper: paperSize.toUpperCase(),
                   orientation: t(orientation),
                   layout:
                     orientation === "landscape"
@@ -366,10 +331,16 @@ export default function PrintQrLabelsPage() {
               </div>
             </div>
             <div
-              className="assetra-print-page-preview mx-auto"
+              className={`assetra-print-page-preview mx-auto ${
+                layoutKey === "2x3"
+                  ? "assetra-print-page-preview--active-2x3"
+                  : ""
+              }`}
               style={{
                 transform: `scale(${zoom / 100})`,
                 transformOrigin: "top center",
+                aspectRatio:
+                  orientation === "landscape" ? "297 / 210" : "210 / 297",
               }}
             >
               <div
