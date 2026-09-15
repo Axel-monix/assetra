@@ -491,6 +491,7 @@
       "editItem": "Item {name} was updated by {performedBy}. {changes}",
       "deactivateAdmin": "Admin {name} was deactivated by {performedBy}. Reason: {reason}.",
       "deactivateItem": "Item {name} was deactivated by {performedBy}. Reason: {reason}.",
+      "deactivateCategory": "Category {name} was deactivated by {performedBy}.",
       "unknown": "Activity was performed by {performedBy}."
     },
     "tabs": {
@@ -506,6 +507,7 @@
       "editItem": "Update",
       "deactivateAdmin": "Deactivate Admin",
       "deactivateItem": "Deactivate Item",
+      "deactivateCategory": "Deactivate Category",
       "unknown": "Activity"
     }
   },
@@ -581,11 +583,14 @@
       "boolean": "Yes/No"
     },
 
-    "deleteCategoryTitle": "Delete Category",
-    "deleteCategoryConfirm": "Are you sure you want to delete {name}? This can't be undone.",
-    "deleteCategory": "Delete",
-    "deleting": "Deleting...",
+    "deleteCategoryTitle": "Deactivate Category",
+    "deleteCategoryConfirm": "Are you sure you want to deactivate {name}? The category will not be permanently deleted.",
+    "deleteCategory": "Deactivate",
+    "deleting": "Deactivating...",
     "deleteFailed": "Failed to delete category.",
+    "categoryInUse": "This category is still used by {count} items and cannot be deactivated.",
+    "categoryDeactivated": "Category deactivated successfully.",
+    "itemUsage": "Used by {count} items",
 
     "retainedSpecificationsWarning": "Some specifications couldn't be removed because they're still used by existing items: {names}"
   }

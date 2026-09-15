@@ -346,6 +346,7 @@
       "editItem": "Item {name} diperbarui oleh {performedBy}. {changes}",
       "deactivateAdmin": "Admin {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "deactivateItem": "Item {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
+      "deactivateCategory": "Kategori {name} dinonaktifkan oleh {performedBy}.",
       "unknown": "Aktivitas dilakukan oleh {performedBy}."
     },
     "tabs": {
@@ -360,6 +361,7 @@
       "editItem": "Update",
       "deactivateAdmin": "Nonaktif Admin",
       "deactivateItem": "Nonaktif Item",
+      "deactivateCategory": "Nonaktif Kategori",
       "unknown": "Aktivitas"
     }
   },
@@ -569,11 +571,14 @@
       "boolean": "Ya/Tidak"
     },
 
-    "deleteCategoryTitle": "Hapus Kategori",
-    "deleteCategoryConfirm": "Apakah kamu yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
-    "deleteCategory": "Hapus",
-    "deleting": "Menghapus...",
+    "deleteCategoryTitle": "Nonaktifkan Kategori",
+    "deleteCategoryConfirm": "Apakah kamu yakin ingin menonaktifkan {name}? Kategori tidak akan dihapus permanen.",
+    "deleteCategory": "Nonaktifkan",
+    "deleting": "Menonaktifkan...",
     "deleteFailed": "Gagal menghapus kategori.",
+    "categoryInUse": "Kategori masih digunakan oleh {count} item dan tidak dapat dinonaktifkan.",
+    "categoryDeactivated": "Kategori berhasil dinonaktifkan.",
+    "itemUsage": "Digunakan oleh {count} item",
 
     "retainedSpecificationsWarning": "Beberapa specification tidak dapat dihapus karena masih digunakan oleh item yang ada: {names}"
   }

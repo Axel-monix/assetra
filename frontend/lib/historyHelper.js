@@ -4,7 +4,22 @@ import {
   Pencil,
   UserX,
   Ban,
+  Layers,
+  X,
 } from "lucide-react";
+
+function CategoryDeactivationIcon(props) {
+  return (
+    <span className="relative inline-flex">
+      <Layers {...props} />
+      <X
+        size={10}
+        strokeWidth={3}
+        className="absolute -right-1 -top-1 text-[var(--color-danger)]"
+      />
+    </span>
+  );
+}
 
 export const HISTORY_TYPE_CONFIG = {
   add_admin: {
@@ -41,6 +56,13 @@ export const HISTORY_TYPE_CONFIG = {
     descriptionKey: "activities.deactivateItem",
     variant: "danger",
   },
+
+  deactivate_category: {
+    icon: CategoryDeactivationIcon,
+    badgeKey: "badges.deactivateCategory",
+    descriptionKey: "activities.deactivateCategory",
+    variant: "danger",
+  },
 };
 
 export function getHistoryConfig(type) {
@@ -54,10 +76,7 @@ export function getHistoryConfig(type) {
   );
 }
 
-export function groupHistoryByDate(
-  items,
-  locale = "id",
-) {
+export function groupHistoryByDate(items, locale = "id") {
   const groups = [];
   const map = new Map();
 
@@ -70,9 +89,7 @@ export function groupHistoryByDate(
   );
 
   items.forEach((item) => {
-    const date = new Date(
-      item.created_at,
-    );
+    const date = new Date(item.created_at);
 
     const startOfItemDay = new Date(
       date.getFullYear(),
@@ -80,48 +97,33 @@ export function groupHistoryByDate(
       date.getDate(),
     );
 
-    const diffDays = Math.round(
-      (startOfToday - startOfItemDay) /
-        86400000,
-    );
+    const diffDays = Math.round((startOfToday - startOfItemDay) / 86400000);
 
     let label;
 
     if (diffDays <= 0) {
-      label =
-        locale === "id"
-          ? "Sekarang"
-          : "Now";
+      label = locale === "id" ? "Sekarang" : "Now";
     } else if (diffDays === 1) {
-      label =
-        locale === "id"
-          ? "Kemarin"
-          : "Yesterday";
+      label = locale === "id" ? "Kemarin" : "Yesterday";
     } else {
       label =
-        locale === "id"
-          ? `${diffDays} hari lalu`
-          : `${diffDays} days ago`;
+        locale === "id" ? `${diffDays} hari lalu` : `${diffDays} days ago`;
     }
 
-    const key =
-      startOfItemDay.toISOString();
+    const key = startOfItemDay.toISOString();
 
     if (!map.has(key)) {
       const group = {
         key,
         label,
-        dateDisplay:
-          startOfItemDay.toLocaleDateString(
-            locale === "id"
-              ? "id-ID"
-              : "en-US",
-            {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            },
-          ),
+        dateDisplay: startOfItemDay.toLocaleDateString(
+          locale === "id" ? "id-ID" : "en-US",
+          {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          },
+        ),
         items: [],
       };
 
@@ -133,4 +135,4 @@ export function groupHistoryByDate(
   });
 
   return groups;
-} 
+}

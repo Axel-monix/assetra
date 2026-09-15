@@ -127,9 +127,6 @@ export default function ManageCategoryPage() {
     if (!response.ok || !result.success) {
       throw new Error(result.message || t("editFailed"));
     }
-
-    // Kalau ada specification yang gagal dihapus karena masih dipakai
-    // asset, backend mengembalikannya lewat retainedSpecifications.
     if (result.data?.retainedSpecifications?.length) {
       setLoadError(
         t("retainedSpecificationsWarning", {
@@ -140,22 +137,28 @@ export default function ManageCategoryPage() {
 
     await fetchCategories();
   }
-
   async function handleDelete() {
+    if (!deleteTarget?.id) {
+      throw new Error(t("deleteFailed"));
+    }
     const response = await fetch(ENDPOINTS.CATEGORY_BY_ID(deleteTarget.id), {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
-
-    const result = await response.json();
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error(t("deleteFailed"));
+    }
 
     if (!response.ok || !result.success) {
       throw new Error(result.message || t("deleteFailed"));
     }
-
     await fetchCategories();
   }
-
   return (
     <DashboardLayout
       role={authUser?.role || authUser?.role_name}
@@ -184,9 +187,7 @@ export default function ManageCategoryPage() {
       {loadError && <div className="assetra-error-box mb-4">{loadError}</div>}
 
       {loading ? (
-        <p className="text-sm text-[var(--color-text-muted)]">
-          {t("loading")}
-        </p>
+        <p className="text-sm text-[var(--color-text-muted)]">{t("loading")}</p>
       ) : categories.length === 0 ? (
         <div className="assetra-card p-8 text-center text-sm text-[var(--color-text-muted)]">
           {t("empty")}
@@ -205,6 +206,9 @@ export default function ManageCategoryPage() {
                       {cat.description}
                     </p>
                   )}
+                  <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+                    {t("itemUsage", { count: cat.item_count || 0 })}
+                  </p>
                 </div>
 
                 <span className="assetra-icon-badge assetra-icon-badge--primary shrink-0">
