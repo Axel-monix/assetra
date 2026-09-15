@@ -54,7 +54,7 @@ async function listCategories(req, res) {
               COUNT(DISTINCT asset.id)::int AS item_count,
               category.created_at,
               COALESCE(
-                json_agg(
+                jsonb_agg(
                   DISTINCT jsonb_build_object(
                     'id', cs.id,
                     'name', cs.name,
@@ -66,9 +66,11 @@ async function listCategories(req, res) {
                 '[]'::jsonb
               ) AS specifications
        FROM category
-      LEFT JOIN asset ON asset.id_category = category.id
-       LEFT JOIN category_specification cs ON cs.id_category = category.id
-      WHERE category.status = 'active'
+       LEFT JOIN asset
+         ON asset.id_category = category.id
+       LEFT JOIN category_specification cs
+         ON cs.id_category = category.id
+       WHERE category.status = 'active'
        GROUP BY category.id
        ORDER BY category.category_name ASC`,
     );
