@@ -144,14 +144,23 @@ export default function AdminOverview({ assets = [], error = "" }) {
           </h2>
 
           <div className="w-full overflow-x-auto">
-            <table className="w-full min-w-[420px] text-left text-sm border-collapse">
+            <table className="w-full min-w-[640px] text-left text-sm border-collapse">
               <thead>
                 <tr className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[100px]">
                     {t("admin.itemId")}
                   </th>
-                  <th className="py-2.5 font-medium whitespace-nowrap">
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[160px]">
                     {t("admin.itemName")}
+                  </th>
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
+                    {t("admin.user")}
+                  </th>
+                  <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[110px]">
+                    {t("admin.status")}
+                  </th>
+                  <th className="py-2.5 font-medium whitespace-nowrap w-[100px]">
+                    {t("admin.date")}
                   </th>
                 </tr>
               </thead>
@@ -168,8 +177,38 @@ export default function AdminOverview({ assets = [], error = "" }) {
                       {activity.id}
                     </td>
 
-                    <td className="py-3 font-medium whitespace-nowrap">
+                    <td className="py-3 pr-4 font-medium whitespace-nowrap">
                       {activity.name}
+                    </td>
+
+                    <td className="py-3 pr-4 text-[var(--color-text-secondary)] whitespace-nowrap">
+                      {typeof activity.category === "object" &&
+                      activity.category !== null
+                        ? activity.category.category_name ||
+                          activity.category.name ||
+                          "-"
+                        : activity.category ||
+                          activity.categoryName ||
+                          activity.category_name ||
+                          "-"}
+                    </td>
+
+                    <td className="py-3 pr-4 whitespace-nowrap">
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${ASSET_STATUS_STYLES[activity.status] || ""}`}
+                      >
+                        {ASSET_STATUS_LABELS[activity.status]
+                          ? t(ASSET_STATUS_LABELS[activity.status])
+                          : activity.status || "-"}
+                      </span>
+                    </td>
+
+                    <td className="py-3 text-[var(--color-text-muted)] text-xs whitespace-nowrap">
+                      {activity.createdAt
+                        ? new Date(activity.createdAt).toLocaleDateString(
+                            "id-ID",
+                          )
+                        : "-"}
                     </td>
                   </tr>
                 ))}
@@ -197,14 +236,24 @@ export default function AdminOverview({ assets = [], error = "" }) {
         </div>
 
         <div className="w-full min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[800px] text-sm whitespace-nowrap">
+          <table className="w-full min-w-[800px] text-sm whitespace-nowrap border-collapse">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
-                <th className="py-2.5 font-medium">{t("admin.itemId")}</th>
-                <th className="py-2.5 font-medium">{t("admin.itemName")}</th>
-                <th className="py-2.5 font-medium">{t("admin.category")}</th>
-                <th className="py-2.5 font-medium">{t("admin.status")}</th>
-                <th className="py-2.5 font-medium">{t("admin.detail")}</th>
+                <th className="w-[140px] py-2.5 font-medium">
+                  {t("admin.itemId")}
+                </th>
+                <th className="w-[240px] py-2.5 font-medium">
+                  {t("admin.itemName")}
+                </th>
+                <th className="w-[180px] py-2.5 font-medium">
+                  {t("admin.category")}
+                </th>
+                <th className="w-[140px] py-2.5 font-medium">
+                  {t("admin.status")}
+                </th>
+                <th className="w-[100px] py-2.5 font-medium">
+                  {t("admin.detail")}
+                </th>
               </tr>
             </thead>
 
@@ -213,12 +262,12 @@ export default function AdminOverview({ assets = [], error = "" }) {
                 <Fragment key={item.id}>
                   <tr className="border-b border-[var(--color-surface)] last:border-0">
                     <td
-                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)]`}
+                      className={`${FONTS.CODE} py-3 text-xs text-[var(--color-text-secondary)] whitespace-nowrap`}
                     >
                       {item.id}
                     </td>
 
-                    <td className="py-3 font-medium">
+                    <td className="py-3 font-medium whitespace-nowrap">
                       <span className="flex items-center gap-2">
                         {item.status === ASSET_STATUS.NEEDS_REPAIR && (
                           <Wrench
@@ -230,11 +279,11 @@ export default function AdminOverview({ assets = [], error = "" }) {
                       </span>
                     </td>
 
-                    <td className="py-3 text-[var(--color-text-secondary)]">
+                    <td className="py-3 text-[var(--color-text-secondary)] whitespace-nowrap">
                       {item.category}
                     </td>
 
-                    <td className="py-3">
+                    <td className="py-3 whitespace-nowrap">
                       <span
                         className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                           ASSET_STATUS_STYLES[item.status] || ""
@@ -246,7 +295,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                       </span>
                     </td>
 
-                    <td className="py-3">
+                    <td className="py-3 whitespace-nowrap">
                       {item.repair && (
                         <button
                           type="button"
