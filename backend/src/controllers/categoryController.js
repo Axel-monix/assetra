@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
+const { logHistory } = require("../utils/historyLogger");
 
 /**
  * =========================================================
@@ -49,22 +50,25 @@ async function listCategories(req, res) {
       `SELECT category.id,
               category.category_name,
               category.description,
+              category.status,
+              COUNT(DISTINCT asset.id)::int AS item_count,
               category.created_at,
               COALESCE(
                 json_agg(
-                  json_build_object(
+                  DISTINCT jsonb_build_object(
                     'id', cs.id,
                     'name', cs.name,
                     'type', cs.type,
                     'required', cs.required,
                     'repairable', cs.repairable
                   )
-                  ORDER BY cs.id ASC
                 ) FILTER (WHERE cs.id IS NOT NULL),
-                '[]'
+                '[]'::jsonb
               ) AS specifications
        FROM category
+      LEFT JOIN asset ON asset.id_category = category.id
        LEFT JOIN category_specification cs ON cs.id_category = category.id
+      WHERE category.status = 'active'
        GROUP BY category.id
        ORDER BY category.category_name ASC`,
     );
@@ -88,9 +92,9 @@ async function getCategoryById(req, res) {
 
   try {
     const { rows: categoryRows } = await pool.query(
-      `SELECT id, category_name, description, created_at
+      `SELECT id, category_name, description, status, created_at
        FROM category
-       WHERE id = $1`,
+       WHERE id = $1 AND status = 'active'`,
       [id],
     );
 
@@ -263,8 +267,8 @@ async function updateCategory(req, res) {
       `UPDATE category
        SET category_name = $1,
            description = $2
-       WHERE id = $3
-       RETURNING id, category_name, description, created_at`,
+      WHERE id = $3 AND status = 'active'
+      RETURNING id, category_name, description, status, created_at`,
       [category_name.trim(), description?.trim() || null, id],
     );
 
@@ -388,27 +392,38 @@ async function updateCategory(req, res) {
 }
 async function deleteCategory(req, res) {
   const { id } = req.params;
+  const actorId = req.user?.id_user || req.user?.id || null;
+  let client;
 
   try {
-    const { rows: usage } = await pool.query(
+    client = await pool.connect();
+    await client.query("BEGIN");
+
+    const { rows: usage } = await client.query(
       `SELECT COUNT(*)::int AS total FROM asset WHERE id_category = $1`,
       [id],
     );
 
-    if (usage[0].total > 0) {
+    const total = Number(usage[0]?.total || 0);
+    if (total > 0) {
+      await client.query("ROLLBACK");
       return error(res, {
         messageKey: "categoryInUse",
-        message: `Kategori tidak dapat dihapus karena masih digunakan oleh ${usage[0].total} item.`,
+        message: `Kategori tidak dapat dinonaktifkan karena masih digunakan oleh ${total} item.`,
         statusCode: 409,
       });
     }
 
-    const { rows } = await pool.query(
-      `DELETE FROM category WHERE id = $1 RETURNING id`,
+    const { rows } = await client.query(
+      `UPDATE category
+       SET status = 'inactive', updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1 AND status = 'active'
+       RETURNING id, category_name`,
       [id],
     );
 
     if (rows.length === 0) {
+      await client.query("ROLLBACK");
       return error(res, {
         messageKey: "notFound",
         message: "Kategori tidak ditemukan.",
@@ -416,18 +431,30 @@ async function deleteCategory(req, res) {
       });
     }
 
+    await logHistory(client, {
+      type: "deactivate_category",
+      performedBy: actorId,
+      subjectName: rows[0].category_name,
+      description: "Kategori dinonaktifkan",
+    });
+
+    await client.query("COMMIT");
+
     return success(res, {
-      messageKey: "categoryDeleted",
-      message: "Kategori berhasil dihapus.",
+      messageKey: "categoryDeactivated",
+      message: "Kategori berhasil dinonaktifkan.",
       data: { id: rows[0].id },
     });
   } catch (err) {
+    if (client) await client.query("ROLLBACK");
     console.error("Error in deleteCategory:", err);
 
     return error(res, {
       messageKey: "deleteFailed",
-      message: "Gagal menghapus kategori.",
+      message: "Gagal menonaktifkan kategori.",
     });
+  } finally {
+    if (client) client.release();
   }
 }
 

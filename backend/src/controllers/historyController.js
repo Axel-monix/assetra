@@ -8,7 +8,7 @@ const PAGE_SIZE = 10;
 const TYPE_GROUPS = {
   added: ["add_admin", "add_item"],
   updated: ["edit_item"],
-  deactivated: ["deactivate_admin", "deactivate_item"],
+  deactivated: ["deactivate_admin", "deactivate_item", "deactivate_category"],
 };
 
 const NEEDS_REPAIR_STATUS = "needs_repair";
@@ -21,6 +21,7 @@ const TYPE_LABELS = {
   edit_item: "Perubahan Data Barang",
   deactivate_admin: "Penonaktifan Admin",
   deactivate_item: "Penonaktifan Barang",
+  deactivate_category: "Penonaktifan Kategori",
 };
 
 const ASSET_STATUS_LABELS = {
@@ -95,20 +96,14 @@ function buildHistoryFilters(reqQuery) {
     selectedGroups = [type];
   }
 
-  selectedGroups = selectedGroups.filter(
-    (group) => TYPE_GROUPS[group],
-  );
+  selectedGroups = selectedGroups.filter((group) => TYPE_GROUPS[group]);
 
   if (selectedGroups.length > 0) {
     const historyTypes = [
-      ...new Set(
-        selectedGroups.flatMap((group) => TYPE_GROUPS[group]),
-      ),
+      ...new Set(selectedGroups.flatMap((group) => TYPE_GROUPS[group])),
     ];
 
-    conditions.push(
-      `history.type = ANY($${idx}::history_type[])`,
-    );
+    conditions.push(`history.type = ANY($${idx}::history_type[])`);
 
     params.push(historyTypes);
     idx++;
@@ -152,18 +147,9 @@ function buildHistoryFilters(reqQuery) {
 
 async function listHistory(req, res) {
   try {
-    const {
-      type,
-      types,
-      search,
-      dateFrom,
-      dateTo,
-    } = req.query;
+    const { type, types, search, dateFrom, dateTo } = req.query;
 
-    const {
-      conditions,
-      params,
-    } = buildHistoryFilters({
+    const { conditions, params } = buildHistoryFilters({
       type,
       types,
       search,
@@ -172,9 +158,7 @@ async function listHistory(req, res) {
     });
 
     const whereClause =
-      conditions.length > 0
-        ? `WHERE ${conditions.join(" AND ")}`
-        : "";
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     const { rows } = await pool.query(
       `SELECT
@@ -230,6 +214,7 @@ function mapRowsForExport(rows, locale = "id") {
             edit_item: "Item Updated",
             deactivate_admin: "Admin Deactivated",
             deactivate_item: "Item Deactivated",
+            deactivate_category: "Category Deactivated",
           }[row.type] || row.type
         : TYPE_LABELS[row.type] || row.type,
 
@@ -246,8 +231,7 @@ function mapRowsForExport(rows, locale = "id") {
             needs_repair: "Needs Repair",
             unavailable: "Unavailable",
           }[row.asset_status] || row.asset_status
-        : ASSET_STATUS_LABELS[row.asset_status] ||
-          row.asset_status
+        : ASSET_STATUS_LABELS[row.asset_status] || row.asset_status
       : "-",
 
     performed_by_name: row.performed_by_name || "-",
@@ -265,51 +249,44 @@ function mapRowsForExport(rows, locale = "id") {
 ========================================================= */
 
 async function getExportSummary() {
-  const [
-    addedResult,
-    needsRepairResult,
-    unavailableResult,
-    repairedResult,
-  ] = await Promise.all([
-    pool.query(
-      `SELECT
+  const [addedResult, needsRepairResult, unavailableResult, repairedResult] =
+    await Promise.all([
+      pool.query(
+        `SELECT
           COUNT(*)::int AS count
        FROM history
        WHERE type = 'add_item'
          AND date_trunc('month', created_at)
              = date_trunc('month', CURRENT_DATE)`,
-    ),
+      ),
 
-    pool.query(
-      `SELECT
+      pool.query(
+        `SELECT
           COUNT(*)::int AS count
        FROM asset
        WHERE status = $1`,
-      [NEEDS_REPAIR_STATUS],
-    ),
+        [NEEDS_REPAIR_STATUS],
+      ),
 
-    pool.query(
-      `SELECT
+      pool.query(
+        `SELECT
           COUNT(*)::int AS count
        FROM asset
        WHERE status = $1`,
-      [UNAVAILABLE_STATUS],
-    ),
+        [UNAVAILABLE_STATUS],
+      ),
 
-    pool.query(
-      `SELECT
+      pool.query(
+        `SELECT
           COUNT(*)::int AS count
        FROM status_asset
        WHERE old_status = $1
          AND new_status = $2
          AND date_trunc('month', changed_at)
              = date_trunc('month', CURRENT_DATE)`,
-      [
-        NEEDS_REPAIR_STATUS,
-        REPAIRED_STATUS,
-      ],
-    ),
-  ]);
+        [NEEDS_REPAIR_STATUS, REPAIRED_STATUS],
+      ),
+    ]);
 
   return {
     addedThisMonth: addedResult.rows[0].count,
@@ -323,11 +300,7 @@ async function getExportSummary() {
    BUILD PDF
 ========================================================= */
 
-function buildPdfBuffer(
-  rows,
-  summary,
-  locale = "id",
-) {
+function buildPdfBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
   const labels = EXPORT_LABELS[lang];
 
@@ -350,14 +323,9 @@ function buildPdfBuffer(
 
     doc.on("error", reject);
 
-    doc
-      .fontSize(16)
-      .text(
-        "Laporan Riwayat Aset - Assetra",
-        {
-          align: "center",
-        },
-      );
+    doc.fontSize(16).text("Laporan Riwayat Aset - Assetra", {
+      align: "center",
+    });
 
     doc.moveDown(1);
 
@@ -412,28 +380,14 @@ function buildPdfBuffer(
     function drawHeader() {
       let x = startX;
 
-      doc
-        .font("Helvetica-Bold")
-        .fontSize(9);
+      doc.font("Helvetica-Bold").fontSize(9);
 
       columns.forEach((col) => {
-        doc
-          .rect(
-            x,
-            y,
-            col.width,
-            rowHeight,
-          )
-          .stroke();
+        doc.rect(x, y, col.width, rowHeight).stroke();
 
-        doc.text(
-          col.label,
-          x + 4,
-          y + 6,
-          {
-            width: col.width - 8,
-          },
-        );
+        doc.text(col.label, x + 4, y + 6, {
+          width: col.width - 8,
+        });
 
         x += col.width;
       });
@@ -443,50 +397,29 @@ function buildPdfBuffer(
 
     drawHeader();
 
-    doc
-      .font("Helvetica")
-      .fontSize(8);
+    doc.font("Helvetica").fontSize(8);
 
     rows.forEach((row) => {
-      if (
-        y + rowHeight >
-        doc.page.height -
-          doc.page.margins.bottom -
-          100
-      ) {
+      if (y + rowHeight > doc.page.height - doc.page.margins.bottom - 100) {
         doc.addPage();
 
         y = doc.page.margins.top;
 
         drawHeader();
 
-        doc
-          .font("Helvetica")
-          .fontSize(8);
+        doc.font("Helvetica").fontSize(8);
       }
 
       let x = startX;
 
       columns.forEach((col) => {
-        doc
-          .rect(
-            x,
-            y,
-            col.width,
-            rowHeight,
-          )
-          .stroke();
+        doc.rect(x, y, col.width, rowHeight).stroke();
 
-        doc.text(
-          String(row[col.key] ?? "-"),
-          x + 4,
-          y + 6,
-          {
-            width: col.width - 8,
-            height: rowHeight - 8,
-            ellipsis: true,
-          },
-        );
+        doc.text(String(row[col.key] ?? "-"), x + 4, y + 6, {
+          width: col.width - 8,
+          height: rowHeight - 8,
+          ellipsis: true,
+        });
 
         x += col.width;
       });
@@ -496,31 +429,17 @@ function buildPdfBuffer(
 
     y += 20;
 
-    if (
-      y >
-      doc.page.height -
-        doc.page.margins.bottom -
-        100
-    ) {
+    if (y > doc.page.height - doc.page.margins.bottom - 100) {
       doc.addPage();
 
       y = doc.page.margins.top;
     }
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .text(
-        labels.summary,
-        startX,
-        y,
-      );
+    doc.font("Helvetica-Bold").fontSize(11).text(labels.summary, startX, y);
 
     y += 20;
 
-    doc
-      .font("Helvetica")
-      .fontSize(9);
+    doc.font("Helvetica").fontSize(9);
 
     [
       `${labels.addedThisMonth}: ${summary.addedThisMonth}`,
@@ -528,11 +447,7 @@ function buildPdfBuffer(
       `${labels.unavailable}: ${summary.unavailableCount}`,
       `${labels.repairedThisMonth}: ${summary.repairedThisMonth}`,
     ].forEach((line) => {
-      doc.text(
-        line,
-        startX,
-        y,
-      );
+      doc.text(line, startX, y);
 
       y += 16;
     });
@@ -545,20 +460,14 @@ function buildPdfBuffer(
    BUILD EXCEL
 ========================================================= */
 
-async function buildExcelBuffer(
-  rows,
-  summary,
-  locale = "id",
-) {
+async function buildExcelBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
   const labels = EXPORT_LABELS[lang];
 
   const workbook = new ExcelJS.Workbook();
 
   const sheet = workbook.addWorksheet(
-    lang === "en"
-      ? "Asset History"
-      : "Riwayat Aset",
+    lang === "en" ? "Asset History" : "Riwayat Aset",
   );
 
   sheet.columns = [
@@ -603,10 +512,7 @@ async function buildExcelBuffer(
       width: 22,
     },
     {
-      header:
-        lang === "en"
-          ? "Description"
-          : "Deskripsi",
+      header: lang === "en" ? "Description" : "Deskripsi",
       key: "description",
       width: 40,
     },
@@ -620,31 +526,17 @@ async function buildExcelBuffer(
 
   sheet.addRow([]);
 
-  sheet
-    .addRow([labels.summary])
-    .font = {
-      bold: true,
-    };
+  sheet.addRow([labels.summary]).font = {
+    bold: true,
+  };
 
-  sheet.addRow([
-    labels.addedThisMonth,
-    summary.addedThisMonth,
-  ]);
+  sheet.addRow([labels.addedThisMonth, summary.addedThisMonth]);
 
-  sheet.addRow([
-    labels.needsRepair,
-    summary.needsRepairCount,
-  ]);
+  sheet.addRow([labels.needsRepair, summary.needsRepairCount]);
 
-  sheet.addRow([
-    labels.unavailable,
-    summary.unavailableCount,
-  ]);
+  sheet.addRow([labels.unavailable, summary.unavailableCount]);
 
-  sheet.addRow([
-    labels.repairedThisMonth,
-    summary.repairedThisMonth,
-  ]);
+  sheet.addRow([labels.repairedThisMonth, summary.repairedThisMonth]);
 
   return workbook.xlsx.writeBuffer();
 }
@@ -655,26 +547,13 @@ async function buildExcelBuffer(
 
 async function exportHistory(req, res) {
   try {
-    const {
-      type,
-      types,
-      search,
-      dateFrom,
-      dateTo,
-      locale,
-    } = req.query;
+    const { type, types, search, dateFrom, dateTo, locale } = req.query;
 
-    const format = (
-      req.query.format || "excel"
-    ).toLowerCase();
+    const format = (req.query.format || "excel").toLowerCase();
 
-    const exportLocale =
-      getExportLocale(locale);
+    const exportLocale = getExportLocale(locale);
 
-    const {
-      conditions,
-      params,
-    } = buildHistoryFilters({
+    const { conditions, params } = buildHistoryFilters({
       type,
       types,
       search,
@@ -683,9 +562,7 @@ async function exportHistory(req, res) {
     });
 
     const whereClause =
-      conditions.length > 0
-        ? `WHERE ${conditions.join(" AND ")}`
-        : "";
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     const { rows } = await pool.query(
       `SELECT
@@ -718,44 +595,24 @@ async function exportHistory(req, res) {
       params,
     );
 
-    const exportRows =
-      mapRowsForExport(
-        rows,
-        exportLocale,
-      );
+    const exportRows = mapRowsForExport(rows, exportLocale);
 
-    const summary =
-      await getExportSummary();
+    const summary = await getExportSummary();
 
     if (format === "pdf") {
-      const buffer =
-        await buildPdfBuffer(
-          exportRows,
-          summary,
-          exportLocale,
-        );
+      const buffer = await buildPdfBuffer(exportRows, summary, exportLocale);
 
-      res.setHeader(
-        "Content-Type",
-        "application/pdf",
-      );
+      res.setHeader("Content-Type", "application/pdf");
 
       res.setHeader(
         "Content-Disposition",
         'attachment; filename="history.pdf"',
       );
 
-      return res
-        .status(200)
-        .send(buffer);
+      return res.status(200).send(buffer);
     }
 
-    const buffer =
-      await buildExcelBuffer(
-        exportRows,
-        summary,
-        exportLocale,
-      );
+    const buffer = await buildExcelBuffer(exportRows, summary, exportLocale);
 
     res.setHeader(
       "Content-Type",
@@ -767,14 +624,9 @@ async function exportHistory(req, res) {
       'attachment; filename="history-export.xlsx"',
     );
 
-    return res
-      .status(200)
-      .send(buffer);
+    return res.status(200).send(buffer);
   } catch (err) {
-    console.error(
-      "Error in exportHistory:",
-      err,
-    );
+    console.error("Error in exportHistory:", err);
 
     return error(res, {
       message: "HISTORY_EXPORT_FAILED",
