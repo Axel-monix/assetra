@@ -1,5 +1,3 @@
-// src/controllers/adminController.js
-
 const bcrypt = require("bcrypt");
 
 const pool = require("../config/db");
@@ -7,7 +5,6 @@ const pool = require("../config/db");
 const { logHistory } = require("../utils/historyLogger");
 
 const PASSWORD_MIN_LENGTH = 8;
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 async function listAdmins(req, res) {
@@ -37,10 +34,6 @@ async function createAdmin(req, res) {
   try {
     const { name, email, password } = req.body;
 
-    // =========================
-    // VALIDATION
-    // =========================
-
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -65,15 +58,7 @@ async function createAdmin(req, res) {
       });
     }
 
-    // =========================
-    // HASH PASSWORD
-    // =========================
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // =========================
-    // INSERT ADMIN
-    // =========================
 
     const { rows } = await pool.query(
       `
@@ -98,10 +83,6 @@ async function createAdmin(req, res) {
 
     const actorId = req.user?.id_user || req.user?.id || null;
 
-    // =========================
-    // HISTORY
-    // =========================
-
     await logHistory(pool, {
       type: "add_admin",
       idUser: rows[0].id,
@@ -109,10 +90,6 @@ async function createAdmin(req, res) {
       subjectName: rows[0].name,
       description: "Penambahan admin baru",
     });
-
-    // =========================
-    // SUCCESS
-    // =========================
 
     return res.status(201).json({
       success: true,
@@ -122,7 +99,6 @@ async function createAdmin(req, res) {
   } catch (err) {
     console.error("Error in createAdmin:", err);
 
-    // Email duplicate
     if (err.code === "23505") {
       return res.status(409).json({
         success: false,
@@ -146,10 +122,6 @@ async function toggleAdminStatus(req, res) {
 
     const actorId = req.user?.id_user || req.user?.id || null;
 
-    // =========================
-    // FIND ADMIN
-    // =========================
-
     const { rows: targetRows } = await client.query(
       `
         SELECT id, name, role, status
@@ -166,10 +138,6 @@ async function toggleAdminStatus(req, res) {
       });
     }
 
-    // =========================
-    // CHECK ROLE
-    // =========================
-
     if (targetRows[0].role !== "admin") {
       return res.status(403).json({
         success: false,
@@ -178,10 +146,6 @@ async function toggleAdminStatus(req, res) {
     }
 
     await client.query("BEGIN");
-
-    // =========================
-    // DEACTIVATE
-    // =========================
 
     if (action === "deactivate") {
       if (!reason || !reason.trim()) {
@@ -228,9 +192,6 @@ async function toggleAdminStatus(req, res) {
       });
     }
 
-    // =========================
-    // REACTIVATE
-    // =========================
     else if (action === "reactivate") {
       await client.query(
         `
@@ -262,9 +223,6 @@ async function toggleAdminStatus(req, res) {
       );
     }
 
-    // =========================
-    // INVALID ACTION
-    // =========================
     else {
       await client.query("ROLLBACK");
 

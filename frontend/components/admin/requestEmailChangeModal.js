@@ -112,7 +112,9 @@ export default function RequestEmailChangeModal({
               {error && <div className="assetra-error-box mb-4">{error}</div>}
 
               <div className="mb-4">
-                <label className="assetra-form-label">{t("currentEmail")}</label>
+                <label className="assetra-form-label">
+                  {t("currentEmail")}
+                </label>
                 <input
                   type="email"
                   className="assetra-form-input"
@@ -154,7 +156,10 @@ export default function RequestEmailChangeModal({
           ) : (
             <>
               <div className="flex items-center gap-2 mb-1">
-                <ShieldCheck size={17} className="text-[var(--color-primary)]" />
+                <ShieldCheck
+                  size={17}
+                  className="text-[var(--color-primary)]"
+                />
                 <h2 className="text-base font-semibold text-[var(--color-text)]">
                   {t("verifyCodeTitle")}
                 </h2>
@@ -166,7 +171,9 @@ export default function RequestEmailChangeModal({
               {error && <div className="assetra-error-box mb-4">{error}</div>}
 
               <div className="mb-5">
-                <label className="assetra-form-label">{t("verificationCode")}</label>
+                <label className="assetra-form-label">
+                  {t("verificationCode")}
+                </label>
                 <input
                   type="text"
                   inputMode="numeric"

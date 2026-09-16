@@ -139,7 +139,6 @@ export default function ForgotPasswordPage() {
     return () => clearInterval(timer);
   }, [cooldown]);
 
-  // ---------- STEP 1: kirim email, minta kode ----------
   async function handleSendCode(event) {
     event.preventDefault();
     setServerError("");
@@ -163,8 +162,6 @@ export default function ForgotPasswordPage() {
       });
       const result = await res.json();
 
-      // Backend mengecek apakah email terdaftar. Kalau tidak terdaftar,
-      // backend mengembalikan success:false dengan message yang jelas.
       if (!res.ok || !result.success) {
         setServerError(result.message || t("emailNotRegistered"));
         return;
@@ -200,7 +197,6 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  // ---------- STEP 2: input kode ----------
   function handleCodeChange(index, value) {
     const digit = value.replace(/[^0-9]/g, "").slice(-1);
     const nextCode = [...code];
@@ -252,7 +248,6 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  // ---------- STEP 3: password baru ----------
   async function handleResetPassword(event) {
     event.preventDefault();
     setServerError("");
@@ -305,7 +300,6 @@ export default function ForgotPasswordPage() {
       <div className="mb-12 text-2xl font-semibold">Assetra</div>
 
       <div className="w-full max-w-[405px] rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-7 shadow-2xl">
-        {/* ---------- STEP 1: EMAIL ---------- */}
         {step === FORGOT_PASSWORD_STEP.EMAIL && (
           <>
             <div className="mb-8 text-center">
@@ -371,7 +365,6 @@ export default function ForgotPasswordPage() {
           </>
         )}
 
-        {/* ---------- STEP 2: VERIFY CODE ---------- */}
         {step === FORGOT_PASSWORD_STEP.VERIFY_CODE && (
           <>
             <div className="mb-8 text-center">
@@ -435,7 +428,6 @@ export default function ForgotPasswordPage() {
           </>
         )}
 
-        {/* ---------- STEP 3: NEW PASSWORD ---------- */}
         {step === FORGOT_PASSWORD_STEP.NEW_PASSWORD && (
           <>
             <div className="mb-8 text-center">
@@ -536,7 +528,6 @@ export default function ForgotPasswordPage() {
           </>
         )}
 
-        {/* ---------- STEP 4: SUCCESS ---------- */}
         {step === FORGOT_PASSWORD_STEP.SUCCESS && (
           <div className="flex flex-col items-center py-4 text-center">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-teal-500/15 text-teal-400">

@@ -306,14 +306,9 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
     const { name, value } = event.target;
 
     if (name === "status") {
-      // FR-REP-02: transisi ke Need Repair harus lewat modal dulu.
-      // Kalau sebelumnya sudah needs_repair, dropdown ini tidak akan
-      // fire onChange (value tidak berubah) — untuk kasus "tambah
-      // laporan lagi", lihat tombol addDamageReport di bawah, bukan
-      // di sini.
       if (value === "needs_repair" && form.status !== "needs_repair") {
         setShowNeedRepairModal(true);
-        return; // status belum di-set, menunggu konfirmasi modal
+        return;
       }
 
       if (value !== "needs_repair") {

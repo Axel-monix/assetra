@@ -210,12 +210,11 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`assetra-dashboard-sidebar w-60 shrink-0 border-r border-[var(--color-border)] flex flex-col px-4 py-5 overflow-y-auto ${isSidebarOpen ? "is-open" : ""}`}
       >
         <div className="mb-6 px-2">
-          <BrandLogo className="text-lg font-semibold" />
+          <BrandLogo className="text-xl font-semibold" />
           <div className="mt-2 text-xs text-[var(--color-text-muted)]">
             {t("Trackyourstuff")}
           </div>
@@ -258,7 +257,6 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
         <Header
           userName={effectiveUserName || t("user")}

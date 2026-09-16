@@ -818,7 +818,7 @@ async function getPublicAsset(req, res) {
       location: raw.location || null,
       description: raw.description || null,
       updatedAt: raw.updated_at,
-      createdAt: raw.created_at
+      createdAt: raw.created_at,
     };
 
     const [assetWithSpecs] = await attachSpecsToAssets([asset]);

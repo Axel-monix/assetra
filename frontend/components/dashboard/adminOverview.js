@@ -98,7 +98,6 @@ export default function AdminOverview({ assets = [], error = "" }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        {/* Distribusi Kategori */}
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold">
@@ -137,7 +136,6 @@ export default function AdminOverview({ assets = [], error = "" }) {
           </div>
         </div>
 
-        {/* Aktivitas Terkini */}
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <h2 className="text-sm font-semibold mb-4">
             {t("admin.recentActivity")}
@@ -218,7 +216,6 @@ export default function AdminOverview({ assets = [], error = "" }) {
         </div>
       </div>
 
-      {/* Item Perlu Perhatian */}
       <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold flex items-center gap-2">

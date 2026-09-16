@@ -159,7 +159,6 @@ export default function PrintQrLabelsPage() {
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
-      {/* Dynamic print CSS */}
       <style>{`
         @media print {
           @page {
@@ -204,7 +203,6 @@ export default function PrintQrLabelsPage() {
               {t("printSettings")}
             </h3>
 
-            {/* Orientation */}
             <div className="assetra-filter-section pt-0">
               <label className="assetra-form-label">{t("orientation")}</label>
               <div className="flex gap-2">
@@ -228,7 +226,6 @@ export default function PrintQrLabelsPage() {
               </div>
             </div>
 
-            {/* Labels Per Page */}
             <div className="assetra-filter-section">
               <label className="assetra-form-label">{t("labelsPerPage")}</label>
               <div className="grid grid-cols-4 gap-2">
@@ -253,7 +250,6 @@ export default function PrintQrLabelsPage() {
               </p>
             </div>
 
-            {/* Label Size */}
             <div className="assetra-filter-section">
               <label className="assetra-form-label">{t("labelSize")}</label>
               <select
@@ -272,7 +268,6 @@ export default function PrintQrLabelsPage() {
               </select>
             </div>
 
-            {/* Label Content */}
             <div className="assetra-filter-section border-b-0">
               <label className="assetra-form-label">{t("labelContent")}</label>
               <div className="assetra-filter-options">
@@ -295,7 +290,6 @@ export default function PrintQrLabelsPage() {
             </div>
           </div>
 
-          {/* PRINT PREVIEW PANEL */}
           <div className="assetra-card p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[var(--color-text)]">
@@ -389,7 +383,6 @@ export default function PrintQrLabelsPage() {
         </div>
       </div>
 
-      {/* Bottom action bar */}
       <div className="no-print fixed bottom-0 left-0 right-0 flex items-center justify-between border-t border-[var(--color-border)] bg-[var(--color-card)] px-6 py-3">
         <div className="flex items-center gap-2 text-sm text-[var(--color-text)]">
           <Printer size={16} />
@@ -415,7 +408,6 @@ export default function PrintQrLabelsPage() {
         </div>
       </div>
 
-      {/* Print-only pages */}
       <div
         className="print-only"
         style={{

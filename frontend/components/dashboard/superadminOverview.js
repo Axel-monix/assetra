@@ -86,9 +86,7 @@ export default function SuperAdminOverview({
         />
       </div>
 
-      {/* Grid Content Utama */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Aktivitas Terbaru */}
         <div className="lg:col-span-2 min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold">
@@ -165,7 +163,6 @@ export default function SuperAdminOverview({
           </div>
         </div>
 
-        {/* Maintenance Alerts */}
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <h2 className="text-sm font-semibold mb-4">
             {t("superadmin.maintenanceAlerts")}

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "@/i18n/navigation"; // ← PAKE INI!
-import { Link } from "@/i18n/navigation"; // ← PAKE INI!
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { Shield } from "lucide-react";
 import { ENDPOINTS, AUTH_TOKEN_KEY, AUTH_USER_KEY } from "@/lib/constants";
 import BrandLogo from "@/components/common/brandLogo";
 
@@ -90,7 +90,7 @@ function FeedbackIcon({ type }) {
 }
 
 export default function LoginPage() {
-  const router = useRouter(); // ← OTOMATIS PAKE LOCALE!
+  const router = useRouter();
   const t = useTranslations("login");
 
   const [identifier, setIdentifier] = useState("");
@@ -163,7 +163,6 @@ export default function LoginPage() {
       storage.setItem(AUTH_TOKEN_KEY, token);
       storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
 
-      // Dashboard berada di halaman utama locale: /en atau /id.
       setFeedback({ type: "success", message: t("loginSuccess") });
       window.setTimeout(() => router.push("/"), 700);
     } catch (err) {
@@ -179,10 +178,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] flex flex-col items-center justify-center px-4">
-      <BrandLogo className="mb-12 text-2xl font-semibold" />
+    <main className="h-dvh overflow-hidden bg-[var(--color-background)] text-[var(--color-text)] flex flex-col items-center justify-center px-4">
+      <BrandLogo className="mb-6 text-3xl font-semibold sm:mb-12" />
 
-      <div className="w-full max-w-[405px] rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-7 shadow-2xl">
+      <div className="w-full max-w-[405px] rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-2xl sm:p-7">
         <div className="mb-8">
           <h1 className="text-xl font-semibold">{t("title")}</h1>
 
@@ -192,7 +191,6 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleLogin}>
-          {/* Username or Email */}
           <div className="mb-7">
             <label
               htmlFor="identifier"
@@ -200,7 +198,6 @@ export default function LoginPage() {
             >
               {t("identifierLabel")}
             </label>
-
             <div className="assetra-login-field flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-input)] px-3">
               <input
                 id="identifier"
@@ -215,7 +212,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Password */}
           <div className="mb-4">
             <label
               htmlFor="password"
@@ -249,7 +245,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Remember Me */}
           <div className="mb-7 flex items-center justify-between text-xs">
             <label className="flex cursor-pointer items-center gap-2 text-[var(--color-text-secondary)]">
               <input
@@ -277,8 +272,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 border-t border-[var(--color-border)] pt-5 text-center text-xs text-[var(--color-text-muted)]">
-          {t("accessRestricted")}
+        <div className="mt-6 flex items-center justify-center gap-1.5 border-t border-[var(--color-border)] pt-5 text-center text-xs text-[var(--color-text-secondary)]">
+          <Shield size={15} strokeWidth={2} aria-hidden="true" />
+          <span>{t("accessRestricted")}</span>
         </div>
       </div>
 

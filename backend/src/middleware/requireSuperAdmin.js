@@ -7,6 +7,5 @@ function requireSuperAdmin(req, res, next) {
   }
   next();
 }
- 
+
 module.exports = { requireSuperAdmin };
- 

@@ -38,7 +38,6 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
         className="w-full max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-2xl transition-all"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Modal */}
         <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)] mb-5">
           <h2 className="text-base font-semibold text-[var(--color-text)]">
             {t("adminProfile")}
@@ -52,7 +51,6 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
           </button>
         </div>
 
-        {/* Profile Info */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="h-20 w-20 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-2xl font-bold text-[var(--color-text)] mb-3 overflow-hidden shadow-inner">
             {admin.image_url ? (  
@@ -75,9 +73,7 @@ export default function AdminProfileModal({ admin, onClose, onToggleActive }) {
           </p>
         </div>
 
-        {/* Info Cards */}
         <div className="space-y-3">
-          {/* Tanggal Bergabung */}
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/40 p-3.5">
             <div className="text-[10px] uppercase font-semibold tracking-wider text-[var(--color-text-muted)] mb-1">
               {t("joined")}

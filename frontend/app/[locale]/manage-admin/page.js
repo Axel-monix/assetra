@@ -221,7 +221,6 @@ export default function ManageAdminPage() {
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
       <div className="flex flex-col gap-6 w-full">
-        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">
@@ -248,9 +247,7 @@ export default function ManageAdminPage() {
           </div>
         )}
 
-        {/* Stats Cards Section */}
         <div className="grid w-full max-w-[660px] grid-cols-1 gap-5 sm:grid-cols-2">
-          {/* Card 1: Total Admins */}
           <div className="flex min-h-[122px] flex-col justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm">
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {t("totalAdmins")}
@@ -265,7 +262,6 @@ export default function ManageAdminPage() {
             </div>
           </div>
 
-          {/* Card 2: Active Now */}
           <div className="flex min-h-[122px] flex-col justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-sm">
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {t("activeNow")}
@@ -281,7 +277,6 @@ export default function ManageAdminPage() {
           </div>
         </div>
 
-        {/* Table Section */}
         <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden shadow-sm flex flex-col w-full">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left text-sm border-collapse min-w-[600px]">
@@ -319,7 +314,6 @@ export default function ManageAdminPage() {
                       onClick={() => setSelectedAdmin(admin)}
                       className="group cursor-pointer hover:bg-[var(--color-surface)]/50 transition-colors"
                     >
-                      {/* Administrator Column */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3.5">
                           <div className="h-10 w-10 rounded-full border border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-sm font-semibold text-[var(--color-text)] shrink-0 group-hover:border-[var(--color-primary,#4f46e5)] transition-colors overflow-hidden">
@@ -349,17 +343,14 @@ export default function ManageAdminPage() {
                         </div>
                       </td>
 
-                      {/* Joined Date Column */}
                       <td className="py-4 px-6 text-sm text-[var(--color-text-secondary)] font-normal whitespace-nowrap">
                         {formatDate(admin.created_at)}
                       </td>
 
-                      {/* Last Activity Column */}
                       <td className="py-4 px-6 text-sm text-[var(--color-text-secondary)] font-normal whitespace-nowrap">
                         {formatLastActivity(admin)}
                       </td>
 
-                      {/* Status Column */}
                       <td
                         className="py-4 px-6 whitespace-nowrap"
                         onClick={(e) => e.stopPropagation()}

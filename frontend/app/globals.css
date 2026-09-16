@@ -93,8 +93,8 @@ body {
 }
 
 .assetra-brand-logo img {
-  width: 1em;
-  height: 1em;
+  width: 1.45em;
+  height: 1.45em;
   flex: 0 0 auto;
   object-fit: contain;
 }
@@ -3993,8 +3993,8 @@ textarea:focus-visible {
   color: var(--assetra-primary);
 }
 .guest-logo-img {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -4018,7 +4018,7 @@ textarea:focus-visible {
 }
 
 .guest-logo-text {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--assetra-text);
   letter-spacing: -0.02em;

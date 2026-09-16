@@ -135,7 +135,6 @@ export default function FilterForm({
           </div>
 
           <div className="assetra-filter-body">
-            {/* CATEGORY */}
 
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">
@@ -193,7 +192,6 @@ export default function FilterForm({
               </div>
             </section>
 
-            {/* STATUS */}
 
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">
@@ -244,7 +242,6 @@ export default function FilterForm({
               </div>
             </section>
 
-            {/* DATE */}
 
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">

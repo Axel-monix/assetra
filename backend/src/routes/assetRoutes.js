@@ -25,5 +25,4 @@ router.post("/", createAsset);
 router.patch("/deactivate", deactivateAssets);
 router.patch("/:id", updateAsset);
 
-
 module.exports = router;

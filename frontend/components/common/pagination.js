@@ -2,18 +2,6 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * Generic numbered pagination — style-nya full dari globals.css
- * (.assetra-pagination-*), bukan hardcoded Tailwind color classes.
- * Sengaja ditaruh di components/common, bukan components/history,
- * karena dipakai lintas halaman (History, Manage Admin, dst).
- *
- * Props:
- * - page: halaman aktif (1-based)
- * - totalPages: total halaman
- * - onPageChange: (nextPage: number) => void
- * - showingLabel: string hasil t("showing", {...}) dari caller
- */
 export default function Pagination({
   page,
   totalPages,

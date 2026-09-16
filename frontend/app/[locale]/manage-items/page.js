@@ -58,7 +58,6 @@ export default function ManageItemsPage() {
   const router = useRouter();
   const t = useTranslations("manageItem");
 
-  // ================= STATE =================
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -74,8 +73,6 @@ export default function ManageItemsPage() {
   const [deactivateTarget, setDeactivateTarget] = useState(null);
 
   const clickTimerRef = useRef(null);
-
-  // ================= FETCH DATA =================
 
   const fetchItems = useCallback(async () => {
     const token = getToken();
@@ -93,7 +90,6 @@ export default function ManageItemsPage() {
       const categoryList = categoriesResult.data || [];
       setCategories(categoryList);
 
-      // Map id kategori -> nama kategori, dipakai buat "isi" nama kategori di setiap item
       const categoryNameById = new Map(
         categoryList.map((category) => [
           String(category.id),
@@ -177,8 +173,6 @@ export default function ManageItemsPage() {
     setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
   }
 
-  // Bedakan single click vs double click pakai delay kecil,
-  // karena browser mengirim 2 event click berturut-turut saat user double click.
   function handleCardClick(id, event) {
     if (event.detail >= 2) {
       if (clickTimerRef.current) {
@@ -209,8 +203,6 @@ export default function ManageItemsPage() {
     setFilters(nextFilters);
     clearSelection();
   }
-
-  // ================= AKSI ITEM (add / edit / deactivate / print) =================
 
   function handlePrintQr() {
     if (selectedIds.length === 0) return;
@@ -272,8 +264,6 @@ export default function ManageItemsPage() {
     }
   }
 
-  // ================= FILTER & DATA TURUNAN =================
-
   const selectedItem = items.find((item) => item.id === selectedItemId) || null;
 
   function matchesFilters(item) {
@@ -314,7 +304,6 @@ export default function ManageItemsPage() {
 
     const createdAt = item.created_at;
     if (!createdAt) {
-      // item tanpa tanggal, tapi user sedang filter berdasarkan tanggal -> tidak cocok
       return !(filters.dateFrom || filters.dateTo);
     }
 
@@ -348,8 +337,6 @@ export default function ManageItemsPage() {
       filters.statuses.includes("functional") &&
       filters.statuses.includes("needs_repair")
     );
-
-  // ================= RENDER =================
 
   if (!isInitialized || loading) {
     return (

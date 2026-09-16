@@ -216,7 +216,6 @@ export default function ProfilePage() {
       </button>
 
       <div>
-        {/* Profile header */}
         <div className="assetra-profile-header">
           <div className="assetra-profile-avatar-wrap">
             <div className="assetra-profile-avatar">
@@ -267,9 +266,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Identity + Security */}
         <div className="assetra-profile-grid">
-          {/* Identity */}
           <div className="assetra-card">
             <div className="assetra-profile-card-header">
               <Briefcase size={16} strokeWidth={1.75} />
@@ -344,7 +341,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Security */}
           <div className="assetra-card">
             <div className="assetra-profile-card-header">
               <Lock size={16} strokeWidth={1.75} />

@@ -142,8 +142,6 @@ export default function AddItemForm({ onClose, onSubmit }) {
   );
 
   useEffect(() => {
-    // Reset spec values setiap kali category berubah — field lama
-    // (field.id) sudah tidak relevan untuk category baru.
     setSpecValues({});
   }, [selectedCategory?.id]);
 

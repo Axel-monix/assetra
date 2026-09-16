@@ -69,10 +69,6 @@ function getExportLocale(locale) {
   return String(locale).toLowerCase().startsWith("en") ? "en" : "id";
 }
 
-/* =========================================================
-   BUILD HISTORY FILTERS
-========================================================= */
-
 function buildHistoryFilters(reqQuery) {
   const { type, types, search, dateFrom, dateTo } = reqQuery;
 
@@ -144,10 +140,6 @@ function buildHistoryFilters(reqQuery) {
   };
 }
 
-/* =========================================================
-   LIST HISTORY
-========================================================= */
-
 async function listHistory(req, res) {
   try {
     const { type, types, search, dateFrom, dateTo } = req.query;
@@ -202,10 +194,6 @@ async function listHistory(req, res) {
   }
 }
 
-/* =========================================================
-   MAP EXPORT ROWS
-========================================================= */
-
 function mapRowsForExport(rows, locale = "id") {
   const lang = getExportLocale(locale);
   const dateLocale = lang === "en" ? "en-US" : "id-ID";
@@ -251,10 +239,6 @@ function mapRowsForExport(rows, locale = "id") {
     description: row.description || "",
   }));
 }
-
-/* =========================================================
-   EXPORT SUMMARY
-========================================================= */
 
 async function getExportSummary() {
   const [addedResult, needsRepairResult, unavailableResult, repairedResult] =
@@ -303,10 +287,6 @@ async function getExportSummary() {
     repairedThisMonth: repairedResult.rows[0].count,
   };
 }
-
-/* =========================================================
-   BUILD PDF
-========================================================= */
 
 function buildPdfBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
@@ -464,10 +444,6 @@ function buildPdfBuffer(rows, summary, locale = "id") {
   });
 }
 
-/* =========================================================
-   BUILD EXCEL
-========================================================= */
-
 async function buildExcelBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
   const labels = EXPORT_LABELS[lang];
@@ -548,10 +524,6 @@ async function buildExcelBuffer(rows, summary, locale = "id") {
 
   return workbook.xlsx.writeBuffer();
 }
-
-/* =========================================================
-   EXPORT HISTORY
-========================================================= */
 
 async function exportHistory(req, res) {
   try {
@@ -649,10 +621,6 @@ async function exportHistory(req, res) {
     });
   }
 }
-
-/* =========================================================
-   MODULE EXPORTS
-========================================================= */
 
 module.exports = {
   listHistory,

@@ -145,7 +145,6 @@ export default function HistoryPage() {
     console.log("Export berhasil");
   }, []);
 
-  // ===== PAGINATION (client-side) =====
   const totalEntries = entries.length;
   const totalPages = Math.max(1, Math.ceil(totalEntries / PAGE_SIZE));
   const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

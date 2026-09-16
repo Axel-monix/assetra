@@ -41,7 +41,6 @@ export default function ImagePreviewModal({
       aria-label="Image preview"
       onClick={onClose}
     >
-      {/* Preview image */}
       <div
         className="
           relative
@@ -66,7 +65,6 @@ export default function ImagePreviewModal({
           "
         />
 
-        {/* Close button */}
         <button
           type="button"
           onClick={onClose}

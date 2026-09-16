@@ -1,4 +1,3 @@
-// src/controllers/forgotPasswordController.js
 const bcrypt = require("bcrypt");
 const { logHistory } = require("../utils/historyLogger");
 const pool = require("../config/db");
@@ -35,12 +34,12 @@ async function forgotPassword(req, res) {
     }
 
     const code = generateVerificationCode();
-    await Resetcode.setCode(normalizedEmail, code); // <- tambah await
+    await Resetcode.setCode(normalizedEmail, code);
 
     const emailSent = await sendResetPasswordEmail(normalizedEmail, code);
 
     if (!emailSent) {
-      await Resetcode.deleteEntry(normalizedEmail); // <- tambah await
+      await Resetcode.deleteEntry(normalizedEmail);
       return res.status(500).json({
         success: false,
         message: "Failed to send verification email. Please try again.",
@@ -73,7 +72,7 @@ async function verifyResetCode(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = await Resetcode.getEntry(normalizedEmail); // <- tambah await
+    const entry = await Resetcode.getEntry(normalizedEmail);
 
     if (!entry) {
       return res.status(404).json({
@@ -131,7 +130,7 @@ async function resetPassword(req, res) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const entry = await Resetcode.getEntry(normalizedEmail); // <- tambah await
+    const entry = await Resetcode.getEntry(normalizedEmail);
     if (!entry || Resetcode.isExpired(entry)) {
       return res.status(400).json({
         success: false,

@@ -60,7 +60,6 @@ export default function ItemDetailPanel({
           </button>
         </div>
 
-        {/* ITEM IMAGE */}
         <div className="aspect-video rounded-lg bg-gradient-to-br from-[var(--color-media-start)] to-[var(--color-input)] flex items-center justify-center mb-4 overflow-hidden">
           {item.imageUrl ? (
             <img
@@ -251,7 +250,6 @@ export default function ItemDetailPanel({
         </div>
       </aside>
 
-      {/* IMAGE PREVIEW */}
       {showImagePreview && item.imageUrl && (
         <ImagePreviewModal
           src={item.imageUrl}

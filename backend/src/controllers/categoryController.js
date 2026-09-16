@@ -2,25 +2,6 @@ const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
 const { logHistory } = require("../utils/historyLogger");
 
-/**
- * =========================================================
- * SKEMA DB (lihat migration_category_specification.sql):
- *
- * CREATE TABLE category_specification (
- *   id          SERIAL PRIMARY KEY,
- *   id_category INTEGER NOT NULL REFERENCES category(id) ON DELETE CASCADE,
- *   name        VARCHAR(100) NOT NULL,
- *   type        VARCHAR(20) NOT NULL DEFAULT 'text', -- text | number | date | boolean
- *   required    BOOLEAN NOT NULL DEFAULT false,
- *   repairable  BOOLEAN NOT NULL DEFAULT false,
- *   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- *   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
- * );
- *
- * asset_specification.id_specification -> FK ke category_specification.id
- * =========================================================
- */
-
 const SPEC_TYPES = ["text", "number", "date", "boolean"];
 
 function validateSpecifications(specifications) {

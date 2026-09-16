@@ -95,7 +95,6 @@ export default function PublicItemCard({
 
   return (
     <div className="guest-container">
-      {/* Damage Alert Modal */}
       {showDamageModal && (
         <>
           <div
@@ -129,7 +128,6 @@ export default function PublicItemCard({
           </div>
         </>
       )}
-      {/* Navigation */}
       <div className="guest-nav">
         <div className="guest-nav-left">
           <img
@@ -265,7 +263,6 @@ export default function PublicItemCard({
             </div>
           )}
 
-          {/* Recent Maintenance Section */}
           {maintenance && maintenance.length > 0 && (
             <div className="guest-section">
               <div className="guest-section-header">
@@ -310,7 +307,6 @@ export default function PublicItemCard({
             </div>
           )}
 
-          {/* Action Buttons */}
           {showActions && (
             <div className="guest-actions">
               {permissions.canEdit && (

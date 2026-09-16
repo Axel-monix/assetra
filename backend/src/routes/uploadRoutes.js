@@ -36,7 +36,8 @@ router.post(
     upload.single("image")(req, res, (err) => {
       if (err) {
         return error(res, {
-          messageKey: err.code === "LIMIT_FILE_SIZE" ? "fileTooLarge" : "invalidFileType",
+          messageKey:
+            err.code === "LIMIT_FILE_SIZE" ? "fileTooLarge" : "invalidFileType",
           message: err.message || "Gagal upload gambar",
           statusCode: err.code === "LIMIT_FILE_SIZE" ? 413 : 400,
         });

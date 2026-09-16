@@ -1,15 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const {
-  login,
-  getMe,
-} = require("../controllers/authController");
-const {
-  authenticateToken,
-} = require("../middleware/authMiddleware");
-const {
-  authorizeRoles,
-} = require("../middleware/roleMiddleware");
+const { login, getMe } = require("../controllers/authController");
+const { authenticateToken } = require("../middleware/authMiddleware");
+const { authorizeRoles } = require("../middleware/roleMiddleware");
 const {
   forgotPassword,
   verifyResetCode,
@@ -19,11 +12,7 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/forgot-password/verify", verifyResetCode);
 router.post("/forgot-password/reset", resetPassword);
-router.get(
-  "/me",
-  authenticateToken,
-  getMe
-);
+router.get("/me", authenticateToken, getMe);
 router.get(
   "/superadmin",
   authenticateToken,
@@ -36,7 +25,7 @@ router.get(
         user: req.user,
       },
     });
-  }
+  },
 );
 
 module.exports = router;

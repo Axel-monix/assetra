@@ -5,8 +5,6 @@ const { hashPassword, comparePassword } = require("../utils/password");
 const login = async (req, res) => {
   try {
     const { identifier = req.body.email, password } = req.body;
-    // VALIDASI INPUT
-
     if (!identifier || !password) {
       return res.status(400).json({
         success: false,
@@ -14,8 +12,6 @@ const login = async (req, res) => {
         data: null,
       });
     }
-    // CARI USER
-
     const result = await pool.query(
       `
       SELECT
@@ -33,8 +29,6 @@ const login = async (req, res) => {
       `,
       [identifier.trim()],
     );
-    // USER TIDAK DITEMUKAN
-
     if (result.rows.length === 0) {
       return res.status(401).json({
         success: false,
@@ -44,8 +38,6 @@ const login = async (req, res) => {
     }
 
     const user = result.rows[0];
-
-    // CEK STATUS USER
 
     if (user.status !== "active") {
       const deactivationResult = await pool.query(
@@ -67,8 +59,6 @@ const login = async (req, res) => {
         },
       });
     }
-
-    // CEK PASSWORD
 
     let isPasswordValid = false;
 
@@ -98,22 +88,13 @@ const login = async (req, res) => {
       `UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1`,
       [user.id],
     );
-
-    // BUAT JWT PAYLOAD
-
     const payload = {
       id: user.id,
       role: user.role,
     };
-
-    // BUAT TOKEN
-
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-
-    // RESPONSE LOGIN
-
     return res.status(200).json({
       success: true,
       message: "Login successful",
@@ -132,7 +113,6 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -140,7 +120,6 @@ const login = async (req, res) => {
     });
   }
 };
-
 // GET CURRENT USER
 const getMe = async (req, res) => {
   try {

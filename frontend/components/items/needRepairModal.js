@@ -90,7 +90,6 @@ export default function NeedRepairModal({
             </button>
           </div>
 
-          {/* A. Informasi barang (read-only) */}
           <div className="mt-4 mb-5 ml-[46px]">
             <p className="text-sm font-semibold text-[var(--color-text)]">
               {item?.name}
@@ -101,7 +100,6 @@ export default function NeedRepairModal({
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* B. Bagian yang bermasalah */}
             {repairableSpecs.length > 0 && (
               <div>
                 <label className="assetra-form-label">{t("whatsWrong")}</label>
@@ -128,7 +126,6 @@ export default function NeedRepairModal({
               </div>
             )}
 
-            {/* C. Detail masalah */}
             <div>
               <label className="assetra-form-label">
                 {t("repairDetails")}{" "}
