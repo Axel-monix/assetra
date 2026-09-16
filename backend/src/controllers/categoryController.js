@@ -41,9 +41,6 @@ function validateSpecifications(specifications) {
   return null;
 }
 
-/**
- * GET /api/categories
- */
 async function listCategories(req, res) {
   try {
     const { rows } = await pool.query(

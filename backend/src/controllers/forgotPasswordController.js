@@ -1,7 +1,11 @@
 // src/controllers/forgotPasswordController.js
 const bcrypt = require("bcrypt");
+const { logHistory } = require("../utils/historyLogger");
 const pool = require("../config/db");
-const { generateVerificationCode, sendResetPasswordEmail } = require("../utils/mailer");
+const {
+  generateVerificationCode,
+  sendResetPasswordEmail,
+} = require("../utils/mailer");
 const Resetcode = require("../utils/Resetcode");
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
@@ -19,10 +23,9 @@ async function forgotPassword(req, res) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    const { rows } = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [normalizedEmail]
-    );
+    const { rows } = await pool.query("SELECT id FROM users WHERE email = $1", [
+      normalizedEmail,
+    ]);
 
     if (rows.length === 0) {
       return res.status(404).json({
@@ -46,7 +49,8 @@ async function forgotPassword(req, res) {
 
     return res.json({
       success: true,
-      message: "Code for reset password has been sent to your email. Valid for 5 minutes.",
+      message:
+        "Code for reset password has been sent to your email. Valid for 5 minutes.",
     });
   } catch (error) {
     console.error("Error in forgotPassword:", error);
@@ -93,7 +97,7 @@ async function verifyResetCode(req, res) {
       });
     }
 
-    await Resetcode.markVerified(normalizedEmail); 
+    await Resetcode.markVerified(normalizedEmail);
 
     return res.json({
       success: true,
@@ -144,15 +148,25 @@ async function resetPassword(req, res) {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    const { rowCount } = await pool.query(
-      "UPDATE users SET password = $1 WHERE email = $2",
-      [hashedPassword, normalizedEmail]
+    const { rows } = await pool.query(
+      "UPDATE users SET password = $1, updated_at = NOW() WHERE email = $2 RETURNING id, name, role",
+      [hashedPassword, normalizedEmail],
     );
 
-    if (rowCount === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "User not found.",
+      });
+    }
+
+    if (rows[0].role === "admin") {
+      await logHistory(pool, {
+        type: "update_admin_profile",
+        idUser: rows[0].id,
+        performedBy: rows[0].id,
+        subjectName: rows[0].name,
+        description: JSON.stringify({ changedFields: ["password"] }),
       });
     }
 

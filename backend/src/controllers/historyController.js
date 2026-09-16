@@ -7,9 +7,11 @@ const PAGE_SIZE = 10;
 
 const TYPE_GROUPS = {
   added: ["add_admin", "add_item"],
-  updated: ["edit_item"],
+  updated: ["edit_item", "update_admin_profile"],
   deactivated: ["deactivate_admin", "deactivate_item", "deactivate_category"],
 };
+
+const ADMIN_PROFILE_HISTORY_TYPE = "update_admin_profile";
 
 const NEEDS_REPAIR_STATUS = "needs_repair";
 const UNAVAILABLE_STATUS = "unavailable";
@@ -22,6 +24,7 @@ const TYPE_LABELS = {
   deactivate_admin: "Penonaktifan Admin",
   deactivate_item: "Penonaktifan Barang",
   deactivate_category: "Penonaktifan Kategori",
+  update_admin_profile: "Perubahan Profil Admin",
 };
 
 const ASSET_STATUS_LABELS = {
@@ -157,6 +160,10 @@ async function listHistory(req, res) {
       dateTo,
     });
 
+    if (req.user.role !== "super_admin") {
+      conditions.push(`history.type <> '${ADMIN_PROFILE_HISTORY_TYPE}'`);
+    }
+
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
@@ -215,6 +222,7 @@ function mapRowsForExport(rows, locale = "id") {
             deactivate_admin: "Admin Deactivated",
             deactivate_item: "Item Deactivated",
             deactivate_category: "Category Deactivated",
+            update_admin_profile: "Admin Profile Updated",
           }[row.type] || row.type
         : TYPE_LABELS[row.type] || row.type,
 
@@ -560,6 +568,10 @@ async function exportHistory(req, res) {
       dateFrom,
       dateTo,
     });
+
+    if (req.user.role !== "super_admin") {
+      conditions.push(`history.type <> '${ADMIN_PROFILE_HISTORY_TYPE}'`);
+    }
 
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";

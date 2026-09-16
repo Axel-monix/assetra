@@ -1,10 +1,11 @@
 const pool = require("../config/db");
+const { logHistory } = require("../utils/historyLogger");
 const {
   generateVerificationCode,
   sendEmailChangeVerification,
 } = require("../utils/mailer");
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\  s@]+$/;
 const OTP_EXPIRY_MINUTES = 5;
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -21,8 +22,6 @@ const getUsers = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to fetch users" });
   }
 };
-
-// PATCH /api/users/me — ganti nama sendiri, tanpa approval
 const updateOwnName = async (req, res) => {
   const { name, image_url } = req.body;
   const userId = req.user.id;
@@ -43,14 +42,27 @@ const updateOwnName = async (req, res) => {
        RETURNING id, name, email, role, status, image_url`,
       [name?.trim() || null, image_url || null, userId],
     );
+
+    if (
+      req.user.role === "admin" &&
+      name?.trim() &&
+      name.trim() !== req.user.name
+    ) {
+      await logHistory(pool, {
+        type: "update_admin_profile",
+        idUser: userId,
+        performedBy: userId,
+        subjectName: result.rows[0].name,
+        description: JSON.stringify({ changedFields: ["name"] }),
+      });
+    }
+
     res.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Gagal memperbarui nama" });
   }
 };
-
-// POST /api/users/me/email-change/request
 const requestEmailChange = async (req, res) => {
   const { newEmail } = req.body;
   const userId = req.user.id;
@@ -160,6 +172,16 @@ const verifyEmailChange = async (req, res) => {
     await pool.query(`DELETE FROM email_change_requests WHERE id_user = $1`, [
       userId,
     ]);
+
+    if (req.user.role === "admin" && request.new_email !== req.user.email) {
+      await logHistory(pool, {
+        type: "update_admin_profile",
+        idUser: userId,
+        performedBy: userId,
+        subjectName: updated.rows[0].name,
+        description: JSON.stringify({ changedFields: ["email"] }),
+      });
+    }
 
     res.json({ success: true, data: updated.rows[0] });
   } catch (error) {
