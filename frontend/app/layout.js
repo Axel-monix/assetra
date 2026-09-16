@@ -6,9 +6,11 @@ export const metadata = {
   description: "Asset Management System",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children, params }) {
+  const { locale = "en" } = await params;
+
   return (
-    <html suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${fontMain.variable} ${fontCode.variable} ${fontDesc.variable} ${fontMain.className}`}
         suppressHydrationWarning
