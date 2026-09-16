@@ -121,6 +121,8 @@
     "emailPlaceholder": "nama@perusahaan.com",
     "temporaryPassword": "Password Sementara",
     "passwordPlaceholder": "Minimal 8 karakter",
+    "showPassword": "Tampilkan password",
+    "hidePassword": "Sembunyikan password",
     "internalError": "Terjadi kesalahan pada server.",
     "requiredFields": "Nama, email, dan password wajib diisi.",
     "invalidEmail": "Format email tidak valid.",
@@ -340,6 +342,12 @@
     "statusChange": "Status diubah dari {from} menjadi {to}.",
     "damageChange": "Bagian yang rusak: {parts}.",
     "repairChange": "Detail kerusakan: {details}.",
+    "profileFieldsChanged": "Perubahan profil: {fields}.",
+    "profileFields": {
+      "name": "nama",
+      "email": "email",
+      "password": "kata sandi"
+    },
     "activities": {
       "addAdmin": "Admin {name} ditambahkan oleh {performedBy}.",
       "addItem": "Item {name} ditambahkan oleh {performedBy}.",
@@ -347,6 +355,7 @@
       "deactivateAdmin": "Admin {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "deactivateItem": "Item {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "deactivateCategory": "Kategori {name} dinonaktifkan oleh {performedBy}.",
+      "updateAdminProfile": "Profil admin {name} diperbarui oleh {performedBy}. {changes}",
       "unknown": "Aktivitas dilakukan oleh {performedBy}."
     },
     "tabs": {
@@ -362,6 +371,7 @@
       "deactivateAdmin": "Nonaktif Admin",
       "deactivateItem": "Nonaktif Item",
       "deactivateCategory": "Nonaktif Kategori",
+      "updateAdminProfile": "Update Profil Admin",
       "unknown": "Aktivitas"
     }
   },

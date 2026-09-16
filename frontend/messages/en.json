@@ -121,6 +121,8 @@
     "emailPlaceholder": "name@company.com",
     "temporaryPassword": "Temporary Password",
     "passwordPlaceholder": "Minimum 8 characters",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "internalError": "An internal server error occurred.",
     "requiredFields": "Name, email, and password are required.",
     "invalidEmail": "Invalid email format.",
@@ -485,6 +487,12 @@
     "statusChange": "Status changed from {from} to {to}.",
     "damageChange": "Damaged parts: {parts}.",
     "repairChange": "Damage details: {details}.",
+    "profileFieldsChanged": "Profile changes: {fields}.",
+    "profileFields": {
+      "name": "name",
+      "email": "email",
+      "password": "password"
+    },
     "activities": {
       "addAdmin": "Admin {name} was added by {performedBy}.",
       "addItem": "Item {name} was added by {performedBy}.",
@@ -492,6 +500,7 @@
       "deactivateAdmin": "Admin {name} was deactivated by {performedBy}. Reason: {reason}.",
       "deactivateItem": "Item {name} was deactivated by {performedBy}. Reason: {reason}.",
       "deactivateCategory": "Category {name} was deactivated by {performedBy}.",
+      "updateAdminProfile": "Admin profile for {name} was updated by {performedBy}. {changes}",
       "unknown": "Activity was performed by {performedBy}."
     },
     "tabs": {
@@ -508,6 +517,7 @@
       "deactivateAdmin": "Deactivate Admin",
       "deactivateItem": "Deactivate Item",
       "deactivateCategory": "Deactivate Category",
+      "updateAdminProfile": "Admin Profile Updated",
       "unknown": "Activity"
     }
   },

@@ -31,6 +31,17 @@ function parseEditChanges(description) {
   }
 }
 
+function parseProfileChanges(description) {
+  if (!description) return [];
+
+  try {
+    const parsed = JSON.parse(description);
+    return Array.isArray(parsed.changedFields) ? parsed.changedFields : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function HistoryItem({ entry, isLast }) {
   const t = useTranslations("history");
 
@@ -55,6 +66,11 @@ export default function HistoryItem({ entry, isLast }) {
 
   const editChanges =
     entry?.type === "edit_item" ? parseEditChanges(entry?.description) : null;
+
+  const profileChanges =
+    entry?.type === "update_admin_profile"
+      ? parseProfileChanges(entry?.description)
+      : [];
 
   const editDescription = editChanges
     ? [
@@ -88,6 +104,14 @@ export default function HistoryItem({ entry, isLast }) {
         .join(" ")
     : entry?.description || "";
 
+  const profileDescription = profileChanges.length
+    ? t("profileFieldsChanged", {
+        fields: profileChanges
+          .map((field) => t(`profileFields.${field}`, { defaultValue: field }))
+          .join(", "),
+      })
+    : "";
+
   const description = t(config?.descriptionKey || "activities.unknown", {
     name: entry?.subject_name || "-",
 
@@ -95,7 +119,10 @@ export default function HistoryItem({ entry, isLast }) {
 
     reason: reason || "-",
 
-    changes: editDescription,
+    changes:
+      entry?.type === "update_admin_profile"
+        ? profileDescription
+        : editDescription,
   });
 
   return (

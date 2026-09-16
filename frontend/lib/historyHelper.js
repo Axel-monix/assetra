@@ -63,6 +63,13 @@ export const HISTORY_TYPE_CONFIG = {
     descriptionKey: "activities.deactivateCategory",
     variant: "danger",
   },
+
+  update_admin_profile: {
+    icon: Pencil,
+    badgeKey: "badges.updateAdminProfile",
+    descriptionKey: "activities.updateAdminProfile",
+    variant: "muted",
+  },
 };
 
 export function getHistoryConfig(type) {
