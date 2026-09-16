@@ -51,7 +51,6 @@ export default function Header({
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-border)] overflow-hidden">
               {userImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={userImage}
                   alt={userName || t("user")}
