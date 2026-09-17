@@ -279,13 +279,13 @@ export default function ManageAdminPage() {
 
         <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden shadow-sm flex flex-col w-full">
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left text-sm border-collapse min-w-[600px]">
+            <table className="w-full text-left text-sm border-collapse table-fixed">
               <thead>
                 <tr className="border-b border-[var(--color-border)] text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] bg-transparent">
-                  <th className="py-4 px-6">{t("administrator")}</th>
-                  <th className="py-4 px-6">{t("joinedDate")}</th>
-                  <th className="py-4 px-6">{t("lastActivity")}</th>
-                  <th className="py-4 px-6">{t("status")}</th>
+                  <th className="py-4 px-6 w-[40%]">{t("administrator")}</th>
+                  <th className="py-4 px-6 w-[18%]">{t("joinedDate")}</th>
+                  <th className="py-4 px-6 w-[22%]">{t("lastActivity")}</th>
+                  <th className="py-4 px-6 w-[20%]">{t("status")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border)]/50">
@@ -315,7 +315,7 @@ export default function ManageAdminPage() {
                       className="group cursor-pointer hover:bg-[var(--color-surface)]/50 transition-colors"
                     >
                       <td className="py-4 px-6">
-                        <div className="flex items-center gap-3.5">
+                        <div className="flex items-center gap-3.5 min-w-0">
                           <div className="h-10 w-10 rounded-full border border-[var(--color-border)] bg-[var(--color-input)] flex items-center justify-center text-sm font-semibold text-[var(--color-text)] shrink-0 group-hover:border-[var(--color-primary,#4f46e5)] transition-colors overflow-hidden">
                             {admin.image_url ? (
                               <img
@@ -355,7 +355,7 @@ export default function ManageAdminPage() {
                         className="py-4 px-6 whitespace-nowrap"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 ">
                           <ToggleSwitch
                             checked={admin.status === "active"}
                             onChange={(next) =>
