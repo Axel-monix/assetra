@@ -10,7 +10,8 @@ export const FONTS = {
 
 export const COLORS = colors;
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const ENDPOINTS = {

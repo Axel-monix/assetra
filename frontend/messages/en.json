@@ -163,6 +163,8 @@
     "subtitle": "Add or manage items.",
     "addItem": "Add Item",
     "addNewItem": "Add New Item",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
     "loading": "Loading...",
     "filter": "Filters:",
     "clearAll": "Clear All",
@@ -390,7 +392,9 @@
     "selectedItems": "{count} Selected Item{plural}",
     "printQr": "Print QR",
     "deactivate": "Deactivate",
-    "deactivateConfirm": "Deactivate"
+    "deactivateConfirm": "Deactivate",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All"
   },
   "itemDetail": {
     "title": "Item Details",
@@ -401,6 +405,9 @@
     "specifications": "Full Specifications",
     "repairMarked": "Damage reported",
     "treatmentHistory": "Treatment History",
+    "historyChanges": "Item Change History",
+    "noHistoryChanges": "No change history found for this item.",
+    "loadingHistory": "Loading change history...",
     "edit": "Edit",
     "deactivate": "Deactivate",
     "markUnavailable": "Mark Unavailable",

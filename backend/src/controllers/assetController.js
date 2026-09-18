@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 const { randomInt } = require("node:crypto");
 const { success, error } = require("../../constants/response");
-const { generateQrPng } = require("../utils/qrGenerator");
+const { generateQrSvg, generateQrPng } = require("../utils/qrGenerator");
 const { logHistory } = require("../utils/historyLogger");
 
 function generateCodePrefix(name) {
@@ -21,7 +21,8 @@ function assetIdentifierClause(parameterIndex = 1) {
   return `(code = $${parameterIndex} OR id::text = $${parameterIndex})`;
 }
 function buildQrCodeUrl(code) {
-  const apiUrl = process.env.API_URL;
+  const rawApiUrl = process.env.API_URL || "http://localhost:5000";
+  const apiUrl = rawApiUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 
   return `${apiUrl}/api/assets/${encodeURIComponent(code)}/qr`;
 }
@@ -741,16 +742,28 @@ async function getAssetQrCode(req, res) {
     }
 
     const assetCode = rows[0].code;
+    const format = (req.query.format || "").toLowerCase();
 
-    const pngBuffer = await generateQrPng(assetCode);
+    if (format === "png") {
+      const pngBuffer = await generateQrPng(assetCode);
+
+      res.set({
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=3600",
+        "Content-Length": pngBuffer.length,
+      });
+
+      return res.send(pngBuffer);
+    }
+
+    const svgString = await generateQrSvg(assetCode);
 
     res.set({
-      "Content-Type": "image/png",
+      "Content-Type": "image/svg+xml",
       "Cache-Control": "public, max-age=3600",
-      "Content-Length": pngBuffer.length,
     });
 
-    return res.send(pngBuffer);
+    return res.send(svgString);
   } catch (err) {
     console.error("Error in getAssetQrCode:", err);
 
