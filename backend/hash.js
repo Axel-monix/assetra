@@ -1,18 +1,17 @@
-// const { hashPassword } = require("./src/utils/password"); 
-// const PASSWORD_TO_HASH = "Monix123";
+const { hashPassword } = require("./src/utils/password"); 
+const PASSWORD_TO_HASH = "Dessray123";
  
-// (async () => {
-//     const hashed = await hashPassword(PASSWORD_TO_HASH);
-//     console.log("Password asli :", PASSWORD_TO_HASH);
-//     console.log("Hasil hash    :", hashed);
-//     console.log("\nTinggal copy nilai 'Hasil hash' di atas ke kolom password_hash superadmin di DB.");
-// })();
+(async () => {
+    const hashed = await hashPassword(PASSWORD_TO_HASH);
+    console.log("Password asli :", PASSWORD_TO_HASH);
+    console.log("Hasil hash    :", hashed);
+})();
 
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 
-const plainPassword = "Monix123";
-const hashDariDB = "$2b$10$Zpih6MKLEr1xb1htSy4pYu2VXs7jt1rUE9Uz4UJZ3xruKVAUvbxAm"; 
+// const plainPassword = "Akbar123";
+// const hashDariDB = "$2b$10$B01IAuqpRWceq/k/jcXALui6/likNvFdqhPGZ4KPkDm5135Jlc4GG"; 
 
-bcrypt.compare(plainPassword, hashDariDB).then(result => {
-  console.log("Match?", result);
-});
+// bcrypt.compare(plainPassword, hashDariDB).then(result => {
+//   console.log("Match?", result);
+// });

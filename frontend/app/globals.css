@@ -351,6 +351,35 @@ input:-webkit-autofill:focus {
     transform: scale3d(1.1, 1.1, 1);
   }
 }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--assetra-border-hover) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--assetra-border-hover);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--assetra-primary);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
 /* ==
    ADMIN PROFILE PAGE (self-profile)
    == */
@@ -952,7 +981,9 @@ input:-webkit-autofill:focus {
 
 .assetra-items-content {
   min-width: 0;
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ==
@@ -1664,23 +1695,6 @@ input:-webkit-autofill:focus {
 .assetra-filter-clear-button:hover {
   color: var(--assetra-text);
 }
-
-.assetra-filter-apply-button {
-  min-height: 34px;
-  border-radius: 0.45rem;
-  background: var(--assetra-primary);
-  color: var(--assetra-primary-contrast);
-  padding: 0.4rem 0.75rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 150ms ease;
-}
-
-.assetra-filter-apply-button:hover {
-  background: var(--assetra-primary-hover);
-}
-
 @keyframes assetra-filter-enter {
   from {
     opacity: 0;
@@ -4687,4 +4701,60 @@ textarea:focus-visible {
 .guest-maintenance-content {
   overflow: hidden;
   max-width: 100%;
+}
+
+.assetra-marquee {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 0;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Fade kiri + kanan selalu aktif */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 18px,
+    black calc(100% - 18px),
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 18px,
+    black calc(100% - 18px),
+    transparent 100%
+  );
+
+  touch-action: pan-y;
+}
+
+.assetra-marquee.is-scrollable {
+  cursor: grab;
+}
+
+.assetra-marquee.is-scrollable:active {
+  cursor: grabbing;
+}
+
+.assetra-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  white-space: nowrap;
+}
+
+.assetra-marquee-item {
+  display: inline-block;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.assetra-marquee-gap {
+  display: inline-block;
+  width: 40px;
+  flex-shrink: 0;
 }

@@ -3,20 +3,13 @@
 import { useState } from "react";
 import { X, Pencil, PackageX, Wrench } from "lucide-react";
 import { FONTS } from "@/lib/constants";
-import {
-  getAssetStatusLabelKey,
-  getAssetStatusStyle,
-} from "@/lib/assetStatus";
+import { getAssetStatusLabelKey, getAssetStatusStyle } from "@/lib/assetStatus";
 import { useTranslations } from "next-intl";
 import colors from "@/lib/colors";
 import ImagePreviewModal from "./imagePreviewModal";
+import MarqueeText from "@/components/common/marqueeText";
 
-export default function ItemDetailPanel({
-  item,
-  onClose,
-  onEdit,
-  onDelete,
-}) {
+export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
   const [showImagePreview, setShowImagePreview] = useState(false);
   const t = useTranslations("itemDetail");
   const [closing, setClosing] = useState(false);
@@ -77,10 +70,7 @@ export default function ItemDetailPanel({
               onClick={() => setShowImagePreview(true)}
             />
           ) : (
-            <span
-              aria-hidden="true"
-              className="text-4xl opacity-30"
-            >
+            <span aria-hidden="true" className="text-4xl opacity-30">
               📦
             </span>
           )}
@@ -113,9 +103,7 @@ export default function ItemDetailPanel({
 
             {item.repair.specifications?.length > 0 && (
               <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
-                {item.repair.specifications
-                  .map((spec) => spec.name)
-                  .join(", ")}
+                {item.repair.specifications.map((spec) => spec.name).join(", ")}
               </p>
             )}
 
@@ -133,9 +121,7 @@ export default function ItemDetailPanel({
               {t("category")}
             </div>
 
-            <div className="text-sm">
-              {item.category || "-"}
-            </div>
+            <div className="text-sm">{item.category || "-"}</div>
           </div>
 
           <div className="rounded-lg border border-[var(--color-border)] p-3">
@@ -143,9 +129,7 @@ export default function ItemDetailPanel({
               {t("location")}
             </div>
 
-            <div className="text-sm">
-              {item.location || "-"}
-            </div>
+            <div className="text-sm">{item.location || "-"}</div>
           </div>
         </div>
 
@@ -164,66 +148,61 @@ export default function ItemDetailPanel({
         )}
 
         {item.specs && item.specs.length > 0 && (
-          <div className="mb-5">
+          <div className="mb-2">
             <h4 className="text-xs font-semibold text-[var(--color-text-secondary)] mb-2">
               {t("specifications")}
             </h4>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 text-alignt-right">
               {item.specs.map((spec) => (
                 <div
                   key={spec.id_specification}
-                  className="flex items-center justify-between gap-3 text-sm"
+                  className="flex items-center gap-3 text-sm"
                 >
-                  <span
+                   <span
                     title={spec.name}
-                    className="text-[var(--color-text-muted)] shrink-0 max-w-[45%] truncate"
+                    className="min-w-0 max-w-[42%] shrink-0 truncate text-[var(--color-text-muted)]"
                   >
                     {spec.name}
                   </span>
 
-                  <span
-                    title={spec.value}
-                    className={`${FONTS.DESCRIPTION} min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-right`}
-                  >
-                    {spec.value}
-                  </span>
+                  <MarqueeText
+                    text={spec.value}
+                    className={`${FONTS.DESCRIPTION} min-w-0 flex-1 text-right text-sm`}
+                  />
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {item.treatmentHistory &&
-          item.treatmentHistory.length > 0 && (
-            <div className="mb-6">
-              <h4 className="text-xs font-semibold text-[var(--color-text-secondary)] mb-2">
-                {t("treatmentHistory")}
-              </h4>
+        {item.treatmentHistory && item.treatmentHistory.length > 0 && (
+          <div className="mb-6">
+            <h4 className="text-xs font-semibold text-[var(--color-text-secondary)] mb-2">
+              {t("treatmentHistory")}
+            </h4>
 
-              <div className="flex flex-col gap-3">
-                {item.treatmentHistory.map((entry, index) => (
-                  <div key={index} className="flex gap-3">
-                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] shrink-0" />
+            <div className="flex flex-col gap-3">
+              {item.treatmentHistory.map((entry, index) => (
+                <div key={index} className="flex gap-3">
+                  <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] shrink-0" />
 
-                    <div>
-                      <p className="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wide">
-                        {entry.date}
-                      </p>
+                  <div>
+                    <p className="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wide">
+                      {entry.date}
+                    </p>
 
-                      <p className="text-sm">
-                        {entry.title}
-                      </p>
+                    <p className="text-sm">{entry.title}</p>
 
-                      <p className="text-xs text-[var(--color-text-muted)]">
-                        {entry.meta}
-                      </p>
-                    </div>
+                    <p className="text-xs text-[var(--color-text-muted)]">
+                      {entry.meta}
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
         <div className="flex gap-2">
           <button
