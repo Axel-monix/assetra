@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { usePageLoading } from "@/components/common/loadingProvider";
+import LoadingScreen  from "@/components/common/loadingScreen";
 import {
   User,
   Camera,
@@ -67,11 +67,9 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
   }, [router]);
 
-  usePageLoading(checking || !user);
   if (checking || !user) {
-    return null;
+    return <LoadingScreen instant />;
   }
-
   const roleLabel =
     user.role === ROLES.SUPER_ADMIN ? t("superAdmin") : t("administrator");
 
@@ -352,7 +350,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     className="assetra-profile-change-btn"
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {t("change")}
                   </button>
