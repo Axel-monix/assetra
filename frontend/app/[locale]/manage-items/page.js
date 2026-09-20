@@ -292,7 +292,7 @@ export default function ManageItemsPage() {
       return false;
     }
 
-    const createdAt = item.created_at;
+    const createdAt = item.createdAt ?? item.created_at;
     if (!createdAt) {
       return !(filters.dateFrom || filters.dateTo);
     }
@@ -316,20 +316,26 @@ export default function ManageItemsPage() {
     return true;
   }
 
-  const filteredItems = items.filter(matchesFilters);
+  const isUnavailable = (item) =>
+    String(item.status || "").toLowerCase() === "unavailable";
+
+  const filteredItems = items
+    .filter(matchesFilters)
+    .sort((a, b) => Number(isUnavailable(a)) - Number(isUnavailable(b)));
 
   const hasActiveFilters =
     filters.categories.length > 0 ||
+    filters.statuses.length > 0 ||
     filters.dateFrom ||
-    filters.dateTo ||
-    !(
-      filters.statuses.length === 2 &&
-      filters.statuses.includes("functional") &&
-      filters.statuses.includes("needs_repair")
-    );
+    filters.dateTo;
+  !(
+    filters.statuses.length === 2 &&
+    filters.statuses.includes("functional") &&
+    filters.statuses.includes("needs_repair")
+  );
 
   if (!isInitialized || loading) {
-    return <LoadingScreen instant/>;
+    return <LoadingScreen instant />;
   }
 
   if (!user) {
@@ -345,7 +351,7 @@ export default function ManageItemsPage() {
       <div
         className={`assetra-items-layout h-full ${selectedItem ? "has-detail-panel" : ""}`}
       >
-        <div className="assetra-items-content min-w-0">
+        <div className="assetra-items-content min-w-0 min-h-[640px]">
           {error && (
             <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
           )}

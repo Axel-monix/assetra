@@ -29,7 +29,7 @@ const STATUS_OPTIONS = [
 function createDefaultFilters() {
   return {
     categories: [],
-    statuses: ["functional", "needs_repair"],
+    statuses: [],
     dateFrom: "",
     dateTo: "",
   };
@@ -84,16 +84,8 @@ export default function FilterForm({
     draftFilters.dateFrom !== "" || draftFilters.dateTo !== "";
 
   const hasCategoryFilter = draftFilters.categories.length > 0;
-
-  const statusIsDefault =
-    draftFilters.statuses.length === 2 &&
-    ["functional", "needs_repair"].every((status) =>
-      draftFilters.statuses.includes(status),
-    );
-
-  const hasCustomFilter =
-    hasCategoryFilter || hasDateFilter || !statusIsDefault;
-
+  const hasStatusFilter = draftFilters.statuses.length > 0;
+  const hasCustomFilter = hasCategoryFilter || hasDateFilter || hasStatusFilter;
   return (
     <div className="assetra-filter-wrapper">
       <button
@@ -110,9 +102,7 @@ export default function FilterForm({
         <ChevronDown
           size={14}
           strokeWidth={1.8}
-          className={`assetra-filter-chevron ${
-            open ? "is-open" : ""
-          }`}
+          className={`assetra-filter-chevron ${open ? "is-open" : ""}`}
         />
       </button>
 
@@ -135,7 +125,6 @@ export default function FilterForm({
           </div>
 
           <div className="assetra-filter-body">
-
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">
                 <h4>{t("category")}</h4>
@@ -158,9 +147,7 @@ export default function FilterForm({
 
               <div className="assetra-filter-options">
                 {categories.length === 0 ? (
-                  <p className="assetra-filter-empty">
-                    {t("noCategories")}
-                  </p>
+                  <p className="assetra-filter-empty">{t("noCategories")}</p>
                 ) : (
                   categories.map((category) => {
                     const categoryId = String(category.id);
@@ -177,14 +164,10 @@ export default function FilterForm({
                         }`}
                       >
                         <span className="assetra-filter-checkbox">
-                          {checked && (
-                            <Check size={12} strokeWidth={2.5} />
-                          )}
+                          {checked && <Check size={12} strokeWidth={2.5} />}
                         </span>
 
-                        <span>
-                          {category.category_name}
-                        </span>
+                        <span>{category.category_name}</span>
                       </button>
                     );
                   })
@@ -192,33 +175,28 @@ export default function FilterForm({
               </div>
             </section>
 
-
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">
                 <h4>{t("status")}</h4>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDraftFilters((prev) => ({
-                      ...prev,
-                      statuses: [
-                        "functional",
-                        "needs_repair",
-                      ],
-                    }))
-                  }
-                  className="assetra-filter-reset-section"
-                >
-                  {t("reset")}
-                </button>
+                {draftFilters.statuses.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraftFilters((prev) => ({
+                        ...prev,
+                        statuses: [],
+                      }))
+                    }
+                    className="assetra-filter-reset-section"
+                  >
+                    {t("clear")}
+                  </button>
+                )}
               </div>
-
               <div className="assetra-filter-options">
                 {STATUS_OPTIONS.map((status) => {
-                  const checked = draftFilters.statuses.includes(
-                    status.value,
-                  );
+                  const checked = draftFilters.statuses.includes(status.value);
 
                   return (
                     <button
@@ -230,9 +208,7 @@ export default function FilterForm({
                       }`}
                     >
                       <span className="assetra-filter-checkbox">
-                        {checked && (
-                          <Check size={12} strokeWidth={2.5} />
-                        )}
+                        {checked && <Check size={12} strokeWidth={2.5} />}
                       </span>
 
                       <span>{t(status.labelKey)}</span>
@@ -241,7 +217,6 @@ export default function FilterForm({
                 })}
               </div>
             </section>
-
 
             <section className="assetra-filter-section">
               <div className="assetra-filter-section-header">

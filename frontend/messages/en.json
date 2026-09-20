@@ -3,7 +3,7 @@
     "title": "Welcome back",
     "subtitle": "Sign in to continue to your Assetra account.",
     "identifierLabel": "Username or Email",
-    "identifierPlaceholder": "Enter your username or email",
+    "identifierPlaceholder": "name@company.com",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
     "showPassword": "Show password",

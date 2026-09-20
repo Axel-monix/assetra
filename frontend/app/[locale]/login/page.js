@@ -231,7 +231,7 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder={t("passwordPlaceholder")}
+                // placeholder={t("passwordPlaceholder")}
                 className="h-11 w-full bg-transparent text-sm text-[var(--color-white)] outline-none placeholder:text-[var(--color-text-placeholder)]"
                 required
               />

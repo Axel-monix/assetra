@@ -76,7 +76,7 @@ function RenderHistoryDescription({ description }) {
     const key = getAssetStatusLabelKey(status);
     return key ? t(key, { defaultValue: fallback }) : fallback;
   };
-
+  
   const fieldMap = {
     name: "Name",
     code: "Code",
