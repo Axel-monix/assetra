@@ -174,11 +174,7 @@ export default function DashboardLayout({
   }, [isSidebarOpen]);
 
   if (!effectiveRole) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
+    return null;
   }
 
   const navItems = NAV_ITEMS.filter(

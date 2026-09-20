@@ -211,11 +211,7 @@ export default function ManageAdminPage() {
   };
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -290,14 +286,7 @@ export default function ManageAdminPage() {
               </thead>
               <tbody className="divide-y divide-[var(--color-border)]/50">
                 {loading ? (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="py-12 text-center text-sm text-[var(--color-text-muted)]"
-                    >
-                      {t("loading")}
-                    </td>
-                  </tr>
+                  null
                 ) : pageAdmins.length === 0 ? (
                   <tr>
                     <td

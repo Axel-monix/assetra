@@ -16,6 +16,7 @@ import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
 import { groupHistoryByDate } from "@/lib/historyHelper";
 
 import { createDefaultHistoryFilters } from "@/components/history/historyFilterForm";
+import LoadingScreen from "@/components/common/loadingScreen";
 
 const PAGE_SIZE = 10;
 
@@ -152,11 +153,7 @@ export default function HistoryPage() {
   const groups = groupHistoryByDate(pageEntries, locale);
 
   if (!isInitialized || (loading && entries.length === 0 && !error)) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
+    return <LoadingScreen instant/>;
   }
 
   return (

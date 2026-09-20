@@ -140,10 +140,15 @@ export default function LoginPage() {
         }),
       });
 
-      const result = await response.json();
+      let result = null;
+      try {
+        result = await response.json();
+      } catch {
+        result = null;
+      }
 
-      if (!response.ok || !result.success) {
-        const { title, message } = getErrorInfo(result);
+      if (!response.ok || !result?.success) {
+        const { title, message } = getErrorInfo(result || {});
         setFeedback({ type: "error", title, message });
         return;
       }

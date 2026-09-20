@@ -187,7 +187,7 @@ export default function ManageCategoryPage() {
       {loadError && <div className="assetra-error-box mb-4">{loadError}</div>}
 
       {loading ? (
-        <p className="text-sm text-[var(--color-text-muted)]">{t("loading")}</p>
+        null
       ) : categories.length === 0 ? (
         <div className="assetra-card p-8 text-center text-sm text-[var(--color-text-muted)]">
           {t("empty")}

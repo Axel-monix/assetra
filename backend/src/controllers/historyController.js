@@ -70,11 +70,20 @@ function getExportLocale(locale) {
 }
 
 function buildHistoryFilters(reqQuery) {
-  const { type, types, search, dateFrom, dateTo } = reqQuery;
+  const { type, types, search, dateFrom, dateTo, assetId, code, idAsset } = reqQuery;
 
   const conditions = [];
   const params = [];
   let idx = 1;
+
+  const targetAsset = assetId || code || idAsset;
+  if (targetAsset && String(targetAsset).trim()) {
+    conditions.push(
+      `(history.id_asset::text = $${idx} OR history.subject_code ILIKE $${idx})`,
+    );
+    params.push(String(targetAsset).trim());
+    idx++;
+  }
 
   let selectedGroups = [];
 
@@ -142,15 +151,7 @@ function buildHistoryFilters(reqQuery) {
 
 async function listHistory(req, res) {
   try {
-    const { type, types, search, dateFrom, dateTo } = req.query;
-
-    const { conditions, params } = buildHistoryFilters({
-      type,
-      types,
-      search,
-      dateFrom,
-      dateTo,
-    });
+    const { conditions, params } = buildHistoryFilters(req.query);
 
     if (req.user.role !== "super_admin") {
       conditions.push(`history.type <> '${ADMIN_PROFILE_HISTORY_TYPE}'`);

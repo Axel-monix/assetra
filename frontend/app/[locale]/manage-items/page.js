@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -18,8 +18,7 @@ import FilterForm, {
 } from "@/components/items/itemFilterForm";
 
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY, ENDPOINTS } from "@/lib/constants";
-
-const DOUBLE_CLICK_DELAY_MS = 220;
+import LoadingScreen from "../../../components/common/loadingScreen";
 function getToken() {
   return (
     window.localStorage.getItem(AUTH_TOKEN_KEY) ||
@@ -71,8 +70,6 @@ export default function ManageItemsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [deactivateTarget, setDeactivateTarget] = useState(null);
-
-  const clickTimerRef = useRef(null);
 
   const fetchItems = useCallback(async () => {
     const token = getToken();
@@ -142,51 +139,44 @@ export default function ManageItemsPage() {
     init();
   }, [router, fetchItems]);
 
-  useEffect(() => {
-    return () => {
-      if (clickTimerRef.current) {
-        clearTimeout(clickTimerRef.current);
+  const isSelectionMode = selectedIds.length > 0;
+
+  function handleHoldSelect(id) {
+    setSelectedItemId(null);
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((x) => x !== id);
       }
-    };
-  }, []);
+      return [...prev, id];
+    });
+  }
 
-  function handleSingleSelect(id) {
+  function handleCardClick(id) {
     if (selectedIds.length > 0) {
-      const nextSelectedIds = selectedIds.includes(id)
-        ? selectedIds.filter((x) => x !== id)
-        : [...selectedIds, id];
-
-      setSelectedIds(nextSelectedIds);
+      setSelectedIds((prev) => {
+        if (prev.includes(id)) {
+          return prev.filter((x) => x !== id);
+        }
+        return [...prev, id];
+      });
       return;
     }
 
     if (selectedItemId === id) {
       clearSelection();
-      return;
+    } else {
+      setSelectedItemId(id);
     }
-
-    setSelectedItemId(id);
   }
 
-  function handleDoubleSelect(id) {
+  function handleSelectAll() {
+    const allFilteredIds = filteredItems.map((item) => item.id);
     setSelectedItemId(null);
-    setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setSelectedIds(allFilteredIds);
   }
 
-  function handleCardClick(id, event) {
-    if (event.detail >= 2) {
-      if (clickTimerRef.current) {
-        clearTimeout(clickTimerRef.current);
-        clickTimerRef.current = null;
-      }
-      handleDoubleSelect(id);
-      return;
-    }
-
-    clickTimerRef.current = setTimeout(() => {
-      handleSingleSelect(id);
-      clickTimerRef.current = null;
-    }, DOUBLE_CLICK_DELAY_MS);
+  function handleDeselectAll() {
+    setSelectedIds([]);
   }
 
   function clearSelection() {
@@ -339,11 +329,7 @@ export default function ManageItemsPage() {
     );
 
   if (!isInitialized || loading) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
+    return <LoadingScreen instant/>;
   }
 
   if (!user) {
@@ -386,19 +372,56 @@ export default function ManageItemsPage() {
                 {t("clearAll")}
               </button>
             )}
+
+            {isSelectionMode && (
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-1.5 text-xs shadow-sm">
+                <span className="font-semibold text-[var(--color-primary)]">
+                  {selectedIds.length} / {filteredItems.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={
+                    selectedIds.length >= filteredItems.length
+                      ? handleDeselectAll
+                      : handleSelectAll
+                  }
+                  className="font-medium text-[var(--color-text)] hover:text-[var(--color-primary)] transition"
+                >
+                  {selectedIds.length >= filteredItems.length
+                    ? t("deselectAll", { defaultValue: "Deselect All" })
+                    : t("selectAll", { defaultValue: "Select All" })}
+                </button>
+                <button
+                  type="button"
+                  onClick={clearSelection}
+                  className="ml-1 text-[var(--color-text-muted)] hover:text-[var(--color-white)] transition"
+                >
+                  {t("clear", { defaultValue: "Clear" })}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xl:gap-4 pb-24">
-            {filteredItems.map((item) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                selected={
-                  selectedIds.includes(item.id) || selectedItemId === item.id
-                }
-                onClick={handleCardClick}
-              />
-            ))}
+            {filteredItems.map((item) => {
+              const isSelected = selectedIds.includes(item.id);
+              const selectedOrder = isSelected
+                ? selectedIds.indexOf(item.id) + 1
+                : null;
+              const isPanelActive = selectedItemId === item.id;
+
+              return (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  selected={isSelected || isPanelActive}
+                  selectedOrder={selectedOrder}
+                  isSelectionMode={isSelectionMode}
+                  onClick={handleCardClick}
+                  onHoldSelect={handleHoldSelect}
+                />
+              );
+            })}
 
             <button
               type="button"
@@ -433,6 +456,9 @@ export default function ManageItemsPage() {
 
       <BulkActionBar
         selectedCount={selectedIds.length}
+        totalCount={filteredItems.length}
+        onSelectAll={handleSelectAll}
+        onDeselectAll={handleDeselectAll}
         onPrintQr={handlePrintQr}
         onDeactivate={() => setDeactivateTarget(selectedIds)}
         onClose={clearSelection}

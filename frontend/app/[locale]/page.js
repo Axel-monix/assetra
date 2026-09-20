@@ -12,6 +12,7 @@ import {
   ENDPOINTS,
   ROLES,
 } from "@/lib/constants";
+import LoadingScreen from "../../components/common/loadingScreen";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -67,11 +68,7 @@ export default function DashboardPage() {
   }, [router, t]);
 
   if (checking || !user) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
+    return <LoadingScreen instant/>;
   }
 
   return (

@@ -1,0 +1,22 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="assetraA" x1="24" y1="14" x2="61" y2="76" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C9CAFF"/>
+    </linearGradient>
+    <linearGradient id="assetraBox" x1="45" y1="54" x2="58" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9E6BFF"/>
+      <stop offset="1" stop-color="#4D28DC"/>
+    </linearGradient>
+  </defs>
+  <path d="M14 76L38 22C39.8 17.9 45.6 17.9 47.4 22L64 59" stroke="url(#assetraA)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30 61L47 51L64 61L47 71L30 61Z" fill="#B77CFF"/>
+  <path d="M30 61V78L47 88V71L30 61Z" fill="#5A2BE0"/>
+  <path d="M47 71V88L64 78V61L47 71Z" fill="url(#assetraBox)"/>
+  <path d="M47 51L64 61L58 65L41 55L47 51Z" fill="#7F43F0"/>
+  <rect x="70" y="30" width="9" height="9" rx="1.5" fill="#F4F4FF"/>
+  <rect x="80" y="21" width="10" height="10" rx="1.5" fill="#F4F4FF"/>
+  <rect x="72" y="44" width="12" height="12" rx="1.5" fill="#E8E8FF"/>
+  <rect x="83" y="59" width="7" height="7" rx="1.5" fill="#F4F4FF"/>
+  <rect x="71" y="68" width="8" height="8" rx="1.5" fill="#E8E8FF"/>
+</svg>

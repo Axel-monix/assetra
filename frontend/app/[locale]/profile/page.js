@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { usePageLoading } from "@/components/common/loadingProvider";
 import {
   User,
   Camera,
@@ -66,16 +67,9 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
   }, [router]);
 
+  usePageLoading(checking || !user);
   if (checking || !user) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex flex-col items-center justify-center gap-3 text-[var(--color-text-secondary)] text-sm">
-        <Loader2
-          size={28}
-          className="animate-spin text-[var(--color-primary)]"
-        />
-        <span>{t("loading")}</span>
-      </div>
-    );
+    return null;
   }
 
   const roleLabel =
@@ -358,7 +352,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     className="assetra-profile-change-btn"
-                    onClick={() => {}}
+                    onClick={() => { }}
                   >
                     {t("change")}
                   </button>

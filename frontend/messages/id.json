@@ -96,6 +96,12 @@
     "mobileNavigation": "Navigasi utama"
   },
 
+  "loading": {
+    "title": "Memuat",
+    "message": "Mohon tunggu sebentar...",
+    "offlineTitle": "Koneksi terputus",
+    "offlineMessage": "Menunggu koneksi internet kembali..."
+  },
   "manageAdmin": {
     "loading": "Memuat...",
     "title": "Kelola Administrator",
@@ -163,6 +169,8 @@
     "subtitle": "Tambah atau kelola item.",
     "addItem": "Tambah Item",
     "addNewItem": "Tambah Item Baru",
+    "selectAll": "Pilih Semua",
+    "deselectAll": "Batalkan Semua",
     "loading": "Memuat...",
     "filter": "Filter:",
     "clearAll": "Hapus Semua",
@@ -489,7 +497,9 @@
     "selectedItems": "{count} Item Dipilih",
     "printQr": "Cetak QR",
     "deactivate": "Nonaktifkan",
-    "deactivateConfirm": "Nonaktifkan"
+    "deactivateConfirm": "Nonaktifkan",
+    "selectAll": "Pilih Semua",
+    "deselectAll": "Batalkan Semua"
   },
   "itemDetail": {
     "title": "Detail Item",
@@ -500,6 +510,9 @@
     "specifications": "Spesifikasi Lengkap",
     "repairMarked": "Kerusakan ditandai",
     "treatmentHistory": "Riwayat Perawatan",
+    "historyChanges": "Riwayat Perubahan",
+    "noHistoryChanges": "Belum ada riwayat perubahan untuk item ini.",
+    "loadingHistory": "Memuat riwayat perubahan...",
     "edit": "Edit",
     "deactivate": "Nonaktifkan",
     "markUnavailable": "Tandai Tidak Tersedia",

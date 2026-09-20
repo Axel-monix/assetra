@@ -147,15 +147,7 @@ export default function PrintQrLabelsPage() {
     waitForImages.then(() => window.print());
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-secondary)] text-sm">
-        {t("loading")}
-      </div>
-    );
-  }
-
-  if (!user) return null;
+  if (loading || !user) return null;
 
   return (
     <DashboardLayout role={user.role} userName={user.name || user.username}>
@@ -439,6 +431,29 @@ export default function PrintQrLabelsPage() {
   );
 }
 
+function resolveQrCodeUrl(item) {
+  if (!item) return "";
+  const code = item.code || item.id;
+  const rawUrl = item.qrCodeUrl;
+
+  if (
+    rawUrl &&
+    typeof rawUrl === "string" &&
+    !rawUrl.startsWith("undefined") &&
+    (rawUrl.startsWith("http://") ||
+      rawUrl.startsWith("https://") ||
+      rawUrl.startsWith("/"))
+  ) {
+    return rawUrl;
+  }
+
+  const apiBase = (
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+  ).replace(/\/+$/, "");
+
+  return `${apiBase}/assets/${encodeURIComponent(code)}/qr`;
+}
+
 function PrintLabelContent({ item, content }) {
   const metaParts = [
     content.assetId ? item.id : null,
@@ -446,11 +461,13 @@ function PrintLabelContent({ item, content }) {
     content.location && item.location ? item.location : null,
   ].filter(Boolean);
 
+  const qrUrl = resolveQrCodeUrl(item);
+
   return (
     <div className="assetra-print-label-inner">
-      {content.qrCode && item.qrCodeUrl && (
+      {content.qrCode && qrUrl && (
         <img
-          src={item.qrCodeUrl}
+          src={qrUrl}
           alt={item.name}
           className="assetra-print-qr"
         />

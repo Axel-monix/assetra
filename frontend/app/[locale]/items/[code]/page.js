@@ -129,12 +129,7 @@ export default function GuestAssetPage() {
   return (
     <div className="min-h-screen bg-[var(--color-background)] flex items-start justify-center pt-6 pb-12">
       {state.loading ? (
-        <div className="flex flex-col items-center gap-3 mt-20">
-          <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {t("loading")}
-          </p>
-        </div>
+        null
       ) : state.error ? (
         <div className="w-full max-w-md mx-4 p-6 text-center bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl">
           <p className="text-sm text-[var(--color-danger)]">{state.error}</p>
