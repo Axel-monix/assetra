@@ -203,18 +203,6 @@ async function createCategory(req, res) {
   }
 }
 
-/**
- * PATCH /api/categories/:id
- * Body: { category_name, description, specifications: [{ id?, name, type, required, repairable }] }
- *
- * Strategi upsert specification:
- *  - item dengan `id` -> UPDATE baris tsb (harus milik category ini)
- *  - item tanpa `id`  -> INSERT baris baru
- *  - baris lama yang tidak ada lagi di payload -> DELETE,
- *    KECUALI baris tsb masih direferensikan oleh asset_specification.
- *    Jika masih dipakai, baris dipertahankan dan dilaporkan lewat
- *    `data.retainedSpecifications`.
- */
 async function updateCategory(req, res) {
   const { id } = req.params;
   const { category_name, description, specifications } = req.body;
@@ -317,6 +305,15 @@ async function updateCategory(req, res) {
             id,
           ],
         );
+        if (rows.length) {
+          savedSpecs.push(rows[0]);
+          await client.query(
+            `UPDATE asset_specification
+     SET spec_key = $1
+     WHERE id_specification = $2`,
+            [rows[0].name, rows[0].id],
+          );
+        }
 
         if (rows.length) savedSpecs.push(rows[0]);
       } else {

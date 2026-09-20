@@ -183,10 +183,14 @@ async function attachSpecsToAssets(assets) {
   const ids = assets.map((asset) => asset.databaseId);
 
   const { rows: specRows } = await pool.query(
-    `SELECT id_asset, id_specification, spec_key, spec_value
-     FROM asset_specification
-     WHERE id_asset = ANY($1::int[])
-     ORDER BY id_specification ASC`,
+    `SELECT asp.id_asset,
+          asp.id_specification,
+          COALESCE(cs.name, asp.spec_key) AS spec_key,
+          asp.spec_value
+   FROM asset_specification asp
+   LEFT JOIN category_specification cs ON cs.id = asp.id_specification
+   WHERE asp.id_asset = ANY($1::int[])
+   ORDER BY asp.id_specification ASC`,
     [ids],
   );
 
@@ -215,21 +219,22 @@ async function attachRepairDetails(assets) {
   const ids = assets.map((asset) => asset.databaseId);
   const { rows } = await pool.query(
     `SELECT
-            r.id_asset,
-            r.reason,
-            rs.id_specification,
-            rs.specification_name
-     FROM reason r
-     LEFT JOIN reason_specification rs ON rs.id_reason = r.id
-     WHERE r.id_asset = ANY($1::int[])
-       AND r.action = 'need_repair'
-       AND r.id = (
-         SELECT MAX(latest.id)
-         FROM reason latest
-         WHERE latest.id_asset = r.id_asset
-           AND latest.action = 'need_repair'
-       )
-     ORDER BY r.id_asset, rs.id_specification ASC`,
+          r.id_asset,
+          r.reason,
+          rs.id_specification,
+          COALESCE(cs.name, rs.specification_name) AS specification_name
+   FROM reason r
+   LEFT JOIN reason_specification rs ON rs.id_reason = r.id
+   LEFT JOIN category_specification cs ON cs.id = rs.id_specification
+   WHERE r.id_asset = ANY($1::int[])
+     AND r.action = 'need_repair'
+     AND r.id = (
+       SELECT MAX(latest.id)
+       FROM reason latest
+       WHERE latest.id_asset = r.id_asset
+         AND latest.action = 'need_repair'
+     )
+   ORDER BY r.id_asset, rs.id_specification ASC`,
     [ids],
   );
 
