@@ -8,10 +8,9 @@ const REASON_MIN_LENGTH = 5;
 
 const EXIT_DURATION = 180;
 
-export default function DeactivateItemForm({ count = 1, onClose, onConfirm }) {
+export default function DeactivateItemForm({ count = 1,initialReason = "", onClose, onConfirm }) {
   const t = useTranslations("manageItem");
-
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState(initialReason);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);

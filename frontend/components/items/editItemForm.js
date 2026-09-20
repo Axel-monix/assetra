@@ -8,7 +8,9 @@ import {
   AlertTriangle,
   Wrench,
   Plus,
+  PackageX,
 } from "lucide-react";
+import DeactivateItemForm from "./deactivateItemForm";
 import {
   ENDPOINTS,
   AUTH_TOKEN_KEY,
@@ -154,6 +156,8 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [deactivateReason, setDeactivateReason] = useState("");
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [repairPayload, setRepairPayload] = useState(null);
   const [showNeedRepairModal, setShowNeedRepairModal] = useState(false);
 
@@ -209,8 +213,8 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
   useEffect(() => {
     setSpecValues(specsArrayToValues(item?.specs));
     setRepairPayload(item?.repair || null);
+    setDeactivateReason("");
   }, [item]);
-
   const selectedCategory = useMemo(
     () => categories.find((cat) => String(cat.id) === String(form.id_category)),
     [categories, form.id_category],
@@ -310,9 +314,16 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         setShowNeedRepairModal(true);
         return;
       }
+      if (value === "unavailable" && form.status !== "unavailable") {
+        setShowDeactivateModal(true);
+        return;
+      }
 
       if (value !== "needs_repair") {
         setRepairPayload(null);
+      }
+      if (value !== "unavailable") {
+        setDeactivateReason("");
       }
     }
 
@@ -441,6 +452,9 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
         image_url: form.image_url,
         specs: buildSpecsPayload(specTemplate, specValues),
         ...(repairPayload ? { repair: repairPayload } : {}),
+        ...(deactivateReason
+          ? { deactivation: { reason: deactivateReason } }
+          : {}),
       });
 
       handleClose();
@@ -645,6 +659,33 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
                   )}
                 </div>
               )}
+              {form.status === "unavailable" && deactivateReason && (
+                <div className="assetra-repair-summary">
+                  <div className="assetra-repair-summary-header">
+                    <span className="assetra-icon-badge assetra-icon-badge--warning">
+                      <PackageX size={15} strokeWidth={1.9} />
+                    </span>
+
+                    <div className="assetra-repair-summary-heading">
+                      <p className="assetra-repair-summary-title">
+                        {t("reasonForStatusChange")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="assetra-repair-summary-details">
+                    {deactivateReason}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowDeactivateModal(true)}
+                    className="assetra-btn assetra-btn-secondary assetra-repair-add-btn mt-2"
+                  >
+                    {t("editReason")}
+                  </button>
+                </div>
+              )}
 
               {form.status === "needs_repair" && (
                 <button
@@ -733,8 +774,21 @@ export default function EditItemForm({ item, onClose, onSubmit }) {
           onClose={() => setShowNeedRepairModal(false)}
           onConfirm={async (payload) => {
             setRepairPayload(payload);
+            setDeactivateReason("");
             setForm((prev) => ({ ...prev, status: "needs_repair" }));
             setShowNeedRepairModal(false);
+          }}
+        />
+      )}
+      {showDeactivateModal && (
+        <DeactivateItemForm
+          count={1}
+          initialReason={deactivateReason}
+          onClose={() => setShowDeactivateModal(false)}
+          onConfirm={async (reason) => {
+            setDeactivateReason(reason);
+            setRepairPayload(null);
+            setForm((prev) => ({ ...prev, status: "unavailable" }));
           }}
         />
       )}

@@ -215,6 +215,7 @@
     "confirmNeedRepair": "Laporkan Masalah",
     "repairMarked": "Kerusakan ditandai",
     "repairDetailRequired": "Silakan jelaskan masalahnya (minimal {length} karakter).",
+    "editReason": "Ubah Alasan",
     "statusOptions": {
       "functional": "Tersedia",
       "needs_repair": "Perlu Perbaikan",

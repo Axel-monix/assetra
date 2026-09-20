@@ -45,6 +45,8 @@ function getHistoryLabel(type) {
 }
 
 function RenderHistoryDescription({ description }) {
+  const t = useTranslations("itemDetail");
+
   if (!description) return null;
 
   let parsed = null;
@@ -68,6 +70,11 @@ function RenderHistoryDescription({ description }) {
     functional: "Available",
     needs_repair: "Need Repair",
     unavailable: "Unavailable",
+  };
+  const getStatusText = (status) => {
+    const fallback = statusMap[status] || status;
+    const key = getAssetStatusLabelKey(status);
+    return key ? t(key, { defaultValue: fallback }) : fallback;
   };
 
   const fieldMap = {
@@ -95,12 +102,16 @@ function RenderHistoryDescription({ description }) {
           <span className="text-[var(--color-text-secondary)] font-medium">
             Status:
           </span>
-          <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-            {statusMap[parsed.status.from] || parsed.status.from}
+          <span
+            className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(parsed.status.from)}`}
+          >
+            {getStatusText(parsed.status.from)}
           </span>
           <span className="text-[var(--color-text-muted)]">→</span>
-          <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            {statusMap[parsed.status.to] || parsed.status.to}
+          <span
+            className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(parsed.status.to)}`}
+          >
+            {getStatusText(parsed.status.to)}
           </span>
         </div>
       )}

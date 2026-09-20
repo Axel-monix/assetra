@@ -203,6 +203,7 @@
     "confirmNeedRepair": "Report Problem",
     "repairMarked": "Damage reported",
     "repairDetailRequired": "Please describe the problem (minimum {length} characters).",
+    "editReason": "Edit Reason",
     "statusOptions": {
       "functional": "Available",
       "needs_repair": "Need Repair",
