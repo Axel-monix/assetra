@@ -26,10 +26,39 @@ function buildQrCodeUrl(code) {
 
   return `${apiUrl}/api/assets/${encodeURIComponent(code)}/qr`;
 }
+async function assertRequiredSpecifications(client, { idCategory, specs }) {
+  const { rows: requiredSpecs } = await client.query(
+    `SELECT id, name, type
+     FROM category_specification
+     WHERE id_category = $1 AND required = true`,
+    [idCategory],
+  );
+
+  const filled = new Map(
+    (Array.isArray(specs) ? specs : []).map((spec) => [
+      Number(spec.id_specification),
+      String(spec.value ?? "").trim(),
+    ]),
+  );
+
+  const missing = requiredSpecs
+    .filter((spec) => spec.type !== "boolean")
+    .filter((spec) => !filled.get(spec.id))
+    .map((spec) => spec.name);
+
+  if (missing.length > 0) {
+    const err = new Error(`Spesifikasi wajib diisi: ${missing.join(", ")}`);
+    err.code = "SPEC_REQUIRED_VALIDATION";
+    err.missing = missing;
+    throw err;
+  }
+}
 async function replaceAssetSpecifications(
   client,
   { idAsset, idCategory, specs },
 ) {
+  await assertRequiredSpecifications(client, { idCategory, specs });
+
   await client.query(`DELETE FROM asset_specification WHERE id_asset = $1`, [
     idAsset,
   ]);
@@ -444,6 +473,13 @@ async function createAsset(req, res) {
     }
 
     console.error("Error in createAsset:", err);
+    if (err.code === "SPEC_REQUIRED_VALIDATION") {
+      return error(res, {
+        messageKey: "specificationRequired",
+        message: err.message,
+        statusCode: 400,
+      });
+    }
 
     if (err.code === "23503") {
       return error(res, {
@@ -631,6 +667,13 @@ async function updateAsset(req, res) {
     if (err.code === "NEED_REPAIR_VALIDATION") {
       return error(res, {
         messageKey: "repairDetailsRequired",
+        message: err.message,
+        statusCode: 400,
+      });
+    }
+    if (err.code === "SPEC_REQUIRED_VALIDATION") {
+      return error(res, {
+        messageKey: "specificationRequired",
         message: err.message,
         statusCode: 400,
       });
