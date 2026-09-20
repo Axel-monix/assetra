@@ -328,11 +328,6 @@ export default function ManageItemsPage() {
     filters.statuses.length > 0 ||
     filters.dateFrom ||
     filters.dateTo;
-  !(
-    filters.statuses.length === 2 &&
-    filters.statuses.includes("functional") &&
-    filters.statuses.includes("needs_repair")
-  );
 
   if (!isInitialized || loading) {
     return <LoadingScreen instant />;
