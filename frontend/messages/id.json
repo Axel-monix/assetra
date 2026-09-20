@@ -65,7 +65,6 @@
       "category": "Kategori",
       "status": "Status",
       "detail": "detail",
-      "user": "Kategori",
       "date": "Tanggal",
       "thisMonth": "+12 Bulan Ini",
       "urgent": "Mendesak",
@@ -75,7 +74,9 @@
       "viewRepairDetails": "Lihat detail kerusakan",
       "hideRepairDetails": "Sembunyikan detail kerusakan",
       "repairDetails": "Detail kerusakan",
-      "affectedParts": "Bagian yang rusak"
+      "affectedParts": "Bagian yang rusak",
+      "unavailable": "Tidak Tersedia",
+      "damagedBadge": "Rusak"
     },
     "superadmin": {
       "greeting": "Halo,",

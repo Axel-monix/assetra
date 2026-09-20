@@ -1,6 +1,12 @@
 "use client";
 
-import { Archive, Wrench, AlertTriangle, ChevronDown } from "lucide-react";
+import {
+  Archive,
+  Wrench,
+  AlertTriangle,
+  ChevronDown,
+  CheckCircle,
+} from "lucide-react";
 import { Fragment, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -9,7 +15,7 @@ import StatCard from "./statCard";
 import {
   ASSET_STATUS,
   ASSET_STATUS_LABELS,
-  ASSET_STATUS_STYLES,
+  getAssetStatusStyle,
 } from "../../lib/assetStatus";
 
 export default function AdminOverview({ assets = [], error = "" }) {
@@ -60,16 +66,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
         <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
       )}
 
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">{t("admin.title")}</h1>
-
-        <button
-          type="button"
-          className="flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-[var(--color-primary-contrast)] hover:bg-[var(--color-primary-hover)] transition"
-        >
-          + {t("admin.addItem")}
-        </button>
-      </div>
+      <h1 className="text-3xl font-semibold mb-6">{t("admin.title")}</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard
@@ -79,12 +76,10 @@ export default function AdminOverview({ assets = [], error = "" }) {
         />
 
         <StatCard
-          icon={<Archive size={20} strokeWidth={1.75} />}
+          icon={<CheckCircle size={20} strokeWidth={1.75} />}
           label={t("admin.available")}
           value={stats.available}
-          badgeText={
-            stats.available > 0 ? t("admin.availableBadge") : undefined
-          }
+          badgeText={t("admin.availableBadge")}
           badgeColor="info"
         />
 
@@ -100,13 +95,13 @@ export default function AdminOverview({ assets = [], error = "" }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold">
+            <h2 className="text-base font-semibold">
               {t("admin.categoryDistribution")}
             </h2>
 
             <Link
               href="/manage-items"
-              className="text-xs text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
+              className="text-sm text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
             >
               {t("admin.viewDetail")}
             </Link>
@@ -115,7 +110,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
           <div className="flex flex-col gap-4">
             {categoryBreakdown.map((cat) => (
               <div key={cat.label}>
-                <div className="flex items-center justify-between text-xs mb-1.5">
+                <div className="flex items-center justify-between text-sm mb-1.5">
                   <span className="text-[var(--color-text-secondary)]">
                     {cat.label}
                   </span>
@@ -137,14 +132,14 @@ export default function AdminOverview({ assets = [], error = "" }) {
         </div>
 
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
-          <h2 className="text-sm font-semibold mb-4">
+          <h2 className="text-base font-semibold mb-4">
             {t("admin.recentActivity")}
           </h2>
 
           <div className="w-full overflow-x-auto">
             <table className="w-full min-w-[640px] text-left text-sm border-collapse">
               <thead>
-                <tr className="text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+                <tr className="text-[11px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[100px]">
                     {t("admin.itemId")}
                   </th>
@@ -152,7 +147,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                     {t("admin.itemName")}
                   </th>
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
-                    {t("admin.user")}
+                    {t("admin.category")}
                   </th>
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[110px]">
                     {t("admin.status")}
@@ -193,7 +188,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
 
                     <td className="py-3 pr-4 whitespace-nowrap">
                       <span
-                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${ASSET_STATUS_STYLES[activity.status] || ""}`}
+                        className={`rounded-md px-2.5 py-1 text-xs font-medium ${getAssetStatusStyle(activity.status)}`}
                       >
                         {ASSET_STATUS_LABELS[activity.status]
                           ? t(ASSET_STATUS_LABELS[activity.status])
@@ -201,7 +196,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
                       </span>
                     </td>
 
-                    <td className="py-3 text-[var(--color-text-muted)] text-xs whitespace-nowrap">
+                    <td className="py-3 text-[var(--color-text-muted)] text-sm whitespace-nowrap">
                       {activity.createdAt
                         ? new Date(activity.createdAt).toLocaleDateString(
                             "id-ID",
@@ -218,7 +213,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
 
       <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold flex items-center gap-2">
+          <h2 className="text-base font-semibold flex items-center gap-2">
             <AlertTriangle
               size={16}
               strokeWidth={1.75}
@@ -227,7 +222,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
             {t("admin.attentionItems")}
           </h2>
 
-          <span className="rounded-md bg-[var(--color-border)] px-2 py-0.5 text-[11px] text-[var(--color-text-secondary)]">
+          <span className="rounded-md bg-[var(--color-border)] px-2.5 py-1 text-xs text-[var(--color-text-secondary)]">
             {t("admin.totalIssues", { count: attentionItems.length })}
           </span>
         </div>
@@ -235,7 +230,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
         <div className="w-full min-w-0 overflow-x-auto">
           <table className="w-full min-w-[800px] text-sm whitespace-nowrap border-collapse">
             <thead>
-              <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+              <tr className="text-left text-[11px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
                 <th className="w-[140px] py-2.5 font-medium">
                   {t("admin.itemId")}
                 </th>
@@ -282,9 +277,7 @@ export default function AdminOverview({ assets = [], error = "" }) {
 
                     <td className="py-3 whitespace-nowrap">
                       <span
-                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-                          ASSET_STATUS_STYLES[item.status] || ""
-                        }`}
+                        className={`rounded-md px-2.5 py-1 text-xs font-medium ${getAssetStatusStyle(item.status)}`}
                       >
                         {ASSET_STATUS_LABELS[item.status]
                           ? t(ASSET_STATUS_LABELS[item.status])

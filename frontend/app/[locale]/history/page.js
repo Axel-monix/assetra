@@ -159,11 +159,11 @@ export default function HistoryPage() {
   return (
     <DashboardLayout role={user?.role} userName={user?.name || user?.username}>
       <div className="mb-5">
-        <h1 className="text-lg font-semibold text-[var(--color-text)]">
+        <h1 className="text-2xl font-semibold text-[var(--color-text)]">
           {t("title")}
         </h1>
 
-        <p className="text-sm text-[var(--color-text-secondary)]">
+        <p className="text-base text-[var(--color-text-secondary)]">
           {t("subtitle")}
         </p>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Wrench, AlertTriangle, ChevronDown } from "lucide-react";
+import { Archive, Wrench, AlertTriangle, ChevronDown, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -56,7 +56,7 @@ export default function SuperAdminOverview({
         <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p>
       )}
 
-      <h1 className="text-2xl font-semibold mb-6">
+      <h1 className="text-3xl font-semibold mb-6">
         {t("superadmin.greeting")} {userName || t("roles.superAdmin")}
       </h1>
 
@@ -68,12 +68,10 @@ export default function SuperAdminOverview({
         />
 
         <StatCard
-          icon={<Archive size={20} strokeWidth={1.75} />}
+          icon={<CheckCircle size={20} strokeWidth={1.75} />}
           label={t("admin.available")}
           value={stats.available}
-          badgeText={
-            stats.available > 0 ? t("admin.availableBadge") : undefined
-          }
+          badgeText={t("admin.availableBadge")}
           badgeColor="info"
         />
 
@@ -89,13 +87,13 @@ export default function SuperAdminOverview({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold">
+            <h2 className="text-base font-semibold">
               {t("superadmin.recentActivity")}
             </h2>
 
             <Link
               href="/history"
-              className="text-xs text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
+              className="text-sm text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
             >
               {t("superadmin.viewAll")}
             </Link>
@@ -104,7 +102,7 @@ export default function SuperAdminOverview({
           <div className="w-full overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm border-collapse">
               <thead>
-                <tr className="text-left text-[10px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
+                <tr className="text-left text-[11px] uppercase tracking-wide text-[var(--color-text-muted)] border-b border-[var(--color-border)]">
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[100px]">
                     {t("admin.itemId")}
                   </th>
@@ -112,7 +110,7 @@ export default function SuperAdminOverview({
                     {t("admin.itemName")}
                   </th>
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[140px]">
-                    {t("admin.user")}
+                    {t("admin.category")}
                   </th>
                   <th className="py-2.5 pr-4 font-medium whitespace-nowrap w-[110px]">
                     {t("admin.status")}
@@ -145,7 +143,7 @@ export default function SuperAdminOverview({
 
                     <td className="py-3 pr-4 whitespace-nowrap">
                       <span
-                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(row.status)}`}
+                        className={`rounded-md px-2.5 py-1 text-xs font-medium ${getAssetStatusStyle(row.status)}`}
                       >
                         {ASSET_STATUS_LABELS[row.status]
                           ? t(ASSET_STATUS_LABELS[row.status])
@@ -153,7 +151,7 @@ export default function SuperAdminOverview({
                       </span>
                     </td>
 
-                    <td className="py-3 text-[var(--color-text-muted)] text-xs whitespace-nowrap">
+                    <td className="py-3 text-[var(--color-text-muted)] text-sm whitespace-nowrap">
                       {row.date}
                     </td>
                   </tr>
@@ -164,7 +162,7 @@ export default function SuperAdminOverview({
         </div>
 
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
-          <h2 className="text-sm font-semibold mb-4">
+          <h2 className="text-base font-semibold mb-4">
             {t("superadmin.maintenanceAlerts")}
           </h2>
 

@@ -21,21 +21,21 @@ export default function StatCard({
           <div className="rounded-lg bg-[var(--color-surface)] p-2 text-[var(--color-primary)] shrink-0">
             {icon}
           </div>
-          <p className="text-sm text-[var(--color-text-secondary)] font-medium">
+          <p className="text-base text-[var(--color-text-secondary)] font-medium">
             {label}
           </p>
         </div>
 
         {badgeText && (
           <span
-            className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium shrink-0 ${badgeStyles[badgeColor]}`}
+            className={`rounded-full px-3 py-1 text-xs font-semibold shrink-0 ${badgeStyles[badgeColor]}`}
           >
             {badgeText}
           </span>
         )}
       </div>
       <div className="mt-3">
-        <p className="text-3xl font-bold tracking-tight text-[var(--color-text)]">
+        <p className="text-4xl font-bold tracking-tight text-[var(--color-text)]">
           {value}
         </p>
       </div>
