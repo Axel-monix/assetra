@@ -307,7 +307,8 @@ export default function AdminOverview({ assets = [], error = "" }) {
                       )}
 
                       <Link
-                        href={`/manage-items?item=${item.id}`}
+                        href={`/manage-items?itemId=${encodeURIComponent(item.id)}`}
+                        aria-label={t("admin.detail")}
                         className="text-[var(--color-primary-soft)] hover:text-[var(--color-primary)]"
                       >
                         ↗

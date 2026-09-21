@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -316,18 +316,32 @@ export default function ManageItemsPage() {
     return true;
   }
 
-  const isUnavailable = (item) =>
-    String(item.status || "").toLowerCase() === "unavailable";
+  const isNeedRepair = (item) =>
+    String(item.status || "").toLowerCase() === "needs_repair";
 
   const filteredItems = items
     .filter(matchesFilters)
-    .sort((a, b) => Number(isUnavailable(a)) - Number(isUnavailable(b)));
+    .sort((b, a) => Number(isNeedRepair(a)) - Number(isNeedRepair(b)));
 
   const hasActiveFilters =
     filters.categories.length > 0 ||
     filters.statuses.length > 0 ||
     filters.dateFrom ||
     filters.dateTo;
+  const deepLinkHandledRef = useRef(false);
+
+  useEffect(() => {
+    if (loading || deepLinkHandledRef.current) return;
+    deepLinkHandledRef.current = true;
+
+    const itemId = new URLSearchParams(window.location.search).get("itemId");
+    if (!itemId) return;
+
+    if (items.some((item) => item.id === itemId)) {
+      setSelectedItemId(itemId);
+    }
+    window.history.replaceState(null, "", window.location.pathname);
+  }, [loading, items]);
 
   if (!isInitialized || loading) {
     return <LoadingScreen instant />;
