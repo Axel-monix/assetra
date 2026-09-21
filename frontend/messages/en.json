@@ -584,7 +584,9 @@
     "newPassword": "New password",
     "confirmPassword": "Confirm new password",
     "showPassword": "Show password",
-    "hidePassword":"Hide password"
+    "hidePassword":"Hide password",
+    "cancel":"Cancel",
+    "close":"Close"
    
   },
   "manageCategory": {
