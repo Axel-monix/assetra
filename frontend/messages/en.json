@@ -586,7 +586,10 @@
     "showPassword": "Show password",
     "hidePassword":"Hide password",
     "cancel":"Cancel",
-    "close":"Close"
+    "close":"Close",
+    "passwordMismatch":"Passwords do not match.",
+    "savePassword":"Save Password",
+    "saving":"Saving..."
    
   },
   "manageCategory": {

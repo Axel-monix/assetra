@@ -114,7 +114,7 @@ export default function ChangePasswordModal({ email, onClose }) {
 
   const handleSendCode = () =>
     run(async () => {
-      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD, { email });
+      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD_REQUEST, { email });
       if (!ok) {
         setError(data.message || ERROR_MESSAGES.GENERIC_ERROR);
         return;
@@ -126,7 +126,7 @@ export default function ChangePasswordModal({ email, onClose }) {
 
   const handleVerify = () =>
     run(async () => {
-      const { ok, data } = await postJson(ENDPOINTS.VERIFY_RESET_CODE, {
+      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD_VERIFY, {
         email,
         code,
       });
@@ -147,7 +147,7 @@ export default function ChangePasswordModal({ email, onClose }) {
       return;
     }
     return run(async () => {
-      const { ok, data } = await postJson(ENDPOINTS.RESET_PASSWORD, {
+      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD_RESET, {
         email,
         code,
         newPassword,
