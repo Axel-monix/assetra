@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const { logHistory } = require("../utils/historyLogger");
 const pool = require("../config/db");
 const {
   generateVerificationCode,
@@ -156,16 +155,6 @@ async function resetPassword(req, res) {
       return res.status(404).json({
         success: false,
         message: "User not found.",
-      });
-    }
-
-    if (rows[0].role === "admin") {
-      await logHistory(pool, {
-        type: "update_admin_profile",
-        idUser: rows[0].id,
-        performedBy: rows[0].id,
-        subjectName: rows[0].name,
-        description: JSON.stringify({ changedFields: ["password"] }),
       });
     }
 

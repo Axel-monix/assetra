@@ -568,6 +568,25 @@
     "loadError": "Failed to load items",
     "noItemsSelected": "No items selected"
   },
+  "changePassword": {
+    "title": "Change Password",
+    "sendDesc": "We'll send a verification code to {email} to confirm it's you.",
+    "verifyDesc": "Enter the {length}-digit code sent to {email}. It's valid for {minutes} minutes.",
+    "resetDesc": "Choose a new password with at least {length} characters.",
+    "doneDesc": "Your password has been changed. Use the new password next time you log in.",
+    "sendCode": "Send code",
+    "sending": "Sending...",
+    "codeLabel": "Verification code",
+    "resendCode": "Resend code",
+    "resendIn": "Resend in {seconds}s",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "showPassword": "Show password",
+    "hidePassword":"Hide password"
+   
+  },
   "manageCategory": {
     "title": "Manage Category",
     "subtitle": "Add or manage item categories.",

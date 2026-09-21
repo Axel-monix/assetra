@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import RequestEmailChangeModal from "@/components/admin/requestEmailChangeModal";
+import ChangePasswordModal from "@/components/admin/changePasswordModal";
 import {
   AUTH_USER_KEY,
   AUTH_TOKEN_KEY,
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   const [savingName, setSavingName] = useState(false);
 
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState("");
@@ -350,7 +352,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     className="assetra-profile-change-btn"
-                    onClick={() => {}}
+                    onClick={() => setShowPasswordModal(true)}
                   >
                     {t("change")}
                   </button>
@@ -366,6 +368,13 @@ export default function ProfilePage() {
           currentEmail={user.email}
           onClose={() => setShowEmailModal(false)}
           onSuccess={handleEmailChangeSuccess}
+        />
+      )}
+
+      {showPasswordModal && (
+        <ChangePasswordModal
+          email={user.email}
+          onClose={() => setShowPasswordModal(false)}
         />
       )}
     </DashboardLayout>
