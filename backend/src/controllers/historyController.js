@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
-const PDFDocument = require("pdfkit");
+const PDFDocument = require("pdfkit/js/pdfkit.standalone");
 const ExcelJS = require("exceljs");
 
 const PAGE_SIZE = 10;
