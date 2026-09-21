@@ -44,11 +44,11 @@ function PasswordField({
   label,
   value,
   onChange,
-  show,
-  onToggle,
-  toggleLabel,
+  showLabel,
+  hideLabel,
   autoFocus,
 }) {
+  const [show, setShow] = useState(false);
   return (
     <div>
       <div className="assetra-profile-field-label">{label}</div>
@@ -63,8 +63,8 @@ function PasswordField({
         />
         <button
           type="button"
-          onClick={onToggle}
-          aria-label={toggleLabel}
+          onClick={() => setShow((v) => !v)}
+          aria-label={show ? hideLabel : showLabel}
           className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
         >
           {show ? (
@@ -85,7 +85,6 @@ export default function ChangePasswordModal({ email, onClose }) {
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [cooldown, setCooldown] = useState(0);
@@ -114,7 +113,9 @@ export default function ChangePasswordModal({ email, onClose }) {
 
   const handleSendCode = () =>
     run(async () => {
-      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD_REQUEST, { email });
+      const { ok, data } = await postJson(ENDPOINTS.FORGOT_PASSWORD_REQUEST, {
+        email,
+      });
       if (!ok) {
         setError(data.message || ERROR_MESSAGES.GENERIC_ERROR);
         return;
@@ -204,10 +205,7 @@ export default function ChangePasswordModal({ email, onClose }) {
           </div>
 
           {error && (
-            <p
-              className="mb-4 text-xs text-[var(--color-danger)]"
-              role="alert"
-            >
+            <p className="mb-4 text-xs text-[var(--color-danger)]" role="alert">
               {error}
             </p>
           )}
@@ -303,22 +301,16 @@ export default function ChangePasswordModal({ email, onClose }) {
                 label={t("newPassword")}
                 value={newPassword}
                 onChange={setNewPassword}
-                show={showPassword}
-                onToggle={() => setShowPassword((s) => !s)}
-                toggleLabel={
-                  showPassword ? t("hidePassword") : t("showPassword")
-                }
+                showLabel={t("showPassword")}
+                hideLabel={t("hidePassword")}
                 autoFocus
               />
               <PasswordField
                 label={t("confirmPassword")}
                 value={confirmPassword}
                 onChange={setConfirmPassword}
-                show={showPassword}
-                onToggle={() => setShowPassword((s) => !s)}
-                toggleLabel={
-                  showPassword ? t("hidePassword") : t("showPassword")
-                }
+                showLabel={t("showPassword")}
+                hideLabel={t("hidePassword")}
               />
               <div className="flex justify-end pt-1">
                 <button
