@@ -1,10 +1,7 @@
 const pool = require("../config/db");
 const { success, error } = require("../../constants/response");
-const PDFDocument = require("pdfkit/js/pdfkit.standalone");
+const PDFDocument = require("pdfkit");
 const ExcelJS = require("exceljs");
-
-const PAGE_SIZE = 10;
-
 const TYPE_GROUPS = {
   added: ["add_admin", "add_item"],
   updated: ["edit_item", "update_admin_profile"],
@@ -70,7 +67,8 @@ function getExportLocale(locale) {
 }
 
 function buildHistoryFilters(reqQuery) {
-  const { type, types, search, dateFrom, dateTo, assetId, code, idAsset } = reqQuery;
+  const { type, types, search, dateFrom, dateTo, assetId, code, idAsset } =
+    reqQuery;
 
   const conditions = [];
   const params = [];
@@ -234,7 +232,9 @@ function mapRowsForExport(rows, locale = "id") {
     performed_by_name: row.performed_by_name || "-",
 
     created_at_label: row.created_at
-      ? new Date(row.created_at).toLocaleString(dateLocale)
+      ? new Date(row.created_at).toLocaleString(dateLocale, {
+          timeZone: "Asia/Jakarta",
+        })
       : "-",
 
     description: row.description || "",
@@ -293,12 +293,30 @@ function buildPdfBuffer(rows, summary, locale = "id") {
   const lang = getExportLocale(locale);
   const labels = EXPORT_LABELS[lang];
 
+  const fs = require("fs");
+  const path = require("path");
+
+  const FONT_DIR = path.join(
+    __dirname,
+    "../../node_modules/@fontsource/manrope/files",
+  );
+
+  const FONT_REGULAR = fs.readFileSync(
+    path.join(FONT_DIR, "manrope-latin-400-normal.woff"),
+  );
+  const FONT_BOLD = fs.readFileSync(
+    path.join(FONT_DIR, "manrope-latin-700-normal.woff"),
+  );
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: "A4",
       layout: "landscape",
       margin: 30,
+      font: FONT_REGULAR,
     });
+    doc.registerFont("Regular", FONT_REGULAR);
+    doc.registerFont("Bold", FONT_BOLD);
 
     const chunks = [];
 
@@ -369,7 +387,7 @@ function buildPdfBuffer(rows, summary, locale = "id") {
     function drawHeader() {
       let x = startX;
 
-      doc.font("Helvetica-Bold").fontSize(9);
+      doc.font("Bold").fontSize(9);
 
       columns.forEach((col) => {
         doc.rect(x, y, col.width, rowHeight).stroke();
@@ -386,7 +404,7 @@ function buildPdfBuffer(rows, summary, locale = "id") {
 
     drawHeader();
 
-    doc.font("Helvetica").fontSize(8);
+    doc.font("Regular").fontSize(8);
 
     rows.forEach((row) => {
       if (y + rowHeight > doc.page.height - doc.page.margins.bottom - 100) {
@@ -396,7 +414,7 @@ function buildPdfBuffer(rows, summary, locale = "id") {
 
         drawHeader();
 
-        doc.font("Helvetica").fontSize(8);
+        doc.font("Regular").fontSize(8);
       }
 
       let x = startX;
@@ -424,11 +442,11 @@ function buildPdfBuffer(rows, summary, locale = "id") {
       y = doc.page.margins.top;
     }
 
-    doc.font("Helvetica-Bold").fontSize(11).text(labels.summary, startX, y);
+    doc.font("Bold").fontSize(11).text(labels.summary, startX, y);
 
     y += 20;
 
-    doc.font("Helvetica").fontSize(9);
+    doc.font("Regular").fontSize(9);
 
     [
       `${labels.addedThisMonth}: ${summary.addedThisMonth}`,
