@@ -617,14 +617,14 @@
     "atLeastOneSpecification": "At least one specification is required.",
 
     "specifications": "Specifications",
-    "addDetail": "+ Add Detail",
+    "addDetail": "Add Detail",
     "detailBarang": "Detail Barang",
     "detailBarangPlaceholder": "e.g. Brand, RAM, Processor",
     "type": "Type",
     "required": "Required",
     "repairable": "Repairable",
     "removeRow": "Remove row",
-    "noSpecifications": "No specifications yet. Click \"+ Add Detail\".",
+    "noSpecifications": "No specifications yet. Click \"Add Detail\".",
     "specType": {
       "text": "Text",
       "number": "Number",
