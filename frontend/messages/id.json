@@ -388,6 +388,7 @@
       "deactivateItem": "Item {name} dinonaktifkan oleh {performedBy}. Alasan: {reason}.",
       "deactivateCategory": "Kategori {name} dinonaktifkan oleh {performedBy}.",
       "updateAdminProfile": "Profil admin {name} diperbarui oleh {performedBy}. {changes}",
+      "activateAdmin": "Admin {name} diaktifkan kembali oleh {performedBy}.",
       "unknown": "Aktivitas dilakukan oleh {performedBy}."
     },
     "tabs": {
@@ -404,6 +405,7 @@
       "deactivateItem": "Nonaktif Item",
       "deactivateCategory": "Nonaktif Kategori",
       "updateAdminProfile": "Update Profil Admin",
+      "activateAdmin": "Aktifkan Admin",
       "unknown": "Aktivitas"
     }
   },

@@ -516,7 +516,8 @@
       "deactivateItem": "Item {name} was deactivated by {performedBy}. Reason: {reason}.",
       "deactivateCategory": "Category {name} was deactivated by {performedBy}.",
       "updateAdminProfile": "Admin profile for {name} was updated by {performedBy}. {changes}",
-      "unknown": "Activity was performed by {performedBy}."
+      "unknown": "Activity was performed by {performedBy}.",
+      "activateAdmin": "Admin {name} was reactivated by {performedBy}."
     },
     "tabs": {
       "all": "All",
@@ -533,6 +534,7 @@
       "deactivateItem": "Deactivate Item",
       "deactivateCategory": "Deactivate Category",
       "updateAdminProfile": "Admin Profile Updated",
+      "activateAdmin": "Activate Admin",
       "unknown": "Activity"
     }
   },

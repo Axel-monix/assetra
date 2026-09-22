@@ -1,5 +1,6 @@
 import {
   UserPlus,
+  UserCheck,
   PlusCircle,
   Pencil,
   UserX,
@@ -48,6 +49,12 @@ export const HISTORY_TYPE_CONFIG = {
     badgeKey: "badges.deactivateAdmin",
     descriptionKey: "activities.deactivateAdmin",
     variant: "danger",
+  },
+    activate_admin: {
+    icon: UserCheck,
+    badgeKey: "badges.activateAdmin",
+    descriptionKey: "activities.activateAdmin",
+    variant: "cyan",
   },
 
   deactivate_item: {
