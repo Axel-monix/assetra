@@ -190,9 +190,7 @@ async function toggleAdminStatus(req, res) {
         subjectName: targetRows[0].name,
         description: `Dinonaktifkan: ${reason.trim()}`,
       });
-    }
-
-    else if (action === "reactivate") {
+    } else if (action === "reactivate") {
       await client.query(
         `
           UPDATE users
@@ -221,9 +219,32 @@ async function toggleAdminStatus(req, res) {
         `,
         [id, actorId],
       );
-    }
+      await client.query(
+        `
+          UPDATE admin_deactivation
+          SET
+            reactivated_at = CURRENT_TIMESTAMP,
+            reactivated_by = $2
+          WHERE id = (
+            SELECT id
+            FROM admin_deactivation
+            WHERE id_user = $1
+              AND reactivated_at IS NULL
+            ORDER BY deactivated_at DESC
+            LIMIT 1
+          )
+        `,
+        [id, actorId],
+      );
 
-    else {
+      await logHistory(client, {
+        type: "activate_admin",
+        idUser: targetRows[0].id,
+        performedBy: actorId,
+        subjectName: targetRows[0].name,
+        description: "Admin diaktifkan kembali",
+      });
+    } else {
       await client.query("ROLLBACK");
 
       return res.status(400).json({
