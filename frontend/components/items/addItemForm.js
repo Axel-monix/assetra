@@ -20,20 +20,6 @@ const STATUS_OPTIONS = [
   ASSET_STATUS.UNAVAILABLE,
 ];
 
-function generateCodeFromName(name) {
-  if (!name) return "";
-
-  const prefix = name
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .toUpperCase()
-    .slice(0, 3)
-    .padEnd(3, "X");
-
-  const random = String(Math.floor(1000 + Math.random() * 9000));
-
-  return `${prefix}-${random}`;
-}
-
 function SpecField({ field, value, onChange, disabled }) {
   if (field.type === "boolean") {
     return (
