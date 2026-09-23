@@ -187,7 +187,7 @@
     "itemName": "Item Name",
     "itemNamePlaceholder": "e.g. MacBook Pro M3",
     "codeItem": "Code Item",
-    "codeItemPlaceholder": "Auto generated",
+    "codeItemPlaceholder": "Enter Item Code",
     "category": "Category",
     "selectCategory": "Select Category",
     "status": "Status",
@@ -284,6 +284,7 @@
     "reasonPlaceholder": "Enter a reason",
     "reasonTooShort": "Reason must be at least {length} characters.",
     "statusChangeFailed": "Failed to change item status.",
+    "codeItemRequired":"Code Item Required",
     "serverResponseError": "Server response error. Please try again."
   },
   "guestAsset": {
@@ -423,7 +424,32 @@
       "functional": "Available",
       "needs_repair": "Need Repair",
       "unavailable": "Unavailable"
-    }
+    },
+    "historyType": {
+      "addItem": "Item Created",
+      "editItem": "Item Updated",
+      "deactivateItem": "Item Deactivated",
+      "statusChanged": "Status Changed"
+    },
+    "field": {
+      "name": "Name",
+      "code": "Code",
+      "category": "Category",
+      "location": "Location",
+      "description": "Description",
+      "image": "Image",
+      "status": "Status",
+      "specifications": "Specifications"
+    },
+    "label": {
+      "status": "Status:",
+      "updated": "Updated:",
+      "damagedParts": "Damaged Parts:",
+      "problemDetails": "Problem Details:"
+    },
+    "closeDetailPanel": "Close detail panel",
+    "collapseSheet": "Collapse sheet",
+    "expandSheet": "Expand sheet"
   },
   "history": {
     "title": "History",
@@ -586,13 +612,12 @@
     "newPassword": "New password",
     "confirmPassword": "Confirm new password",
     "showPassword": "Show password",
-    "hidePassword":"Hide password",
-    "cancel":"Cancel",
-    "close":"Close",
-    "passwordMismatch":"Passwords do not match.",
-    "savePassword":"Save Password",
-    "saving":"Saving..."
-   
+    "hidePassword": "Hide password",
+    "cancel": "Cancel",
+    "close": "Close",
+    "passwordMismatch": "Passwords do not match.",
+    "savePassword": "Save Password",
+    "saving": "Saving..."
   },
   "manageCategory": {
     "title": "Manage Category",

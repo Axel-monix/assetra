@@ -31,16 +31,20 @@ function getHistoryBadgeStyle(type) {
   }
 }
 
-function getHistoryLabel(type) {
+function getHistoryLabel(type, t) {
   switch (type) {
     case "add_item":
-      return "Item Created";
+      return t("historyType.addItem", { defaultValue: "Item Created" });
     case "edit_item":
-      return "Item Updated";
+      return t("historyType.editItem", { defaultValue: "Item Updated" });
     case "deactivate_item":
-      return "Item Deactivated";
+      return t("historyType.deactivateItem", {
+        defaultValue: "Item Deactivated",
+      });
     default:
-      return "Status Changed";
+      return t("historyType.statusChanged", {
+        defaultValue: "Status Changed",
+      });
   }
 }
 
@@ -76,18 +80,18 @@ function RenderHistoryDescription({ description }) {
     const key = getAssetStatusLabelKey(status);
     return key ? t(key, { defaultValue: fallback }) : fallback;
   };
-  
+
   const fieldMap = {
-    name: "Name",
-    code: "Code",
-    code_item: "Code",
-    category: "Category",
-    id_category: "Category",
-    location: "Location",
-    description: "Description",
-    image_url: "Image",
-    status: "Status",
-    specs: "Specifications",
+    name: t("field.name", { defaultValue: "Name" }),
+    code: t("field.code", { defaultValue: "Code" }),
+    code_item: t("field.code", { defaultValue: "Code" }),
+    category: t("field.category", { defaultValue: "Category" }),
+    id_category: t("field.category", { defaultValue: "Category" }),
+    location: t("field.location", { defaultValue: "Location" }),
+    description: t("field.description", { defaultValue: "Description" }),
+    image_url: t("field.image", { defaultValue: "Image" }),
+    status: t("field.status", { defaultValue: "Status" }),
+    specs: t("field.specifications", { defaultValue: "Specifications" }),
   };
 
   const otherFields = Array.isArray(parsed.changedFields)
@@ -100,7 +104,7 @@ function RenderHistoryDescription({ description }) {
       {parsed.status && (
         <div className="flex items-center gap-1.5 flex-wrap text-xs">
           <span className="text-[var(--color-text-secondary)] font-medium">
-            Status:
+            {t("label.status", { defaultValue: "Status:" })}
           </span>
           <span
             className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium ${getAssetStatusStyle(parsed.status.from)}`}
@@ -120,7 +124,7 @@ function RenderHistoryDescription({ description }) {
       {otherFields.length > 0 && (
         <div className="text-[11px] text-[var(--color-text-secondary)]">
           <span className="text-[var(--color-text-muted)] font-medium">
-            Updated:{" "}
+            {t("label.updated", { defaultValue: "Updated:" })}{" "}
           </span>
           <span className="text-[var(--color-text)] font-medium">
             {otherFields.map((f) => fieldMap[f] || f).join(", ")}
@@ -133,7 +137,7 @@ function RenderHistoryDescription({ description }) {
         parsed.damagedSpecifications.length > 0 && (
           <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-2 text-xs">
             <span className="font-semibold text-amber-300 block mb-0.5">
-              Damaged Parts:
+              {t("label.damagedParts", { defaultValue: "Damaged Parts:" })}
             </span>
             <span className="text-amber-200/90 text-[11px]">
               {parsed.damagedSpecifications.join(", ")}
@@ -145,7 +149,7 @@ function RenderHistoryDescription({ description }) {
       {parsed.repairDetails && (
         <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-input)]/70 p-2 text-xs">
           <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--color-text-muted)] block mb-1">
-            Problem Details:
+            {t("label.problemDetails", { defaultValue: "Problem Details:" })}
           </span>
           <p className="whitespace-pre-line text-xs text-[var(--color-text)]">
             {parsed.repairDetails}
@@ -255,7 +259,9 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
       <div
         className={`assetra-sheet-backdrop ${closing ? "is-closing opacity-0" : ""}`}
         onClick={handleClose}
-        aria-label="Close detail panel"
+        aria-label={t("closeDetailPanel", {
+          defaultValue: "Close detail panel",
+        })}
       />
 
       <aside
@@ -282,7 +288,11 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
                 type="button"
                 onClick={() => setIsExpanded((prev) => !prev)}
                 className="lg:hidden text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition p-1"
-                aria-label={isExpanded ? "Collapse sheet" : "Expand sheet"}
+                aria-label={
+                  isExpanded
+                    ? t("collapseSheet", { defaultValue: "Collapse sheet" })
+                    : t("expandSheet", { defaultValue: "Expand sheet" })
+                }
               >
                 {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               </button>
@@ -426,7 +436,7 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
                   strokeWidth={1.8}
                   className="text-[var(--color-primary)]"
                 />
-                {t("historyChanges", { defaultValue: "Riwayat Perubahan" })}
+                {t("historyChanges", { defaultValue: "Change History" })}
               </h4>
               {historyEntries.length > 0 && (
                 <span className="text-[11px] font-medium text-[var(--color-text-muted)] bg-[var(--color-input)] px-2 py-0.5 rounded-full border border-[var(--color-border)]">
@@ -439,21 +449,21 @@ export default function ItemDetailPanel({ item, onClose, onEdit, onDelete }) {
               <div className="flex items-center justify-center py-4 text-xs text-[var(--color-text-muted)]">
                 <span className="animate-pulse">
                   {t("loadingHistory", {
-                    defaultValue: "Memuat riwayat perubahan...",
+                    defaultValue: "Loading change history...",
                   })}
                 </span>
               </div>
             ) : historyEntries.length === 0 ? (
               <p className="text-xs text-[var(--color-text-muted)] italic py-1">
                 {t("noHistoryChanges", {
-                  defaultValue: "Belum ada riwayat perubahan untuk item ini.",
+                  defaultValue: "No change history for this item yet.",
                 })}
               </p>
             ) : (
               <div className="relative pl-3.5 space-y-3.5 before:absolute before:left-1 before:top-2 before:bottom-2 before:w-[1px] before:bg-[var(--color-border)]">
                 {historyEntries.map((entry) => {
                   const badgeClass = getHistoryBadgeStyle(entry.type);
-                  const label = getHistoryLabel(entry.type);
+                  const label = getHistoryLabel(entry.type, t);
                   const dateStr = entry.created_at
                     ? new Date(entry.created_at).toLocaleDateString(undefined, {
                         day: "numeric",

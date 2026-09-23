@@ -144,26 +144,16 @@ export default function AddItemForm({ onClose, onSubmit }) {
   useEffect(() => {
     setSpecValues({});
   }, [selectedCategory?.id]);
-
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setForm((prev) => {
-      const next = {
-        ...prev,
-        [name]: value,
-      };
-
-      if (name === "name") {
-        next.code_item = generateCodeFromName(value);
-      }
-
-      return next;
-    });
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
     setError("");
   }
-
   function handleSpecChange(idSpecification, value) {
     setSpecValues((prev) => ({
       ...prev,
@@ -264,6 +254,10 @@ export default function AddItemForm({ onClose, onSubmit }) {
 
     if (!form.name.trim()) {
       setError(t("itemNameRequired"));
+      return;
+    }
+    if (!form.code_item.trim()) {
+      setError(t("codeItemRequired"));
       return;
     }
 
@@ -441,12 +435,15 @@ export default function AddItemForm({ onClose, onSubmit }) {
               </div>
 
               <div>
-                <label className="assetra-form-label">{t("codeItem")}</label>
+                <label className="assetra-form-label">
+                  {t("codeItem")}{" "}
+                  <span className="text-[var(--color-danger)]">*</span>
+                </label>
 
                 <input
                   name="code_item"
                   value={form.code_item}
-                  readOnly
+                  onChange={handleChange}
                   placeholder={t("codeItemPlaceholder")}
                   className={`${"assetra-form-input"} ${"font-mono"}`}
                 />
