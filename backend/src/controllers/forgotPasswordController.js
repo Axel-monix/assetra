@@ -131,6 +131,7 @@ async function resetPassword(req, res) {
     const normalizedEmail = email.trim().toLowerCase();
     const entry = await Resetcode.getEntry(normalizedEmail);
     if (!entry || Resetcode.isExpired(entry)) {
+      if (entry) await Resetcode.deleteEntry(normalizedEmail);
       return res.status(400).json({
         success: false,
         message: "The password reset session has expired. Please start over.",

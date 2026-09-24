@@ -1,12 +1,13 @@
 const pool = require("../config/db");
 
-  const CODE_EXPIRY_MS = 5 * 60 * 1000;
+const CODE_EXPIRY_MS = 5 * 60 * 1000;
 
 async function setCode(email, code) {
   const expiresAt = new Date(Date.now() + CODE_EXPIRY_MS);
   await pool.query(`DELETE FROM password_reset_requests WHERE email = $1`, [
     email,
   ]);
+  await deleteExpired();
   await pool.query(
     `INSERT INTO password_reset_requests (email, code, expires_at)
      VALUES ($1, $2, $3)`,
@@ -44,6 +45,11 @@ async function deleteEntry(email) {
     email,
   ]);
 }
+async function deleteExpired() {
+  await pool.query(
+    `DELETE FROM password_reset_requests WHERE expires_at < NOW()`,
+  );
+}
 function isExpired(entry) {
   return !entry || entry.expiresAt < Date.now();
 }
@@ -53,5 +59,6 @@ module.exports = {
   getEntry,
   markVerified,
   deleteEntry,
+  deleteExpired,
   isExpired,
 };

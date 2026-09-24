@@ -14,4 +14,4 @@ const hashDariDB = "";
 
 bcrypt.compare(plainPassword, hashDariDB).then(result => {
   console.log("Match?", result);
-});
+}); 
