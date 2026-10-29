@@ -30,3 +30,15 @@ Output from each service is clearly prefixed with `[backend]` (blue) and `[front
 | `npm run dev:backend` | Run only the backend server with auto-reload |
 | `npm run dev:frontend` | Run only the frontend Next.js dev server |
 | `npm run install:all` | Install dependencies for root, backend, and frontend |
+## Tech Stack
+Next.js (frontend) · Node.js/Express (backend) · PostgreSQL
+
+## Demo Video
+[Tonton video demo (5 menit)](ISI_LINK_GDRIVE)
+
+## Documentation
+- [User Manual](docs/user-manual.md)
+- [Technical Documentation](docs/technical-documentation.md)
+
+## Live App
+https://assetra-navy.vercel.app
