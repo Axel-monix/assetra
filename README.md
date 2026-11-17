@@ -4,25 +4,38 @@ Monorepo containing the **frontend** (Next.js) and **backend** (Express / Node.j
 
 ---
 
-## Quick Start
+## Prasyarat
 
-### 1. Run Both Projects in One Command
+- Node.js (LTS) dan npm
+- PostgreSQL
+- Akun Gmail + App Password (untuk email OTP)
 
-From the root directory:
+---
+
+## Setup & Menjalankan
+
+```bash
+git clone https://github.com/Axel-monix/assetra.git
+cd assetra
+npm run install:all      # install dependency root, backend, frontend
+```
+
+1. Buat database PostgreSQL, lalu jalankan file migrasi SQL (urutan sesuai tanggal/penamaan file migrasi di repo).
+2. Salin `.env.example` ke `.env` di folder `backend/` dan `frontend/`, lalu isi nilainya (daftar variabel ada di [Technical Documentation](./docs/technical-documentation.md#environment-variables)).
+3. Jalankan dari root:
 
 ```bash
 npm run dev
 ```
 
-This starts:
-- **Backend**: Express API server on [http://localhost:5000](http://localhost:5000) (with auto-reload on changes)
-- **Frontend**: Next.js development server on [http://localhost:3000](http://localhost:3000)
+Ini menjalankan:
 
-Output from each service is clearly prefixed with `[backend]` (blue) and `[frontend]` (green).
+- **Backend**: Express API di [http://localhost:5000](http://localhost:5000) (auto-reload)
+- **Frontend**: Next.js di [http://localhost:3000](http://localhost:3000)
 
----
+Output tiap service diberi prefix `[backend]` (biru) dan `[frontend]` (hijau).
 
-## Additional Commands
+### Command lain
 
 | Command | Description |
 | :--- | :--- |
@@ -30,15 +43,3 @@ Output from each service is clearly prefixed with `[backend]` (blue) and `[front
 | `npm run dev:backend` | Run only the backend server with auto-reload |
 | `npm run dev:frontend` | Run only the frontend Next.js dev server |
 | `npm run install:all` | Install dependencies for root, backend, and frontend |
-## Tech Stack
-Next.js (frontend) · Node.js/Express (backend) · PostgreSQL
-
-## Demo Video
-[Tonton video demo (5 menit)](ISI_LINK_GDRIVE)
-
-## Documentation
-- [User Manual](docs/user-manual.md)
-- [Technical Documentation](docs/technical-documentation.md)
-
-## Live App
-https://assetra-navy.vercel.app
