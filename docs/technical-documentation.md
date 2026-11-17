@@ -19,7 +19,7 @@ Dokumentasi teknis untuk developer / maintainer. Panduan pemakaian untuk end-use
 **Link penting**
 - Aplikasi: https://assetra-navy.vercel.app
 - Repository: https://github.com/Axel-monix/assetra
-- Video demo: _(isi link Google Drive)_
+- Video demo: https://drive.google.com/drive/folders/1K30A0z_ZyhoD-FUYCQGZh3L3lqtEvQO4?usp=sharing
 
 ### Role
 
