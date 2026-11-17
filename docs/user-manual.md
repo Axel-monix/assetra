@@ -6,6 +6,7 @@ Aplikasi: https://assetra-navy.vercel.app
 Video demo (5 menit): _(isi link Google Drive)_
 
 ## Daftar Isi
+
 1. [Pengantar](#1-pengantar)
 2. [Login & Lupa Password](#2-login--lupa-password)
 3. [Dashboard](#3-dashboard)
@@ -22,15 +23,16 @@ Video demo (5 menit): _(isi link Google Drive)_
 
 Assetra dipakai untuk mencatat dan melacak barang. Setiap barang punya QR code. Siapa pun yang memindai QR dapat melihat info dan status barang, sedangkan Admin yang sudah login bisa langsung mengubahnya.
 
-| Peran | Bisa apa |
-|---|---|
-| Guest | Scan QR dan melihat info barang |
-| Admin | Kelola kategori & barang, ubah status, cetak QR, lihat & export history |
-| Super Admin | Semua fitur Admin + kelola akun Admin |
+| Peran       | Bisa apa                                                                |
+| ----------- | ----------------------------------------------------------------------- |
+| Guest       | Scan QR dan melihat info barang                                         |
+| Admin       | Kelola kategori & barang, ubah status, cetak QR, lihat & export history |
+| Super Admin | Semua fitur Admin + kelola akun Admin                                   |
 
 ## 2. Login & Lupa Password
 
 ### Login
+
 1. Buka https://assetra-navy.vercel.app.
 2. Isi email dan password.
 3. (Opsional) centang **Remember Me** agar tetap login di browser ini.
@@ -39,6 +41,7 @@ Assetra dipakai untuk mencatat dan melacak barang. Setiap barang punya QR code. 
 ![Halaman login](./images/login.png)
 
 ### Lupa password
+
 1. Di halaman login, klik **Forgot Password**.
 2. Masukkan email akun, lalu klik kirim.
 3. Cek email, masukkan kode OTP 6 digit.
@@ -59,6 +62,7 @@ Menu samping: Dashboard, Manage Items, Manage Categories, History, dan Manage Ad
 Kategori menentukan spesifikasi apa saja yang diisi pada barang (mis. kategori Laptop punya spesifikasi RAM, Processor).
 
 ### Menambah kategori
+
 1. Buka **Manage Categories**.
 2. Klik **Add New Category**.
 3. Isi nama kategori dan deskripsi (opsional).
@@ -73,12 +77,14 @@ Kategori menentukan spesifikasi apa saja yang diisi pada barang (mis. kategori L
 ![Form kategori](./images/category-form.png)
 
 ### Mengubah / menghapus kategori
+
 - Klik **Edit** pada kategori, ubah data, lalu **Save Changes**.
 - Klik **Delete** untuk menghapus. Kategori yang masih dipakai barang **tidak bisa** dihapus.
 
 ## 5. Mengelola Barang
 
 ### Menambah barang
+
 1. Buka **Manage Items** lalu klik **Add Item**.
 2. Pilih kategori. Kolom spesifikasi akan muncul otomatis.
 3. Isi nama, lokasi, status, foto (opsional), dan spesifikasi.
@@ -87,13 +93,16 @@ Kategori menentukan spesifikasi apa saja yang diisi pada barang (mis. kategori L
 ![Tambah barang](./images/add-item.png)
 
 ### Melihat detail
+
 Klik satu kartu barang. Panel detail muncul berisi info, spesifikasi, deskripsi kerusakan (jika ada), dan riwayat perubahan barang.
 
 ### Mengubah barang
+
 1. Klik barang, lalu pilih **Edit**.
 2. Ubah data, lalu simpan.
 
 ### Melaporkan kerusakan (Need Repair)
+
 1. Pada form edit, ubah **Status** menjadi **Needs Repair**.
 2. Jendela **Need Repair** muncul:
    - Pilih bagian yang rusak (centang spesifikasi)
@@ -103,15 +112,18 @@ Klik satu kartu barang. Panel detail muncul berisi info, spesifikasi, deskripsi 
 ![Modal need repair](./images/need-repair.png)
 
 ### Menonaktifkan barang
+
 1. Pilih barang (bisa lebih dari satu) lalu klik **Deactivate**, atau ubah status menjadi **Unavailable**.
 2. Isi alasan penonaktifan lalu konfirmasi.
 
 ### Mencari & memfilter
+
 Gunakan kotak pencarian, atau tombol filter untuk memilih status, kategori, dan rentang tanggal.
 
 ## 6. QR Code
 
 ### Mencetak QR
+
 1. Buka halaman cetak QR (**Print QR**) dari barang yang dipilih.
 2. Pilih barang, lalu cetak.
 3. Tempel QR pada barang.
@@ -119,6 +131,7 @@ Gunakan kotak pencarian, atau tombol filter untuk memilih status, kategori, dan 
 > QR hanya berisi link ke halaman barang, jadi tetap berlaku walaupun data barang diubah.
 
 ### Memindai QR
+
 1. Scan QR dengan kamera HP.
 2. Halaman barang terbuka.
    - **Guest**: hanya melihat info dan status.
@@ -131,9 +144,11 @@ Gunakan kotak pencarian, atau tombol filter untuk memilih status, kategori, dan 
 Halaman **History** mencatat semua aktivitas: tambah barang, edit barang, laporan kerusakan, penonaktifan barang, dan perubahan akun admin, lengkap dengan siapa yang melakukan dan kapan.
 
 ### Memfilter
+
 Gunakan pencarian, filter tipe aktivitas, dan rentang tanggal. Pindah halaman lewat nomor halaman di bawah.
 
 ### Export
+
 1. Klik **Export**.
 2. Pilih format **PDF** atau **Excel**.
 3. Atur filter jika perlu, lalu unduh.
@@ -154,10 +169,10 @@ Kolom **Last Activity** menampilkan login terakhir admin, atau **Inactive** jika
 
 Buka menu **Profile** dari header.
 
-| Aksi | Cara |
-|---|---|
-| Ganti foto | Klik ikon kamera di avatar |
-| Ganti nama | Klik ikon pensil di samping nama, ubah, simpan |
+| Aksi        | Cara                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| Ganti foto  | Klik ikon kamera di avatar                                                                                          |
+| Ganti nama  | Klik ikon pensil di samping nama, ubah, simpan                                                                      |
 | Ganti email | Klik **Change** pada email, masukkan email baru, lalu masukkan kode OTP 6 digit yang dikirim ke email baru tersebut |
 
 ## 10. Ganti Bahasa
@@ -166,15 +181,15 @@ Klik pemilih bahasa di header untuk beralih antara **English** dan **Indonesia**
 
 ## 11. FAQ / Troubleshooting
 
-| Masalah | Solusi |
-|---|---|
-| Tidak bisa login | Periksa email/password. Jika lupa, gunakan **Forgot Password**. Akun yang dinonaktifkan tidak bisa login, hubungi Super Admin |
-| Kode OTP tidak masuk | Cek folder spam, tunggu beberapa saat, lalu minta kirim ulang |
-| Kategori tidak bisa dihapus | Masih ada barang yang memakai kategori itu. Pindahkan atau nonaktifkan barangnya dulu |
-| Setelah scan QR hanya bisa melihat info | Anda belum login di browser itu. Login sebagai Admin lalu scan ulang |
-| Halaman loading terus | Cek koneksi internet, lalu refresh halaman |
-| Gambar gagal diunggah | Coba lagi dengan file lebih kecil; jika masih gagal, hubungi developer |
+| Masalah                                 | Solusi                                                                                                                        |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Tidak bisa login                        | Periksa email/password. Jika lupa, gunakan **Forgot Password**. Akun yang dinonaktifkan tidak bisa login, hubungi Super Admin |
+| Kode OTP tidak masuk                    | Cek folder spam, tunggu beberapa saat, lalu minta kirim ulang                                                                 |
+| Kategori tidak bisa dihapus             | Masih ada barang yang memakai kategori itu. Pindahkan atau nonaktifkan barangnya dulu                                         |
+| Setelah scan QR hanya bisa melihat info | Anda belum login di browser itu. Login sebagai Admin lalu scan ulang                                                          |
+| Halaman loading terus                   | Cek koneksi internet, lalu refresh halaman                                                                                    |
+| Gambar gagal diunggah                   | Coba lagi dengan file lebih kecil; jika masih gagal, hubungi developer                                                        |
 
 ## Kontak Support
 
-_(isi nama / email / WhatsApp kontak)_
+_(Dessray/anggatyan2@gmail.com)_
