@@ -37,9 +37,16 @@ Output tiap service diberi prefix `[backend]` (biru) dan `[frontend]` (hijau).
 
 ### Command lain
 
-| Command | Description |
-| :--- | :--- |
-| `npm run dev` | Run both frontend and backend concurrently |
-| `npm run dev:backend` | Run only the backend server with auto-reload |
-| `npm run dev:frontend` | Run only the frontend Next.js dev server |
-| `npm run install:all` | Install dependencies for root, backend, and frontend |
+| Command                | Description                                          |
+| :--------------------- | :--------------------------------------------------- |
+| `npm run dev`          | Run both frontend and backend concurrently           |
+| `npm run dev:backend`  | Run only the backend server with auto-reload         |
+| `npm run dev:frontend` | Run only the frontend Next.js dev server             |
+| `npm run install:all`  | Install dependencies for root, backend, and frontend |
+
+---
+
+## Dokumentasi
+
+- [User Manual](./docs/user-manual.md): panduan pemakaian untuk Admin, Super Admin, dan Guest
+- [Technical Documentation](./docs/technical-documentation.md): arsitektur, database, API, setup, dan deployment
